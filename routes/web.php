@@ -7,11 +7,17 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Route khusus admin
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-});
+use App\Http\Controllers\Admin\DashboardController;
+
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin')
+    ->group(function () {
+
+        Route::get('/dashboard', [DashboardController::class, 'index'])
+            ->name('admin.dashboard');
+
+    });
+
 
 // Route khusus kasir
 Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->group(function () {
@@ -48,6 +54,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
 });
+
+
+
+
+
+
+use App\Http\Controllers\Admin\LaporanController;
+
+Route::get('/admin/laporan', [LaporanController::class, 'index'])->middleware('auth');
+Route::post('/admin/laporan/filter', [LaporanController::class, 'filter'])->middleware('auth');
+Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
+Route::get('/admin/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
+Route::get('/admin/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
 
 
 use App\Http\Controllers\Admin\ProdukController;
@@ -97,4 +117,8 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::post('/tutup', [KasirController::class, 'tutupKasir'])->name('tutup');
     Route::get('/daftar', [KasirController::class, 'daftarPenjualan'])->name('daftar');
     Route::get('/cetak/{id}', [KasirController::class, 'cetak'])->name('cetak');
+
+
+    Route::get('/update-stok', [KasirController::class, 'updateStokForm'])->name('update-stok');
+    Route::post('/update-stok', [KasirController::class, 'updateStokProses']);
 });

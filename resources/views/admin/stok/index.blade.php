@@ -1,112 +1,180 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Manajemen Stok - POS Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f9; margin: 0; }
-        .sidebar { position: fixed; top: 0; left: 0; width: 280px; min-height: 100vh;
-            background: linear-gradient(180deg, #2c3e50, #1a2530); z-index: 1000; }
-        .content { margin-left: 280px; padding: 20px; }
-        .nav-link { color: #bdc3c7; border-radius: 8px; margin: 4px 15px; padding: 12px 15px; }
-        .nav-link:hover, .nav-link.active { background-color: #34495e; color: white !important; }
-        .nav-link i { width: 28px; text-align: center; }
-        @media (max-width: 992px) {
-            .sidebar { width: 80px; }
-            .sidebar .text, .sidebar .logo-text { display: none; }
-            .content { margin-left: 80px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manajemen Stok - POS Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 flex min-h-screen">
 
-    <!-- SIDEBAR -->
-    <div class="sidebar text-white p-3">
-        <div class="text-center mb-4">
-            <h4 class="fw-bold text-white mb-1 logo-text">POS ADMIN</h4>
-            <small class="text-info d-block">{{ auth()->user()->name }}</small>
+<!-- SIDEBAR -->
+<aside class="bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 w-72 p-6 flex flex-col justify-between">
+    <!-- HEADER -->
+    <div>
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-white">POS ADMIN</h2>
+            <hr class="border-gray-600 my-3">
+            <p class="text-sm text-gray-300">{{ auth()->user()->name }}</p>
+            <p class="text-xs text-yellow-400">{{ ucfirst(auth()->user()->role) }}</p>
         </div>
-        <hr class="bg-secondary">
-        <nav class="nav flex-column">
-            <a class="nav-link" href="{{ url('/admin/dashboard') }}"><i class="bi bi-house-door"></i> <span class="text">Dashboard</span></a>
-            <a class="nav-link" href="{{ url('/admin/users') }}"><i class="bi bi-people"></i> <span class="text">User</span></a>
-            <a class="nav-link" href="{{ url('/admin/produk') }}"><i class="bi bi-box-seam"></i> <span class="text">Produk</span></a>
-            <a class="nav-link active" href="{{ url('/admin/stok') }}"><i class="bi bi-bar-chart-line"></i> <span class="text">Manajemen Stok</span></a>
-            <hr class="bg-secondary my-4">
-            <form action="{{ url('/logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="nav-link text-danger bg-transparent border-0 text-start w-100 p-2">
-                    <i class="bi bi-box-arrow-right"></i> <span class="text">Logout</span>
-                </button>
-            </form>
+
+        <!-- NAVIGATION -->
+        <nav class="space-y-2">
+            @php $current = request()->path(); @endphp
+
+            <a href="{{ url('/admin/dashboard') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+               {{ $current == 'admin/dashboard' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-2 2v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="{{ url('/admin/users') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+               {{ $current == 'admin/users' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 3-3.87M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+                </svg>
+                Manajemen User
+            </a>
+
+            <a href="{{ url('/admin/produk') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+               {{ $current == 'admin/produk' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6m16 0v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/>
+                </svg>
+                Manajemen Produk
+            </a>
+
+            <a href="{{ url('/admin/stok') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+               {{ $current == 'admin/stok' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+                </svg>
+                Manajemen Stok
+            </a>
+
+            <a href="{{ url('/admin/void') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+               {{ $current == 'admin/void' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5"/>
+                </svg>
+                Void / Refund
+            </a>
+
+            <a href="{{ url('/admin/laporan') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+               {{ $current == 'admin/laporan' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+                </svg>
+                Laporan Penjualan
+            </a>
         </nav>
     </div>
 
-    <!-- KONTEN -->
-    <div class="content">
-        <div class="bg-white rounded shadow p-4 p-md-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="text-primary"><i class="bi bi-bar-chart-line"></i> Manajemen Stok</h3>
-                <div>
-                    <a href="{{ route('admin.stok.masuk') }}" class="btn btn-success me-2"><i class="bi bi-plus-circle"></i> Stok Masuk</a>
-                    <a href="{{ route('admin.stok.keluar') }}" class="btn btn-warning me-2"><i class="bi bi-dash-circle"></i> Stok Keluar</a>
-                    <a href="{{ route('admin.stok.riwayat') }}" class="btn btn-info"><i class="bi bi-clock-history"></i> Riwayat</a>
-                </div>
-            </div>
+    <!-- LOGOUT -->
+    <form action="{{ url('/logout') }}" method="POST">
+        @csrf
+        <button type="submit" 
+                class="flex items-center gap-3 px-4 py-3 rounded-lg w-full text-left text-red-400 hover:bg-red-600 hover:text-white transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"/>
+            </svg>
+            Logout
+        </button>
+    </form>
+</aside>
 
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                    {{ session('success') }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show">
-                    {{ session('error') }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Kode</th>
-                            <th>Produk</th>
-                            <th>Kategori</th>
-                            <th>Stok</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($produks as $p)
-                        <tr>
-                            <td><strong>{{ $p->kode }}</strong></td>
-                            <td>{{ $p->nama }}</td>
-                            <td>{{ $p->category->nama ?? '-' }}</td>
-                            <td class="text-center">
-                                <h5><span class="badge bg-primary fs-6">{{ $p->stok }}</span></h5>
-                            </td>
-                            <td>
-                                @if($p->stok == 0)
-                                    <span class="badge bg-secondary">Habis</span>
-                                @elseif($p->stok <= 10)
-                                    <span class="badge bg-danger">Kritis!</span>
-                                @else
-                                    <span class="badge bg-success">Aman</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                        <tr><td colspan="5" class="text-center text-muted py-5">Belum ada produk.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+<!-- KONTEN -->
+<main class="flex-1 p-8">
+    <div class="bg-white rounded-xl shadow p-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <h3 class="text-2xl font-bold text-blue-700 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+                </svg>
+                Manajemen Stok
+            </h3>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.stok.masuk') }}" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Stok Masuk
+                </a>
+                <a href="{{ route('admin.stok.keluar') }}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                    </svg>
+                    Stok Keluar
+                </a>
+                <a href="{{ route('admin.stok.riwayat') }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/>
+                    </svg>
+                    Riwayat
+                </a>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="py-3 px-6 text-left">Kode</th>
+                        <th class="py-3 px-6 text-left">Produk</th>
+                        <th class="py-3 px-6 text-left">Kategori</th>
+                        <th class="py-3 px-6 text-center">Stok</th>
+                        <th class="py-3 px-6 text-left">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($produks as $p)
+                    <tr class="border-b hover:bg-gray-100">
+                        <td class="py-3 px-6 font-semibold">{{ $p->kode }}</td>
+                        <td class="py-3 px-6">{{ $p->nama }}</td>
+                        <td class="py-3 px-6">{{ $p->category->nama ?? '-' }}</td>
+                        <td class="py-3 px-6 text-center">
+                            <span class="px-2 py-1 rounded bg-blue-500 text-white">{{ $p->stok }}</span>
+                        </td>
+                        <td class="py-3 px-6">
+                            @if($p->stok == 0)
+                                <span class="px-2 py-1 rounded bg-gray-400 text-white">Habis</span>
+                            @elseif($p->stok <= 10)
+                                <span class="px-2 py-1 rounded bg-red-500 text-white">Kritis!</span>
+                            @else
+                                <span class="px-2 py-1 rounded bg-green-500 text-white">Aman</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-gray-500">Belum ada produk.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
 </body>
 </html>

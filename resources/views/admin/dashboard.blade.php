@@ -2,141 +2,140 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - POS</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #2c3e50, #1a2530); }
-        .nav-link { color: #bdc3c7; border-radius: 8px; margin: 5px 10px; }
-        .nav-link:hover, .nav-link.active { background-color: #34495e; color: white !important; }
-        .nav-link i { width: 25px; }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100">
 
-<div class="d-flex">
+<div class="flex min-h-screen">
 
-    <!-- SIDEBAR KIRI -->
-    <div class="sidebar text-white p-3" style="width: 280px;">
-        <div class="text-center mb-4">
-            <h4 class="fw-bold text-white">POS ADMIN</h4>
-            <hr class="bg-light">
-            <small class="text-info">{{ auth()->user()->name }}</small>
+    <!-- SIDEBAR -->
+    <aside class="bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 w-72 p-6 flex flex-col justify-between">
+        <!-- HEADER -->
+        <div>
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-white">POS ADMIN</h2>
+                <hr class="border-gray-600 my-3">
+                <p class="text-sm text-gray-300">{{ auth()->user()->name }}</p>
+                <p class="text-xs text-yellow-400">{{ ucfirst(auth()->user()->role) }}</p>
+            </div>
+
+            <!-- NAVIGATION -->
+            <nav class="space-y-2">
+                @php $current = request()->path(); @endphp
+
+                <!-- Dashboard -->
+                <a href="{{ url('/admin/dashboard') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/dashboard' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-2 2v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7"/>
+                    </svg>
+                    Dashboard
+                </a>
+
+               
+
+                <!-- Manajemen User -->
+                <a href="{{ url('/admin/users') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/users' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 3-3.87M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+                    </svg>
+                    Manajemen User
+                </a>
+
+                <!-- Manajemen Produk -->
+                <a href="{{ url('/admin/produk') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/produk' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6m16 0v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/>
+                    </svg>
+                    Manajemen Produk
+                </a>
+
+                <!-- Manajemen Stok -->
+                <a href="{{ url('/admin/stok') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/stok' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+                    </svg>
+                    Manajemen Stok
+                </a>
+
+                <!-- Void / Refund -->
+                <a href="{{ url('/admin/void') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/void' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5"/>
+                    </svg>
+                    Void / Refund
+                </a>
+
+                <!-- Laporan Penjualan -->
+                <a href="{{ url('/admin/laporan') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/laporan' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+                    </svg>
+                    Laporan Penjualan
+                </a>
+            </nav>
         </div>
 
-        <nav class="nav flex-column">
-            <a class="nav-link active" href="{{ url('/admin/dashboard') }}">
-                <i class="bi bi-house-door"></i> Dashboard
-            </a>
+        <!-- LOGOUT -->
+        <form action="{{ url('/logout') }}" method="POST">
+            @csrf
+            <button type="submit" 
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg w-full text-left text-red-400 
+                    hover:bg-red-600 hover:text-white transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"/>
+                </svg>
+                Logout
+            </button>
+        </form>
+    </aside>
 
-            <hr class="bg-secondary">
-
-            <a class="nav-link" href="{{ url('/admin/users') }}">
-                <i class="bi bi-people"></i> Manajemen User
-            </a>
-            <a class="nav-link" href="{{ url('/admin/produk') }}">
-                <i class="bi bi-box-seam"></i> Manajemen Produk
-            </a>
-            <a class="nav-link" href="{{ url('/admin/stok') }}">
-                <i class="bi bi-bar-chart-line"></i> Manajemen Stok
-            </a>
-            <a class="nav-link" href="{{ url('/admin/void') }}">
-                <i class="bi bi-arrow-counterclockwise"></i> Void / Refund
-            </a>
-            <a class="nav-link" href="{{ url('/admin/laporan') }}">
-                <i class="bi bi-graph-up-arrow"></i> Laporan Penjualan
-            </a>
-            <a class="nav-link" href="{{ url('/admin/pengaturan') }}">
-                <i class="bi bi-gear"></i> Pengaturan Outlet
-            </a>
-            <a class="nav-link" href="{{ url('/admin/backup') }}">
-                <i class="bi bi-cloud-download"></i> Backup & Restore
-            </a>
-
-            <hr class="bg-secondary">
-
-            <!-- Logout di sidebar (POST) -->
-            <form action="{{ url('/logout') }}" method="POST" class="m-2">
-                @csrf
-                <button type="submit" class="nav-link text-danger bg-transparent border-0 text-start w-100"
-                        onclick="return confirm('Yakin ingin keluar?')">
-                    <i class="bi bi-box-arrow-right"></i> Logout
-                </button>
-            </form>
-        </nav>
-    </div>
-
-    <!-- KONTEN UTAMA (Dashboard Ringkas) -->
-    <div class="flex-grow-1 p-4">
-        <h2 class="mb-4 text-primary">
-            <i class="bi bi-speedometer2"></i> Dashboard Utama
+    <!-- KONTEN -->
+    <main class="flex-1 p-8">
+        <h2 class="text-3xl font-bold text-blue-700 mb-6 flex items-center gap-2">
+            Dashboard Utama
         </h2>
 
-        <div class="row g-4">
-
-            <!-- Total Penjualan Hari Ini -->
-            <div class="col-md-3">
-                <div class="card border-success shadow-sm">
-                    <div class="card-body text-center">
-                        <i class="bi bi-cash-stack text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-2">Penjualan Hari Ini</h5>
-                        <h3 class="text-success">Rp 2.450.000</h3>
-                    </div>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- CARD -->
+            <div class="bg-white p-6 rounded-xl shadow text-center">
+                <h4 class="mt-2 text-lg font-semibold">Penjualan Hari Ini</h4>
+                <p class="text-2xl font-bold text-green-600">
+                    Rp {{ number_format($penjualanHariIni) }}
+                </p>
             </div>
-
-            <!-- Total Transaksi Hari Ini -->
-            <div class="col-md-3">
-                <div class="card border-info shadow-sm">
-                    <div class="card-body text-center">
-                        <i class="bi bi-receipt text-info" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-2">Transaksi Hari Ini</h5>
-                        <h3 class="text-info">48</h3>
-                    </div>
-                </div>
+            <div class="bg-white p-6 rounded-xl shadow text-center">
+                <h4 class="mt-2 text-lg font-semibold">Transaksi Hari Ini</h4>
+                <p class="text-2xl font-bold text-blue-600">{{ $transaksiHariIni }}</p>
             </div>
-
-            <!-- Produk Hampir Habis -->
-            <div class="col-md-3">
-                <div class="card border-warning shadow-sm">
-                    <div class="card-body text-center">
-                        <i class="bi bi-exclamation-triangle text-warning" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-2">Stok Kritis</h5>
-                        <h3 class="text-warning">12 Item</h3>
-                    </div>
-                </div>
+            <div class="bg-white p-6 rounded-xl shadow text-center">
+                <h4 class="mt-2 text-lg font-semibold">Stok Kritis (≤ 10)</h4>
+                <p class="text-2xl font-bold text-yellow-600">{{ $stokKritis }}</p>
             </div>
-
-            <!-- User Aktif -->
-            <div class="col-md-3">
-                <div class="card border-primary shadow-sm">
-                    <div class="card-body text-center">
-                        <i class="bi bi-person-check text-primary" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-2">Kasir Aktif</h5>
-                        <h3 class="text-primary">5 Orang</h3>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Info Tambahan -->
-        <div class="mt-5">
-            <div class="alert alert-info">
-                <i class="bi bi-info-circle"></i>
-                <strong>Tips:</strong> Gunakan menu di sidebar kiri untuk mengakses semua fitur admin.
-                Semua perubahan langsung tersimpan secara real-time.
+            <div class="bg-white p-6 rounded-xl shadow text-center">
+                <h4 class="mt-2 text-lg font-semibold">Kasir Aktif</h4>
+                <p class="text-2xl font-bold text-purple-600">{{ $kasirAktif }}</p>
             </div>
         </div>
 
-        <div class="text-center mt-5 text-muted">
-            <small>© 2025 Sistem POS Sederhana - Laravel 12</small>
+        <div class="mt-10 bg-blue-100 border border-blue-300 text-blue-800 p-4 rounded-lg">
+            Gunakan menu di sidebar untuk mengelola sistem POS.
         </div>
-    </div>
+    </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

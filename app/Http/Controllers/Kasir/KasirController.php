@@ -47,7 +47,7 @@ class KasirController extends Controller
         return redirect()->route('kasir.pos')->with('success', 'Kasir berhasil dibuka!');
     }
 
-    // TUTUP KASIR (SUDAH DIPERBAIKI TOTAL!)
+    // TUTUP KASIR — HANYA HITUNG DARI SHIFT YANG SEDANG BUKA!
     public function tutupKasirForm()
     {
         $shift = ShiftKasir::buka()->where('user_id', auth()->id())->first();
@@ -57,7 +57,7 @@ class KasirController extends Controller
 
         $transaksiTunaiEDC = Transaksi::where('user_id', auth()->id())
             ->whereIn('metode_pembayaran', ['Tunai', 'EDC'])
-            ->whereDate('created_at', today())
+            ->where('created_at', '>=', $shift->dibuka_pada)
             ->sum('total');
 
         return view('kasir.tutup', compact('shift', 'transaksiTunaiEDC'));
@@ -70,7 +70,7 @@ class KasirController extends Controller
 
         $transaksiTunaiEDC = Transaksi::where('user_id', auth()->id())
             ->whereIn('metode_pembayaran', ['Tunai', 'EDC'])
-            ->whereDate('created_at', today())
+            ->where('created_at', '>=', $shift->dibuka_pada)
             ->sum('total');
 
         $harusnyaAda = $shift->saldo_awal + $transaksiTunaiEDC;
@@ -89,13 +89,15 @@ class KasirController extends Controller
             ->with('success', "Kasir ditutup! Selisih: Rp " . number_format($selisih));
     }
 
-    // DAFTAR PENJUALAN HARI INI
+    // DAFTAR PENJUALAN — HANYA DARI SHIFT YANG SEDANG BUKA!
     public function daftarPenjualan()
     {
+        $shift = ShiftKasir::buka()->where('user_id', auth()->id())->first();
+
         $transaksis = Transaksi::with('details.produk')
             ->where('user_id', auth()->id())
             ->whereIn('metode_pembayaran', ['Tunai', 'EDC'])
-            ->whereDate('created_at', today())
+            ->when($shift, fn($q) => $q->where('created_at', '>=', $shift->dibuka_pada))
             ->latest()
             ->get();
 
@@ -166,4 +168,39 @@ class KasirController extends Controller
         $transaksi = Transaksi::with('details.produk')->findOrFail($id);
         return view('kasir.cetak', compact('transaksi'));
     }
+
+
+    // TAMPILKAN FORM UPDATE STOK
+public function updateStokForm()
+{
+    $produks = Produk::orderBy('nama')->get();
+    return view('kasir.update-stok', compact('produks'));
+}
+
+// PROSES TAMBAH / KURANG STOK
+public function updateStokProses(Request $request)
+{
+    $request->validate([
+        'produk_id' => 'required|exists:produks,id',
+        'jumlah' => 'required|integer|min:-9999|max:9999|not_in:0',
+        'keterangan' => 'nullable|string|max:255'
+    ]);
+
+    $produk = Produk::findOrFail($request->produk_id);
+    $jumlah = (int)$request->jumlah;
+
+    if ($jumlah < 0 && abs($jumlah) > $produk->stok) {
+        return back()->with('error', 'Stok tidak cukup untuk dikurangi!');
+    }
+
+    $produk->increment('stok', $jumlah);
+
+    // Catat ke riwayat stok (opsional, pakai tabel stok_histories kalau ada)
+    // StokHistory::create([...]);
+
+    $tipe = $jumlah > 0 ? 'ditambah' : 'dikurangi';
+    $pesan = "Stok {$produk->nama} berhasil {$tipe} sebanyak " . abs($jumlah) . " (Total stok: {$produk->stok})";
+
+    return back()->with('success', $pesan);
+}
 }

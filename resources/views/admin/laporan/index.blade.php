@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manajemen User - POS Admin</title>
+<title>Laporan Penjualan - Admin POS</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex min-h-screen">
+<body class="flex bg-gray-100 min-h-screen">
 
 <!-- SIDEBAR -->
 <aside class="bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 w-72 p-6 flex flex-col justify-between">
@@ -100,79 +100,99 @@
             </button>
         </form>
     </aside>
+<!-- MAIN CONTENT -->
+<main class="flex-1 p-6">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+        <i class="bi bi-graph-up-arrow"></i> Laporan Penjualan
+    </h2>
 
-<!-- KONTEN UTAMA -->
-<main class="flex-1 p-8">
-    <div class="bg-white rounded-xl shadow p-6">
-
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-bold text-blue-700 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 3-3.87M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
-                </svg>
-                Manajemen User
-            </h3>
-            <a href="{{ url('/admin/users/create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Tambah User
-            </a>
-        </div>
-
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('success') }}
+    <!-- FILTER -->
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block mb-1 font-medium">Filter Waktu</label>
+                <select name="filter" class="w-full border rounded p-2">
+                    <option value="">Semua</option>
+                    <option value="hari" {{ request('filter')=='hari'?'selected':'' }}>Hari Ini</option>
+                    <option value="bulan" {{ request('filter')=='bulan'?'selected':'' }}>Bulan Ini</option>
+                    <option value="tahun" {{ request('filter')=='tahun'?'selected':'' }}>Tahun Ini</option>
+                </select>
             </div>
-        @endif
-        @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {{ session('error') }}
+            <div>
+                <label class="block mb-1 font-medium">Dari Tanggal</label>
+                <input type="date" name="from" value="{{ request('from') }}" class="w-full border rounded p-2">
             </div>
-        @endif
-
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white rounded-lg overflow-hidden">
-                <thead class="bg-gray-800 text-white">
-                    <tr>
-                        <th class="py-3 px-6 text-left">Nama</th>
-                        <th class="py-3 px-6 text-left">Email</th>
-                        <th class="py-3 px-6 text-left">Role</th>
-                        <th class="py-3 px-6 text-left">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($users as $user)
-                    <tr class="border-b hover:bg-gray-100">
-                        <td class="py-3 px-6 font-semibold">{{ $user->name }}</td>
-                        <td class="py-3 px-6">{{ $user->email }}</td>
-                        <td class="py-3 px-6">
-                            @if($user->role === 'admin')
-                                <span class="bg-red-500 text-white px-2 py-1 rounded">Admin</span>
-                            @else
-                                <span class="bg-green-500 text-white px-2 py-1 rounded">Kasir</span>
-                            @endif
-                        </td>
-                        <td class="py-3 px-6 flex gap-2">
-                            <a href="{{ url('/admin/users/'.$user->id.'/edit') }}" class="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500">
-                                Edit
-                            </a>
-                            <form action="{{ url('/admin/users/'.$user->id) }}" method="POST">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onclick="return confirm('Hapus {{ $user->name }}?')">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center py-4 text-gray-500">Belum ada user.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
+            <div>
+                <label class="block mb-1 font-medium">Sampai Tanggal</label>
+                <input type="date" name="to" value="{{ request('to') }}" class="w-full border rounded p-2">
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700">
+                    Filter
+                </button>
+            </div>
+        </form>
     </div>
+
+    <!-- EXPORT -->
+    <div class="flex gap-2 mb-4">
+        <a href="{{ route('laporan.export.pdf', request()->query()) }}" 
+           class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+           Export PDF
+        </a>
+        <a href="{{ route('laporan.export.excel', request()->query()) }}" 
+           class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+           Export Excel
+        </a>
+    </div>
+
+    <!-- TABLE -->
+    <div class="bg-white rounded-xl shadow overflow-x-auto">
+        <table class="min-w-full table-auto">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="px-4 py-2 text-left">Kode Transaksi</th>
+                    <th class="px-4 py-2 text-left">Nama Kasir</th>
+                    <th class="px-4 py-2 text-left">Total (Rp)</th>
+                    <th class="px-4 py-2 text-left">Metode Pembayaran</th>
+                    <th class="px-4 py-2 text-left">Status</th>
+                    <th class="px-4 py-2 text-left">Tanggal</th>
+                    <th class="px-4 py-2 text-left">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($transaksi as $item)
+                <tr class="border-b hover:bg-gray-100">
+                    <td class="px-4 py-2">{{ 'TRX-' . str_pad($item->id, 6, '0', STR_PAD_LEFT) }}</td>
+                    <td class="px-4 py-2">{{ $item->kasir->name ?? 'Tidak diketahui' }}</td>
+                    <td class="px-4 py-2">Rp {{ number_format($item->total,0,',','.') }}</td>
+                    <td class="px-4 py-2">{{ ucfirst($item->metode_pembayaran ?? '-') }}</td>
+                    <td class="px-4 py-2">
+                        @if($item->status=='lunas')
+                            <span class="px-2 py-1 rounded bg-green-500 text-white">Lunas</span>
+                        @elseif($item->status=='void')
+                            <span class="px-2 py-1 rounded bg-red-500 text-white">Void</span>
+                        @else
+                            <span class="px-2 py-1 rounded bg-gray-400 text-white">{{ $item->status }}</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-2">{{ $item->created_at->format('d/m/Y H:i') }}</td>
+                    <td class="px-4 py-2">
+                        <a href="{{ route('kasir.cetak', $item->id) }}" target="_blank"
+                           class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">
+                           Cetak
+                        </a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" class="px-4 py-6 text-center text-gray-500">Tidak ada data</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
 </main>
 
 </body>

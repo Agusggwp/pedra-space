@@ -1,164 +1,197 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Void / Refund - POS Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f9; margin: 0; }
-        .sidebar { position: fixed; top: 0; left: 0; width: 280px; min-height: 100vh;
-            background: linear-gradient(180deg, #2c3e50, #1a2530); z-index: 1000; }
-        .content { margin-left: 280px; padding: 20px; }
-        .nav-link { color: #bdc3c7; border-radius: 8px; margin: 4px 15px; padding: 12px 15px; }
-        .nav-link:hover, .nav-link.active { background-color: #34495e; color: white !important; }
-        .nav-link i { width: 28px; text-align: center; }
-        @media (max-width: 992px) { .sidebar { width: 80px; } .content { margin-left: 80px; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Void / Refund - POS Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 flex min-h-screen">
 
-    <!-- SIDEBAR -->
-     <div class="sidebar text-white p-3" style="width: 280px;">
-        <div class="text-center mb-4">
-            <h4 class="fw-bold text-white">POS ADMIN</h4>
-            <hr class="bg-light">
-            <small class="text-info">{{ auth()->user()->name }}</small>
+<!-- SIDEBAR -->
+
+<aside class="bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 w-72 p-6 flex flex-col justify-between">
+        <!-- HEADER -->
+        <div>
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-white">POS ADMIN</h2>
+                <hr class="border-gray-600 my-3">
+                <p class="text-sm text-gray-300">{{ auth()->user()->name }}</p>
+                <p class="text-xs text-yellow-400">{{ ucfirst(auth()->user()->role) }}</p>
+            </div>
+
+            <!-- NAVIGATION -->
+            <nav class="space-y-2">
+                @php $current = request()->path(); @endphp
+
+                <!-- Dashboard -->
+                <a href="{{ url('/admin/dashboard') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/dashboard' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-2 2v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7"/>
+                    </svg>
+                    Dashboard
+                </a>
+
+               
+
+                <!-- Manajemen User -->
+                <a href="{{ url('/admin/users') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/users' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 3-3.87M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+                    </svg>
+                    Manajemen User
+                </a>
+
+                <!-- Manajemen Produk -->
+                <a href="{{ url('/admin/produk') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/produk' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6m16 0v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/>
+                    </svg>
+                    Manajemen Produk
+                </a>
+
+                <!-- Manajemen Stok -->
+                <a href="{{ url('/admin/stok') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/stok' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+                    </svg>
+                    Manajemen Stok
+                </a>
+
+                <!-- Void / Refund -->
+                <a href="{{ url('/admin/void') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/void' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5"/>
+                    </svg>
+                    Void / Refund
+                </a>
+
+                <!-- Laporan Penjualan -->
+                <a href="{{ url('/admin/laporan') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
+                   {{ $current == 'admin/laporan' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+                    </svg>
+                    Laporan Penjualan
+                </a>
+            </nav>
         </div>
 
-        <nav class="nav flex-column">
-            <a class="nav-link " href="{{ url('/admin/dashboard') }}">
-                <i class="bi bi-house-door"></i> Dashboard
-            </a>
+        <!-- LOGOUT -->
+        <form action="{{ url('/logout') }}" method="POST">
+            @csrf
+            <button type="submit" 
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg w-full text-left text-red-400 
+                    hover:bg-red-600 hover:text-white transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"/>
+                </svg>
+                Logout
+            </button>
+        </form>
+    </aside>
 
-            <hr class="bg-secondary">
 
-            <a class="nav-link" href="{{ url('/admin/users') }}">
-                <i class="bi bi-people"></i> Manajemen User
-            </a>
-            <a class="nav-link" href="{{ url('/admin/produk') }}">
-                <i class="bi bi-box-seam"></i> Manajemen Produk
-            </a>
-            <a class="nav-link" href="{{ url('/admin/stok') }}">
-                <i class="bi bi-bar-chart-line"></i> Manajemen Stok
-            </a>
-            <a class="nav-link active" href="{{ url('/admin/void') }}">
-                <i class="bi bi-arrow-counterclockwise"></i> Void / Refund
-            </a>
-            <a class="nav-link" href="{{ url('/admin/laporan') }}">
-                <i class="bi bi-graph-up-arrow"></i> Laporan Penjualan
-            </a>
-            <a class="nav-link" href="{{ url('/admin/pengaturan') }}">
-                <i class="bi bi-gear"></i> Pengaturan Outlet
-            </a>
-            <a class="nav-link" href="{{ url('/admin/backup') }}">
-                <i class="bi bi-cloud-download"></i> Backup & Restore
-            </a>
+<!-- KONTEN -->
+<main class="flex-1 p-8">
+    <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-2xl font-bold text-red-600 mb-6 flex items-center gap-2">
+            Void / Batalkan Transaksi
+        </h2>
 
-            <hr class="bg-secondary">
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
 
-            <!-- Logout di sidebar (POST) -->
-            <form action="{{ url('/logout') }}" method="POST" class="m-2">
-                @csrf
-                <button type="submit" class="nav-link text-danger bg-transparent border-0 text-start w-100"
-                        onclick="return confirm('Yakin ingin keluar?')">
-                    <i class="bi bi-box-arrow-right"></i> Logout
-                </button>
-            </form>
-        </nav>
-    </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                <thead class="bg-red-600 text-white">
+                    <tr>
+                        <th class="py-3 px-6 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Tanggal</th>
+                        <th class="py-3 px-6 text-left">Kasir</th>
+                        <th class="py-3 px-6 text-left">Total</th>
+                        <th class="py-3 px-6 text-left">Metode</th>
+                        <th class="py-3 px-6 text-left">Status</th>
+                        <th class="py-3 px-6 text-left">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($transaksis as $t)
+                    <tr class="{{ $t->status === 'void' ? 'bg-gray-200' : '' }} border-b hover:bg-gray-100">
+                        <td class="py-3 px-6 font-semibold">#{{ $t->id }}</td>
+                        <td class="py-3 px-6">{{ $t->created_at->format('d/m/Y H:i') }}</td>
+                        <td class="py-3 px-6">{{ $t->user->name }}</td>
+                        <td class="py-3 px-6">Rp {{ number_format($t->total) }}</td>
+                        <td class="py-3 px-6">{{ $t->metode_pembayaran }}</td>
+                        <td class="py-3 px-6">
+                            @if($t->status === 'void')
+                                <span class="px-2 py-1 rounded bg-gray-400 text-white">Dibatalkan</span>
+                            @else
+                                <span class="px-2 py-1 rounded bg-green-500 text-white">Lunas</span>
+                            @endif
+                        </td>
+                        <td class="py-3 px-6">
+                            @if($t->status !== 'void')
+                                <button onclick="document.getElementById('modal-{{ $t->id }}').classList.remove('hidden')"
+                                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                    Void
+                                </button>
+                            @else
+                                <small class="text-gray-600">Dibatalkan oleh {{ $t->voidBy?->name ?? '-' }}</small>
+                            @endif
+                        </td>
+                    </tr>
 
-    <!-- KONTEN -->
-    <div class="content">
-        <div class="bg-white rounded shadow p-4 p-md-5">
-            <h2 class="text-danger mb-4"><i class="bi bi-arrow-counterclockwise"></i> Void / Batalkan Transaksi</h2>
-
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                    {{ session('success') }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show">
-                    {{ session('error') }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-danger">
-                        <tr>
-                            <th>ID</th>
-                            <th>Tanggal</th>
-                            <th>Kasir</th>
-                            <th>Total</th>
-                            <th>Metode</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($transaksis as $t)
-                        <tr class="{{ $t->status === 'void' ? 'table-secondary' : '' }}">
-                            <td><strong>#{{ $t->id }}</strong></td>
-                            <td>{{ $t->created_at->format('d/m/Y H:i') }}</td>
-                            <td>{{ $t->user->name }}</td>
-                            <td>Rp {{ number_format($t->total) }}</td>
-                            <td>{{ $t->metode_pembayaran }}</td>
-                            <td>
-                                <span class="badge {{ $t->status === 'void' ? 'bg-secondary' : 'bg-success' }}">
-                                    {{ $t->status === 'void' ? 'Dibatalkan' : 'Lunas' }}
-                                </span>
-                            </td>
-                            <td>
-                                @if($t->status !== 'void')
-                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#voidModal{{ $t->id }}">
-                                        <i class="bi bi-x-circle"></i> Void
-                                    </button>
-                                @else
-                                    <small class="text-muted">Dibatalkan oleh {{ $t->voidBy?->name ?? '-' }}</small>
-                                @endif
-                            </td>
-                        </tr>
-
-                        <!-- Modal Void -->
-                        <div class="modal fade" id="voidModal{{ $t->id }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <form action="{{ route('admin.void.proses', $t) }}" method="POST">
-                                    @csrf
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-danger text-white">
-                                            <h5 class="modal-title">Konfirmasi Pembatalan Transaksi</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>Yakin ingin <strong>membatalkan</strong> transaksi ini?</p>
-                                            <p>Total: <strong>Rp {{ number_format($t->total) }}</strong></p>
-                                            <div class="mb-3">
-                                                <label class="form-label">Alasan Void <span class="text-danger">(wajib)</span></label>
-                                                <textarea name="keterangan" class="form-control" rows="3" required
-                                                          placeholder="Contoh: Customer batal, salah input, barang rusak, dll"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-danger">Ya, Batalkan Transaksi!</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                    <!-- Modal Void -->
+                    <div id="modal-{{ $t->id }}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                        <div class="bg-white rounded-lg w-96 p-6 relative">
+                            <h3 class="text-lg font-bold text-red-600 mb-4">Konfirmasi Pembatalan Transaksi</h3>
+                            <p>Yakin ingin <strong>membatalkan</strong> transaksi ini?</p>
+                            <p>Total: <strong>Rp {{ number_format($t->total) }}</strong></p>
+                            <form action="{{ route('admin.void.proses', $t) }}" method="POST" class="mt-4">
+                                @csrf
+                                <textarea name="keterangan" required class="w-full border rounded p-2 mb-4" rows="3"
+                                          placeholder="Contoh: Customer batal, salah input, barang rusak, dll"></textarea>
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" onclick="document.getElementById('modal-{{ $t->id }}').classList.add('hidden')"
+                                            class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">Batal</button>
+                                    <button type="submit" class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600">Ya, Batalkan!</button>
+                                </div>
+                            </form>
                         </div>
-                        @empty
-                        <tr><td colspan="7" class="text-center text-muted py-5">Belum ada transaksi</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                    </div>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-gray-500">Belum ada transaksi</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            <div class="mt-4">
                 {{ $transaksis->links() }}
             </div>
         </div>
     </div>
+</main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

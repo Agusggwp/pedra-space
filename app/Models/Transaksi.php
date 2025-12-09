@@ -25,4 +25,10 @@ class Transaksi extends Model
     {
         return $this->belongsTo(User::class, 'void_by');
     }
+
+    public function kasir()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+
 }
