@@ -110,8 +110,81 @@
                         <i class="ph ph-money text-6xl text-green-500 opacity-20"></i>
                     </div>
                 </div>
-                <!-- ... (7 kartu lainnya tetap sama, tidak perlu saya tulis ulang) ... -->
-                <!-- Pastikan kamu copy semua 8 kartu dari kode sebelumnya -->
+               <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Transaksi Hari Ini</p>
+                        <p class="text-3xl font-bold text-blue-600">{{ $transaksiHariIni }}</p>
+                    </div>
+                    <i class="ph ph-receipt text-5xl text-blue-500 opacity-20"></i>
+                </div>
+            </div>
+
+            <!-- 3. Stok Kritis -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-yellow-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Stok Kritis (≤ 10)</p>
+                        <p class="text-3xl font-bold text-yellow-600">{{ $stokKritis }}</p>
+                    </div>
+                    <i class="ph ph-warning text-5xl text-yellow-500 opacity-20"></i>
+                </div>
+            </div>
+
+            <!-- 4. Kasir Aktif -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Kasir Aktif</p>
+                        <p class="text-3xl font-bold text-purple-600">{{ $kasirAktif }}</p>
+                    </div>
+                    <i class="ph ph-user-focus text-5xl text-purple-500 opacity-20"></i>
+                </div>
+            </div>
+
+            <!-- 5. Total Produk -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-indigo-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Produk</p>
+                        <p class="text-3xl font-bold text-indigo-600">{{ $totalProduk }}</p>
+                    </div>
+                    <i class="ph ph-cube text-5xl text-indigo-500 opacity-20"></i>
+                </div>
+            </div>
+
+            <!-- 6. Transaksi Void Hari Ini -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-red-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Transaksi Dibatalkan</p>
+                        <p class="text-3xl font-bold text-red-600">{{ $voidHariIni }}</p>
+                    </div>
+                    <i class="ph ph-x-circle text-5xl text-red-500 opacity-20"></i>
+                </div>
+            </div>
+
+            <!-- 7. Penjualan Bulan Ini -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-teal-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Penjualan Bulan Ini</p>
+                        <p class="text-3xl font-bold text-teal-600">Rp {{ number_format($penjualanBulanIni) }}</p>
+                    </div>
+                    <i class="ph ph-trend-up text-5xl text-teal-500 opacity-20"></i>
+                </div>
+            </div>
+
+            <!-- 8. Shift Kasir Hari Ini -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-orange-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Shift Kasir Hari Ini</p>
+                        <p class="text-3xl font-bold text-orange-600">{{ $shiftHariIni }}</p>
+                    </div>
+                    <i class="ph ph-clock-countdown text-5xl text-orange-500 opacity-20"></i>
+                </div>
+            </div>
             </div>
 
             <!-- GRAFIK -->
