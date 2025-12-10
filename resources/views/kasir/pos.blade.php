@@ -51,10 +51,9 @@
         .harga {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #157347; /* hijau soft */
+            color: #157347;
         }
 
-        /* KERANJANG */
         .keranjang-card {
             background: #ffffff !important;
             color: #333 !important;
@@ -75,6 +74,11 @@
             color: #2e7d32 !important;
         }
 
+        /* Placeholder untuk produk tanpa foto */
+        .no-image {
+            background: linear-gradient(135deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%);
+            background-size: 20px 20px;
+        }
     </style>
 </head>
 <body>
@@ -99,7 +103,7 @@
 
     <div class="row g-4">
 
-        <!-- PRODUK -->
+        <!-- DAFTAR PRODUK -->
         <div class="col-lg-8">
             <div class="card bg-white shadow-sm">
                 <div class="card-header bg-white border-bottom py-3">
@@ -119,11 +123,15 @@
 
                                 <button type="submit" class="produk-card border-0 p-0 w-100 text-start">
 
-                                    @if($p->foto && file_exists(public_path($p->foto)))
-                                        <img src="{{ asset($p->foto) }}" class="produk-img">
+                                    <!-- FOTO PRODUK – SEKARANG PAKAI LARAVEL STORAGE -->
+                                    @if($p->foto)
+                                        <img src="{{ Storage::url($p->foto) }}"
+                                             alt="{{ $p->nama }}"
+                                             class="produk-img"
+                                             onerror="this.src='https://via.placeholder.com/300x200/E5E7EB/9CA3AF?text=No+Image'">
                                     @else
-                                        <div class="produk-img d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-image fs-1 text-secondary"></i>
+                                        <div class="produk-img d-flex align-items-center justify-content-center no-image">
+                                            <i class="bi bi-image fs-1 text-secondary opacity-50"></i>
                                         </div>
                                     @endif
 
@@ -131,7 +139,7 @@
                                         Stok: {{ $p->stok }}
                                     </span>
 
-                                    <div class="p-2 text-center">
+                                    <div class="p-3 text-center">
                                         <h6 class="fw-semibold mb-1">{{ Str::limit($p->nama, 20) }}</h6>
                                         <div class="harga">Rp {{ number_format($p->harga_jual) }}</div>
                                     </div>
@@ -142,7 +150,7 @@
                         @empty
                             <div class="col-12 text-center py-5">
                                 <i class="bi bi-box-seam display-3 text-muted"></i>
-                                <p class="mt-2">Tidak ada produk</p>
+                                <p class="mt-2">Tidak ada produk tersedia</p>
                             </div>
                         @endforelse
 
@@ -173,7 +181,7 @@
                         </div>
 
                     @else
-                        <table class="table table-white table-hover keranjang-table">
+                        <table class="table table-white table-hover keranjang-table mb-0">
                             @foreach($keranjang as $id => $item)
                             <tr>
                                 <td>
@@ -185,8 +193,8 @@
                                     Rp {{ number_format($item['harga'] * $item['jumlah']) }}
                                 </td>
 
-                                <td>
-                                    <form action="{{ route('kasir.hapus', $id) }}" method="POST">
+                                <td class="text-center">
+                                    <form action="{{ route('kasir.hapus', $id) }}" method="POST" class="d-inline">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">
                                             <i class="bi bi-x-lg"></i>
@@ -196,20 +204,20 @@
                             </tr>
                             @endforeach
 
-                            <tr class="table-total">
-                                <th colspan="2" class="text-end">TOTAL BELANJA</th>
-                                <th class="fw-bold">
+                            <tr class="table-total fw-bold">
+                                <td colspan="2" class="text-end">TOTAL BELANJA</td>
+                                <td>
                                     Rp {{ number_format(collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah'])) }}
-                                </th>
+                                </td>
                             </tr>
                         </table>
 
-                        <!-- PEMBAYARAN -->
-                        <form action="{{ route('kasir.bayar') }}" method="POST" class="mt-3">
+                        <!-- FORM PEMBAYARAN -->
+                        <form action="{{ route('kasir.bayar') }}" method="POST" class="mt-4">
                             @csrf
 
                             <div class="mb-3">
-                                <label class="form-label">Metode Pembayaran</label>
+                                <label class="form-label fw-semibold">Metode Pembayaran</label>
                                 <select name="metode" class="form-select form-select-lg" required>
                                     <option value="Tunai">Tunai</option>
                                     <option value="EDC">EDC / Kartu</option>
@@ -219,15 +227,16 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Jumlah Bayar</label>
+                                <label class="form-label fw-semibold">Jumlah Bayar</label>
                                 <input type="number" 
                                        name="bayar" 
-                                       class="form-control form-control-lg text-end" 
+                                       class="form-control form-control-lg text-end fw-bold" 
                                        min="{{ collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah']) }}" 
-                                       placeholder="0" required>
+                                       placeholder="0" 
+                                       required>
                             </div>
 
-                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">
+                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow">
                                 <i class="bi bi-printer"></i> BAYAR & CETAK STRUK
                             </button>
                         </form>

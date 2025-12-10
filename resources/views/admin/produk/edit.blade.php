@@ -17,7 +17,7 @@
 
 <div class="flex min-h-screen">
 
-    <!-- SIDEBAR (sama persis semua halaman) -->
+    <!-- SIDEBAR -->
     <aside id="sidebar"
            class="fixed md:static inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 p-6 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto">
         <div>
@@ -65,7 +65,7 @@
     <!-- KONTEN UTAMA -->
     <div class="flex-1 flex flex-col min-w-0">
 
-        <!-- HEADER HAMBURGER (mobile & tablet) -->
+        <!-- HEADER MOBILE -->
         <header class="fixed-header bg-white shadow-lg px-6 py-4 flex items-center justify-between md:hidden">
             <button id="menuBtn" class="text-3xl text-gray-800 hover:text-blue-600 transition">
                 <i class="ph ph-list"></i>
@@ -80,7 +80,7 @@
             <!-- Judul Halaman -->
             <div class="mb-8">
                 <h3 class="text-3xl md:text-4xl font-bold text-blue-700 flex items-center gap-4">
-                    <i class="ph ph-pencil-simple-line text-6xl md:text-6xl"></i>
+                    <i class="ph ph-pencil-simple-line text-6xl"></i>
                     Edit Produk: <span class="text-gray-800">{{ $produk->nama }}</span>
                 </h3>
             </div>
@@ -116,9 +116,7 @@
                             <input type="text" name="kode" value="{{ old('kode', $produk->kode) }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('kode') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    required>
-                            @error('kode')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('kode')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Nama Produk -->
@@ -129,9 +127,7 @@
                             <input type="text" name="nama" value="{{ old('nama', $produk->nama) }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('nama') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    required>
-                            @error('nama')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('nama')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Kategori -->
@@ -149,9 +145,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('category_id')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('category_id')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Harga Beli -->
@@ -162,6 +156,7 @@
                             <input type="number" name="harga_beli" value="{{ old('harga_beli', $produk->harga_beli) }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('harga_beli') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    required>
+                            @error('harga_beli')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Harga Jual -->
@@ -172,6 +167,7 @@
                             <input type="number" name="harga_jual" value="{{ old('harga_jual', $produk->harga_jual) }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('harga_jual') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    required>
+                            @error('harga_jual')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Stok -->
@@ -182,28 +178,31 @@
                             <input type="number" name="stok" value="{{ old('stok', $produk->stok) }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('stok') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    required>
+                            @error('stok')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
-                        <!-- Foto Saat Ini -->
+                        <!-- FOTO SAAT INI (PAKAI STORAGE) -->
                         <div class="md:col-span-2">
                             <label class="block text-gray-700 font-medium mb-3">
                                 <i class="ph ph-image-square text-xl mr-2"></i> Foto Saat Ini
                             </label>
-                            <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-6">
                                 @if($produk->foto)
-                                    <img src="{{ asset($produk->foto) }}" 
-                                         alt="{{ $produk->nama }}" 
-                                         class="w-32 h-32 object-cover rounded-xl shadow-lg border-4 border-gray-200">
+                                    <img src="{{ Storage::url($produk->foto) }}"
+                                         alt="{{ $produk->nama }}"
+                                         class="w-40 h-40 object-cover rounded-xl shadow-lg border-4 border-gray-200">
                                 @else
-                                    <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center border-4 border-dashed border-gray-400">
-                                        <i class="ph ph-image text-5xl text-gray-400"></i>
+                                    <div class="w-40 h-40 bg-gray-200 rounded-xl flex items-center justify-center border-4 border-dashed border-gray-400">
+                                        <i class="ph ph-image text-6xl text-gray-400"></i>
                                     </div>
                                 @endif
-                                <span class="text-gray-600">Kosongkan jika tidak ingin mengganti foto</span>
+                                <div>
+                                    <p class="text-gray-600">Kosongkan kolom di bawah jika <strong>tidak ingin mengganti foto</strong>.</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Ganti Foto -->
+                        <!-- GANTI FOTO (opsional) -->
                         <div class="md:col-span-2">
                             <label class="block text-gray-700 font-medium mb-2">
                                 <i class="ph ph-camera text-xl mr-2"></i> Ganti Foto Produk <span class="text-gray-500 text-sm">(opsional)</span>
@@ -236,18 +235,18 @@
     </div>
 </div>
 
-<!-- SCRIPT HAMBURGER MENU -->
+<!-- SCRIPT HAMBURGER -->
 <script>
     const menuBtn = document.getElementById('menuBtn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
 
-    menuBtn.addEventListener('click', () => {
+    menuBtn?.addEventListener('click', () => {
         sidebar.classList.toggle('-translate-x-full');
         overlay.classList.toggle('hidden');
     });
 
-    overlay.addEventListener('click', () => {
+    overlay?.addEventListener('click', () => {
         sidebar.classList.add('-translate-x-full');
         overlay.classList.add('hidden');
     });

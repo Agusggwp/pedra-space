@@ -7,6 +7,7 @@ use App\Models\Produk;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProdukController extends Controller
 {
@@ -25,28 +26,35 @@ class ProdukController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode' => 'required|unique:produks,kode',
-            'nama' => 'required',
+            'kode'        => 'required|unique:produks,kode',
+            'nama'        => 'required',
             'category_id' => 'required|exists:categories,id',
-            'harga_beli' => 'required|numeric',
-            'harga_jual' => 'required|numeric',
-            'stok' => 'required|integer',
-            'foto' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'harga_beli'  => 'required|numeric',
+            'harga_jual'  => 'required|numeric',
+            'stok'        => 'required|integer',
+            'foto'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
         $data = $request->all();
         $data['kode'] = strtoupper($request->kode);
 
+        // Upload foto ke storage
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
-            $nama_file = time() . '_' . Str::slug($request->nama) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/produk'), $nama_file);
-            $data['foto'] = 'uploads/produk/' . $nama_file;
+            $filename = time() . '_' . Str::slug($request->nama) . '.' . $file->getClientOriginalExtension();
+
+            // Simpan ke storage/app/public/produk
+            $path = $file->storeAs('produk', $filename, 'public');
+
+            // Simpan hanya path relatif (tanpa public/)
+            $data['foto'] = 'produk/' . $filename;        // atau langsung $path
         }
 
         Produk::create($data);
 
-        return redirect()->route('admin.produk.index')->with('success', 'Produk berhasil ditambahkan!');
+        return redirect()
+            ->route('admin.produk.index')
+            ->with('success', 'Produk berhasil ditambahkan!');
     }
 
     public function edit(Produk $produk)
@@ -58,39 +66,48 @@ class ProdukController extends Controller
     public function update(Request $request, Produk $produk)
     {
         $request->validate([
-            'kode' => 'required|unique:produks,kode,'.$produk->id,
-            'nama' => 'required',
+            'kode'        => 'required|unique:produks,kode,' . $produk->id,
+            'nama'        => 'required',
             'category_id' => 'required|exists:categories,id',
-            'harga_beli' => 'required|numeric',
-            'harga_jual' => 'required|numeric',
-            'stok' => 'required|integer',
-            'foto' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'harga_beli'  => 'required|numeric',
+            'harga_jual'  => 'required|numeric',
+            'stok'        => 'required|integer',
+            'foto'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
         $data = $request->all();
         $data['kode'] = strtoupper($request->kode);
 
+        // Hapus foto lama & upload yang baru
         if ($request->hasFile('foto')) {
-            if ($produk->foto && file_exists(public_path($produk->foto))) {
-                unlink(public_path($produk->foto));
+            // Hapus foto lama jika ada
+            if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
+                Storage::disk('public')->delete($produk->foto);
             }
+
             $file = $request->file('foto');
-            $nama_file = time() . '_' . Str::slug($request->nama) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/produk'), $nama_file);
-            $data['foto'] = 'uploads/produk/' . $nama_file;
+            $filename = time() . '_' . Str::slug($request->nama) . '.' . $file->getClientOriginalExtension();
+
+            $path = $file->storeAs('produk', $filename, 'public');
+            $data['foto'] = 'produk/' . $filename;
         }
 
         $produk->update($data);
 
-        return redirect()->route('admin.produk.index')->with('success', 'Produk berhasil diupdate!');
+        return redirect()
+            ->route('admin.produk.index')
+            ->with('success', 'Produk berhasil diupdate!');
     }
 
     public function destroy(Produk $produk)
     {
-        if ($produk->foto && file_exists(public_path($produk->foto))) {
-            unlink(public_path($produk->foto));
+        // Hapus foto dari storage
+        if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
+            Storage::disk('public')->delete($produk->foto);
         }
+
         $produk->delete();
-        return back()->with('success', 'Produk dihapus!');
+
+        return back()->with('success', 'Produk berhasil dihapus!');
     }
 }

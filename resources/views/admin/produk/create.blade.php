@@ -17,7 +17,7 @@
 
 <div class="flex min-h-screen">
 
-    <!-- SIDEBAR (sama persis semua halaman) -->
+    <!-- SIDEBAR -->
     <aside id="sidebar"
            class="fixed md:static inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 p-6 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto">
         <div>
@@ -65,7 +65,7 @@
     <!-- KONTEN UTAMA -->
     <div class="flex-1 flex flex-col min-w-0">
 
-        <!-- HEADER HAMBURGER (mobile & tablet only) -->
+        <!-- HEADER MOBILE -->
         <header class="fixed-header bg-white shadow-lg px-6 py-4 flex items-center justify-between md:hidden">
             <button id="menuBtn" class="text-3xl text-gray-800 hover:text-blue-600 transition">
                 <i class="ph ph-list"></i>
@@ -80,7 +80,7 @@
             <!-- Judul Halaman -->
             <div class="mb-8">
                 <h3 class="text-3xl md:text-4xl font-bold text-blue-700 flex items-center gap-4">
-                    <i class="ph ph-plus-circle text-6xl md:text-6xl"></i>
+                    <i class="ph ph-plus-circle text-6xl"></i>
                     Tambah Produk Baru
                 </h3>
             </div>
@@ -115,9 +115,7 @@
                             <input type="text" name="kode" value="{{ old('kode') }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('kode') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    placeholder="Contoh: BRG001" required>
-                            @error('kode')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('kode')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Nama Produk -->
@@ -128,9 +126,7 @@
                             <input type="text" name="nama" value="{{ old('nama') }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('nama') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    placeholder="Masukkan nama produk" required>
-                            @error('nama')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('nama')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Kategori -->
@@ -148,9 +144,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('category_id')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('category_id')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Harga Beli -->
@@ -161,9 +155,7 @@
                             <input type="number" name="harga_beli" value="{{ old('harga_beli') }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('harga_beli') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    placeholder="0" required>
-                            @error('harga_beli')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('harga_beli')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Harga Jual -->
@@ -174,9 +166,7 @@
                             <input type="number" name="harga_jual" value="{{ old('harga_jual') }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('harga_jual') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    placeholder="0" required>
-                            @error('harga_jual')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('harga_jual')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
                         <!-- Stok Awal -->
@@ -187,17 +177,23 @@
                             <input type="number" name="stok" value="{{ old('stok', 0) }}"
                                    class="w-full px-5 py-4 rounded-xl border {{ $errors->has('stok') ? 'border-red-500' : 'border-gray-300' }} focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    min="0" required>
-                            @error('stok')
-                                <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
-                            @enderror
+                            @error('stok')<p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>@enderror
                         </div>
 
-                        <!-- Foto Produk (full width) -->
+                        <!-- Foto Produk + Preview Real-time -->
                         <div class="md:col-span-2">
-                            <label class="block text-gray-700 font-medium mb-2">
-                                <i class="ph ph-image-square text-xl mr-2"></i> Foto Produk <span class="text-gray-500 text-sm">(opsional)</span>
+                            <label class="block text-gray-700 font-medium mb-3">
+                                <i class="ph ph-camera text-xl mr-2"></i> Foto Produk <span class="text-gray-500 text-sm">(opsional)</span>
                             </label>
-                            <input type="file" name="foto" accept="image/*"
+
+                            <!-- Preview Foto -->
+                            <div class="mb-4">
+                                <img id="preview" src="https://via.placeholder.com/400x300/E5E7EB/9CA3AF?text=Preview+Foto"
+                                     alt="Preview foto produk"
+                                     class="w-80 h-60 object-cover rounded-xl shadow-lg border-4 border-gray-200">
+                            </div>
+
+                            <input type="file" name="foto" accept="image/*" id="foto"
                                    class="w-full px-5 py-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             @error('foto')
                                 <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
@@ -225,18 +221,19 @@
     </div>
 </div>
 
-<!-- SCRIPT HAMBURGER MENU -->
+<!-- SCRIPT: Hamburger Menu + Preview Foto -->
 <script>
+    // Hamburger Menu
     const menuBtn = document.getElementById('menuBtn');
-    sidebar = document.getElementById('sidebar');
-    overlay = document.getElementById('overlay');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
 
-    menuBtn.addEventListener('click', () => {
+    menuBtn?.addEventListener('click', () => {
         sidebar.classList.toggle('-translate-x-full');
         overlay.classList.toggle('hidden');
     });
 
-    overlay.addEventListener('click', () => {
+    overlay?.addEventListener('click', () => {
         sidebar.classList.add('-translate-x-full');
         overlay.classList.add('hidden');
     });
@@ -246,6 +243,22 @@
             sidebar.classList.add('-translate-x-full');
             overlay.classList.add('hidden');
         });
+    });
+
+    // Preview Foto Saat Upload
+    document.getElementById('foto').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById('preview');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = 'https://via.placeholder.com/400x300/E5E7EB/9CA3AF?text=Preview+Foto';
+        }
     });
 </script>
 
