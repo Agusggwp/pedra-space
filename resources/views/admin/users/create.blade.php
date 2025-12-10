@@ -23,7 +23,7 @@
         <main class="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
 
             <!-- Judul Halaman -->
-            <div class="mb-8">
+            <div class="mb-8 mt-20">
                 <h3 class="text-3xl md:text-4xl font-bold text-blue-700 flex items-center gap-4">
                     <i class="ph ph-user-plus text-5xl md:text-6xl"></i>
                     Tambah User Baru

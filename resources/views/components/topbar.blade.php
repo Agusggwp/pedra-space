@@ -1,5 +1,5 @@
 <!-- TOPBAR COMPONENT -->
-<header class="sticky top-0 z-20 bg-white border-b border-gray-200 px-6 py-3 flex-shrink-0">
+<header class="fixed top-0 right-0 left-0 md:left-64 z-30 bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
     <div class="flex items-center justify-between">
         <!-- Left: Hamburger Menu (Mobile) + Search -->
         <div class="flex items-center gap-4 flex-1">

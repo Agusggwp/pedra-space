@@ -5,12 +5,8 @@
         <!-- HEADER SIDEBAR -->
         <div class="mb-8 pb-4 border-b border-gray-800">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
-                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
-                        <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
-                        <path d="M12 3v6"/>
-                    </svg>
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden p-1.5">
+                    <img src="{{ asset('storage/logo/pedra.png') }}" alt="Pedra Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
                     <h2 class="text-white font-bold text-lg">POS ADMIN</h2>

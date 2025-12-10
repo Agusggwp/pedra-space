@@ -24,7 +24,7 @@
         <main class="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
 
             <!-- Judul Halaman dengan Gradient Background -->
-            <div class="mb-10 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-3xl p-8 shadow-2xl transform hover:scale-105 transition-all duration-300">
+            <div class="mb-10 mt-20 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-3xl p-8 shadow-2xl transform hover:scale-105 transition-all duration-300">
                 <div class="flex items-center gap-6">
                     <div class="bg-white bg-opacity-20 backdrop-blur-lg p-5 rounded-2xl">
                         <i class="ph ph-chart-line-up text-6xl text-white"></i>

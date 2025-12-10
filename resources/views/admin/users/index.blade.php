@@ -23,7 +23,7 @@
         <main class="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
 
             <!-- Header Section -->
-            <div class="mb-8">
+            <div class="mb-8 mt-20">
                 <h1 class="text-4xl font-bold text-gray-900 mb-2">User Management</h1>
                 <p class="text-gray-600">Manage users, roles, and permissions in the system</p>
             </div>

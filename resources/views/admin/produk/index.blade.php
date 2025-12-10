@@ -20,10 +20,10 @@
         @include('components.topbar')
 
         <!-- MAIN CONTENT -->
-        <main class="flex-1 p-6 md:p-8 lg:p-10 bg-gray-50">
+        <main class="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
 
             <!-- Judul + Tombol Tambah -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-5">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-5 mt-20">
                 <h3 class="text-3xl md:text-4xl font-bold text-blue-700 flex items-center gap-4">
                     <i class="ph ph-package text-5xl md:text-6xl"></i>
                     Manajemen Produk

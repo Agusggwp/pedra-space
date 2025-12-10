@@ -25,7 +25,7 @@
         <main class="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
 
             <!-- 8 KARTU STATISTIK dengan Desain Modern -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 mt-20">
                 
                 <!-- 1. Penjualan Hari Ini -->
                 <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-green-500 transform hover:-translate-y-2">

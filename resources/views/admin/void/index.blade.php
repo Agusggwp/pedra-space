@@ -20,10 +20,10 @@
         @include('components.topbar')
 
         <!-- MAIN CONTENT -->
-        <main class="flex-1 p-6 md:p-8 lg:p-10 bg-gray-50">
+        <main class="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
 
             <!-- Judul Halaman -->
-            <div class="mb-8">
+            <div class="mb-8 mt-20">
                 <h2 class="text-3xl md:text-4xl font-bold text-red-700 flex items-center gap-4">
                     <i class="ph ph-prohibit text-6xl md:text-6xl"></i>
                     Void / Batalkan Transaksi
