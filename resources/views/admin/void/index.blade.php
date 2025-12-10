@@ -1,197 +1,292 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Void / Refund - POS Admin</title>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void / Refund - POS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .ph { font-family: 'Phosphor'; }
+        .fixed-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+        .main-content { margin-top: 70px; }
+        @media (min-width: 768px) { .main-content { margin-top: 0; } }
+    </style>
 </head>
-<body class="bg-gray-100 flex min-h-screen">
+<body class="bg-gray-100">
 
-<!-- SIDEBAR -->
+<div class="flex min-h-screen">
 
-<aside class="bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 w-72 p-6 flex flex-col justify-between">
-        <!-- HEADER -->
+    <!-- SIDEBAR (sama persis semua halaman) -->
+    <aside id="sidebar"
+           class="fixed md:static inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 p-6 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto">
         <div>
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-white">POS ADMIN</h2>
-                <hr class="border-gray-600 my-3">
-                <p class="text-sm text-gray-300">{{ auth()->user()->name }}</p>
-                <p class="text-xs text-yellow-400">{{ ucfirst(auth()->user()->role) }}</p>
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white">POS ADMIN</h2>
+                <hr class="border-gray-600 my-4">
+                <p class="text-gray-300 text-lg">{{ auth()->user()->name }}</p>
+                <p class="text-sm text-yellow-400">{{ ucfirst(auth()->user()->role) }}</p>
             </div>
 
-            <!-- NAVIGATION -->
-            <nav class="space-y-2">
+            <nav class="space-y-3">
                 @php $current = request()->path(); @endphp
-
-                <!-- Dashboard -->
-                <a href="{{ url('/admin/dashboard') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
-                   {{ $current == 'admin/dashboard' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-2 2v7a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7"/>
-                    </svg>
-                    Dashboard
+                <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ $current == 'admin/dashboard' ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
+                    <i class="ph ph-house text-2xl"></i> Dashboard
                 </a>
-
-               
-
-                <!-- Manajemen User -->
-                <a href="{{ url('/admin/users') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
-                   {{ $current == 'admin/users' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 3-3.87M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
-                    </svg>
-                    Manajemen User
+                <a href="{{ url('/admin/users') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'users') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
+                    <i class="ph ph-users text-2xl"></i> Manajemen User
                 </a>
-
-                <!-- Manajemen Produk -->
-                <a href="{{ url('/admin/produk') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
-                   {{ $current == 'admin/produk' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6m16 0v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/>
-                    </svg>
-                    Manajemen Produk
+                <a href="{{ url('/admin/produk') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'produk') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
+                    <i class="ph ph-package text-2xl"></i> Produk
                 </a>
-
-                <!-- Manajemen Stok -->
-                <a href="{{ url('/admin/stok') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
-                   {{ $current == 'admin/stok' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
-                    </svg>
-                    Manajemen Stok
+                <a href="{{ url('/admin/stok') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'stok') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
+                    <i class="ph ph-chart-bar text-2xl"></i> Manajemen Stok
                 </a>
-
-                <!-- Void / Refund -->
-                <a href="{{ url('/admin/void') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
-                   {{ $current == 'admin/void' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5"/>
-                    </svg>
-                    Void / Refund
+                <a href="{{ url('/admin/void') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ $current == 'admin/void' ? 'bg-red-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
+                    <i class="ph ph-arrow-counter-clockwise text-2xl"></i> Void / Refund
                 </a>
-
-                <!-- Laporan Penjualan -->
-                <a href="{{ url('/admin/laporan') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200
-                   {{ $current == 'admin/laporan' ? 'bg-blue-700 text-white' : 'hover:bg-gray-700 hover:text-white' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
-                    </svg>
-                    Laporan Penjualan
+                <a href="{{ url('/admin/laporan') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'laporan') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
+                    <i class="ph ph-chart-line-up text-2xl"></i> Laporan
                 </a>
             </nav>
         </div>
 
-        <!-- LOGOUT -->
-        <form action="{{ url('/logout') }}" method="POST">
+        <form action="{{ url('/logout') }}" method="POST" class="mt-8">
             @csrf
-            <button type="submit" 
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg w-full text-left text-red-400 
-                    hover:bg-red-600 hover:text-white transition-colors duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"/>
-                </svg>
-                Logout
+            <button class="flex items-center gap-4 px-5 py-4 rounded-xl w-full text-left text-red-400 hover:bg-red-600 hover:text-white text-lg transition">
+                <i class="ph ph-sign-out text-2xl"></i> Logout
             </button>
         </form>
     </aside>
 
+    <!-- OVERLAY -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-60 z-40 md:hidden hidden"></div>
 
-<!-- KONTEN -->
-<main class="flex-1 p-8">
-    <div class="bg-white rounded-xl shadow p-6">
-        <h2 class="text-2xl font-bold text-red-600 mb-6 flex items-center gap-2">
-            Void / Batalkan Transaksi
-        </h2>
+    <!-- KONTEN UTAMA -->
+    <div class="flex-1 flex flex-col min-w-0">
 
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('success') }}
+        <!-- HEADER HAMBURGER -->
+        <header class="fixed-header bg-white shadow-lg px-6 py-4 flex items-center justify-between md:hidden">
+            <button id="menuBtn" class="text-3xl text-gray-800 hover:text-red-600 transition">
+                <i class="ph ph-list"></i>
+            </button>
+            <h1 class="text-xl font-bold text-red-700">Void Transaksi</h1>
+            <div class="w-10"></div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content flex-1 p-6 md:p-8 lg:p-10">
+
+            <!-- Judul Halaman -->
+            <div class="mb-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-red-700 flex items-center gap-4">
+                    <i class="ph ph-prohibit text-6xl md:text-6xl"></i>
+                    Void / Batalkan Transaksi
+                </h2>
             </div>
-        @endif
-        @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {{ session('error') }}
-            </div>
-        @endif
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white rounded-lg overflow-hidden">
-                <thead class="bg-red-600 text-white">
-                    <tr>
-                        <th class="py-3 px-6 text-left">ID</th>
-                        <th class="py-3 px-6 text-left">Tanggal</th>
-                        <th class="py-3 px-6 text-left">Kasir</th>
-                        <th class="py-3 px-6 text-left">Total</th>
-                        <th class="py-3 px-6 text-left">Metode</th>
-                        <th class="py-3 px-6 text-left">Status</th>
-                        <th class="py-3 px-6 text-left">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($transaksis as $t)
-                    <tr class="{{ $t->status === 'void' ? 'bg-gray-200' : '' }} border-b hover:bg-gray-100">
-                        <td class="py-3 px-6 font-semibold">#{{ $t->id }}</td>
-                        <td class="py-3 px-6">{{ $t->created_at->format('d/m/Y H:i') }}</td>
-                        <td class="py-3 px-6">{{ $t->user->name }}</td>
-                        <td class="py-3 px-6">Rp {{ number_format($t->total) }}</td>
-                        <td class="py-3 px-6">{{ $t->metode_pembayaran }}</td>
-                        <td class="py-3 px-6">
-                            @if($t->status === 'void')
-                                <span class="px-2 py-1 rounded bg-gray-400 text-white">Dibatalkan</span>
-                            @else
-                                <span class="px-2 py-1 rounded bg-green-500 text-white">Lunas</span>
-                            @endif
-                        </td>
-                        <td class="py-3 px-6">
+            <!-- Flash Message -->
+            @if(session('success'))
+                <div class="bg-green-50 border-l-4 border-green-500 text-green-800 p-5 rounded-xl mb-8 flex items-center gap-4 shadow">
+                    <i class="ph ph-check-circle text-3xl"></i>
+                    <span class="text-lg">{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-red-50 border-l-4 border-red-500 text-red-800 p-5 rounded-xl mb-8 flex items-center gap-4 shadow">
+                    <i class="ph ph-x-circle text-3xl"></i>
+                    <span class="text-lg">{{ session('error') }}</span>
+                </div>
+            @endif
+
+            <!-- Tabel Transaksi -->
+            <!-- TABEL VOID/REFUND – SEMPURNA DI TABLET -->
+<div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gradient-to-r from-red-700 to-red-900 text-white">
+                <tr>
+                    <th class="py-4 px-3 text-left text-xs font-bold uppercase tracking-wider">ID</th>
+                    <th class="py-4 px-3 text-left text-xs font-bold uppercase tracking-wider">Tanggal</th>
+                    <th class="py-4 px-3 text-left text-xs font-bold uppercase tracking-wider">Kasir</th>
+                    <th class="py-4 px-3 text-left text-xs font-bold uppercase tracking-wider">Total</th>
+                    <th class="py-4 px-3 text-left text-xs font-bold uppercase tracking-wider">Metode</th>
+                    <th class="py-4 px-3 text-left text-xs font-bold uppercase tracking-wider">Status</th>
+                    <th class="py-4 px-3 text-center text-xs font-bold uppercase tracking-wider">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @forelse($transaksis as $t)
+                <tr class="{{ $t->status === 'void' ? 'bg-gray-100 opacity-75' : 'hover:bg-gray-50' }} transition duration-200">
+                    <!-- ID -->
+                    <td class="py-4 px-3">
+                        <span class="font-mono font-bold text-base text-gray-800">#{{ $t->id }}</span>
+                    </td>
+
+                    <!-- TANGGAL -->
+                    <td class="py-4 px-3 text-gray-700 text-sm">
+                        <div>{{ $t->created_at->format('d/m/Y') }}</div>
+                        <div class="text-xs text-gray-500">{{ $t->created_at->format('H:i') }}</div>
+                    </td>
+
+                    <!-- KASIR -->
+                    <td class="py-4 px-3">
+                        <div class="font-semibold text-gray-900">{{ $t->user->name }}</div>
+                    </td>
+
+                    <!-- TOTAL -->
+                    <td class="py-4 px-3">
+                        <div class="font-bold text-xl text-red-600 whitespace-nowrap">
+                            Rp {{ number_format($t->total) }}
+                        </div>
+                    </td>
+
+                    <!-- METODE -->
+                    <td class="py-4 px-3">
+                        <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">
+                            {{ $t->metode_pembayaran }}
+                        </span>
+                    </td>
+
+                    <!-- STATUS -->
+                    <td class="py-4 px-3">
+                        @if($t->status === 'void')
+                            <span class="inline-block px-4 py-2 rounded-full bg-gray-600 text-white font-bold text-sm shadow">
+                                Dibatalkan
+                            </span>
+                        @else
+                            <span class="inline-block px-4 py-2 rounded-full bg-green-600 text-white font-bold text-sm shadow">
+                                Lunas
+                            </span>
+                        @endif
+                    </td>
+
+                    <!-- AKSI -->
+                    <td class="py-4 px-3">
+                        <div class="flex justify-center">
                             @if($t->status !== 'void')
-                                <button onclick="document.getElementById('modal-{{ $t->id }}').classList.remove('hidden')"
-                                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                <button onclick="openModal('modal-{{ $t->id }}')"
+                                        class="bg-red-600 hover:bg-red-700 text-white font-medium text-sm px-6 py-3 rounded-lg shadow transition transform hover:scale-105 flex items-center gap-2 min-w-32 justify-center">
+                                    <i class="ph ph-prohibit text-lg"></i>
                                     Void
                                 </button>
                             @else
-                                <small class="text-gray-600">Dibatalkan oleh {{ $t->voidBy?->name ?? '-' }}</small>
-                            @endif
-                        </td>
-                    </tr>
-
-                    <!-- Modal Void -->
-                    <div id="modal-{{ $t->id }}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-                        <div class="bg-white rounded-lg w-96 p-6 relative">
-                            <h3 class="text-lg font-bold text-red-600 mb-4">Konfirmasi Pembatalan Transaksi</h3>
-                            <p>Yakin ingin <strong>membatalkan</strong> transaksi ini?</p>
-                            <p>Total: <strong>Rp {{ number_format($t->total) }}</strong></p>
-                            <form action="{{ route('admin.void.proses', $t) }}" method="POST" class="mt-4">
-                                @csrf
-                                <textarea name="keterangan" required class="w-full border rounded p-2 mb-4" rows="3"
-                                          placeholder="Contoh: Customer batal, salah input, barang rusak, dll"></textarea>
-                                <div class="flex justify-end gap-2">
-                                    <button type="button" onclick="document.getElementById('modal-{{ $t->id }}').classList.add('hidden')"
-                                            class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">Batal</button>
-                                    <button type="submit" class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600">Ya, Batalkan!</button>
+                                <div class="text-center text-sm">
+                                    <div class="text-gray-600">Dibatalkan oleh</div>
+                                    <div class="font-bold text-gray-800">{{ $t->voidBy?->name ?? '-' }}</div>
                                 </div>
-                            </form>
+                            @endif
                         </div>
+                    </td>
+                </tr>
+
+                <!-- MODAL VOID (tetap sama, sudah cantik) -->
+                <div id="modal-{{ $t->id }}" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-8 relative">
+                        <button onclick="closeModal('modal-{{ $t->id }}')" class="absolute top-4 right-6 text-3xl text-gray-500 hover:text-gray-700">
+                            <i class="ph ph-x"></i>
+                        </button>
+                        <h3 class="text-2xl font-bold text-red-700 mb-6 text-center">
+                            Konfirmasi Pembatalan
+                        </h3>
+                        <div class="text-center mb-6">
+                            <p class="text-base">Yakin ingin <strong class="text-red-600">membatalkan</strong> transaksi ini?</p>
+                            <p class="text-2xl font-bold text-red-600 mt-3">Rp {{ number_format($t->total) }}</p>
+                            <p class="text-gray-600 mt-2">Kasir: {{ $t->user->name }}</p>
+                        </div>
+
+                        <form action="{{ route('admin.void.proses', $t) }}" method="POST">
+                            @csrf
+                            <div class="mb-6">
+                                <label class="block text-gray-700 font-medium mb-2">
+                                    Alasan Pembatalan <span class="text-red-500">*</span>
+                                </label>
+                                <textarea name="keterangan" required rows="4"
+                                          class="w-full px-5 py-4 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-4 focus:ring-red-100 transition resize-none text-sm"
+                                          placeholder="Contoh: Customer batal, salah input, barang rusak, dll..."></textarea>
+                            </div>
+
+                            <div class="flex justify-center gap-4">
+                                <button type="button" onclick="closeModal('modal-{{ $t->id }}')"
+                                        class="px-7 py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-xl shadow transition">
+                                    Batal
+                                </button>
+                                <button type="submit"
+                                        class="px-7 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg transition transform hover:scale-105">
+                                    Ya, Batalkan!
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-5 text-gray-500">Belum ada transaksi</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            <div class="mt-4">
-                {{ $transaksis->links() }}
-            </div>
+                </div>
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center py-20">
+                        <div class="text-gray-400">
+                            <i class="ph ph-receipt-x text-9xl mb-6 opacity-20"></i>
+                            <p class="text-2xl font-medium">Belum ada transaksi</p>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    </div>
+
+    <!-- Paginasi -->
+    <div class="p-5 bg-gray-50 border-t border-gray-200">
+        <div class="flex justify-center">
+            {{ $transaksis->links() }}
         </div>
     </div>
-</main>
+</div>
+
+        </main>
+    </div>
+</div>
+
+<!-- SCRIPT HAMBURGER + MODAL -->
+<script>
+    // Hamburger Menu
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    menuBtn?.addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+    });
+
+    overlay?.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    });
+
+    document.querySelectorAll('#sidebar a').forEach(link => {
+        link.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
+    });
+
+    // Modal Void
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    // Tutup modal saat klik di luar
+    document.querySelectorAll('[id^="modal-"]').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal(modal.id);
+        });
+    });
+</script>
 
 </body>
 </html>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\Produk;
 use App\Models\ShiftKasir;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -13,26 +14,71 @@ class DashboardController extends Controller
     {
         $hariIni = now()->format('Y-m-d');
 
+        // 1. Penjualan Hari Ini
         $penjualanHariIni = Transaksi::whereDate('created_at', $hariIni)
             ->where('status', 'lunas')
-            ->sum('total');
+            ->sum('total') ?? 0;
 
+        // 2. Transaksi Hari Ini
         $transaksiHariIni = Transaksi::whereDate('created_at', $hariIni)
             ->where('status', 'lunas')
             ->count();
 
+        // 3. Stok Kritis
         $stokKritis = Produk::where('stok', '<=', 10)->count();
 
+        // 4. Kasir Aktif (shift buka hari ini)
         $kasirAktif = ShiftKasir::where('status', 'buka')
             ->whereDate('dibuka_pada', $hariIni)
             ->distinct('user_id')
             ->count('user_id');
 
+        // 5. Total Produk
+        $totalProduk = Produk::count();
+
+        // 6. Void Hari Ini
+        $voidHariIni = Transaksi::whereDate('created_at', $hariIni)
+            ->where('status', 'void')
+            ->count();
+
+        // 7. Penjualan Bulan Ini
+        $penjualanBulanIni = Transaksi::whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->where('status', 'lunas')
+            ->sum('total') ?? 0;
+
+        // 8. Shift Hari Ini
+        $shiftHariIni = ShiftKasir::whereDate('dibuka_pada', $hariIni)->count();
+
+        // GRAFIK 30 HARI – DIPAKSA ADA 30 TITIK (tidak pernah kosong!)
+        $sales = Transaksi::select(
+                DB::raw('DATE(created_at) as tanggal'),
+                DB::raw('SUM(total) as total')
+            )
+            ->where('status', 'lunas')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->groupBy('tanggal')
+            ->pluck('total', 'tanggal');
+
+        $penjualan30Hari = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $tanggal = now()->subDays($i)->format('Y-m-d');
+            $penjualan30Hari[] = [
+                'tanggal' => $tanggal,
+                'total'   => isset($sales[$tanggal]) ? (int)$sales[$tanggal] : 0
+            ];
+        }
+
         return view('admin.dashboard', compact(
             'penjualanHariIni',
             'transaksiHariIni',
             'stokKritis',
-            'kasirAktif'
+            'kasirAktif',
+            'totalProduk',
+            'voidHariIni',
+            'penjualanBulanIni',
+            'shiftHariIni',
+            'penjualan30Hari'
         ));
     }
 }
