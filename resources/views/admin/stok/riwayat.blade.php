@@ -5,82 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat Stok - POS Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        .ph { font-family: 'Phosphor'; }
-        .fixed-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
-        .main-content { margin-top: 70px; }
-        @media (min-width: 768px) { .main-content { margin-top: 0; } }
-    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        @include('components.sidebar')
+        
+        <div class="flex-1 flex flex-col min-w-0">
+            @include('components.topbar')
 
-<div class="flex min-h-screen">
-
-    <!-- SIDEBAR (sama persis semua halaman) -->
-    <aside id="sidebar"
-           class="fixed md:static inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 p-6 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto">
-        <div>
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-white">POS ADMIN</h2>
-                <hr class="border-gray-600 my-4">
-                <p class="text-gray-300 text-lg">{{ auth()->user()->name }}</p>
-                <p class="text-sm text-yellow-400">{{ ucfirst(auth()->user()->role) }}</p>
-            </div>
-
-            <nav class="space-y-3">
-                @php $current = request()->path(); @endphp
-                <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ $current == 'admin/dashboard' ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-house text-2xl"></i> Dashboard
-                </a>
-                <a href="{{ url('/admin/users') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'users') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-users text-2xl"></i> Manajemen User
-                </a>
-                <a href="{{ url('/admin/produk') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'produk') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-package text-2xl"></i> Produk
-                </a>
-                <a href="{{ url('/admin/stok') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'stok') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-chart-bar text-2xl"></i> Manajemen Stok
-                </a>
-                <a href="{{ url('/admin/void') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'void') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-arrow-counter-clockwise text-2xl"></i> Void
-                </a>
-                <a href="{{ url('/admin/laporan') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'laporan') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-chart-line-up text-2xl"></i> Laporan
-                </a>
-            </nav>
-        </div>
-
-        <form action="{{ url('/logout') }}" method="POST" class="mt-8">
-            @csrf
-            <button class="flex items-center gap-4 px-5 py-4 rounded-xl w-full text-left text-red-400 hover:bg-red-600 hover:text-white text-lg transition">
-                <i class="ph ph-sign-out text-2xl"></i> Logout
-            </button>
-        </form>
-    </aside>
-
-    <!-- OVERLAY -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-60 z-40 md:hidden hidden"></div>
-
-    <!-- KONTEN UTAMA -->
-    <div class="flex-1 flex flex-col min-w-0">
-
-        <!-- HEADER HAMBURGER (mobile & tablet) -->
-        <header class="fixed-header bg-white shadow-lg px-6 py-4 flex items-center justify-between md:hidden">
-            <button id="menuBtn" class="text-3xl text-gray-800 hover:text-blue-600 transition">
-                <i class="ph ph-list"></i>
-            </button>
-            <h1 class="text-xl font-bold text-blue-700">Riwayat Stok</h1>
-            <div class="w-10"></div>
-        </header>
-
-        <!-- MAIN CONTENT -->
-        <main class="main-content flex-1 p-6 md:p-8 lg:p-10">
+            <!-- MAIN CONTENT -->
+            <main class="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10">
 
             <!-- Judul Halaman -->
             <div class="mb-8">
                 <h3 class="text-3xl md:text-4xl font-bold text-blue-700 flex items-center gap-4">
-                    <i class="ph ph-clock-counter-clockwise text-6xl md:text-6xl"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                        <path d="M12 7v5l4 2"/>
+                    </svg>
                     Riwayat Stok
                 </h3>
             </div>
@@ -111,12 +54,20 @@
                                 </td>
                                 <td class="py-5 px-5">
                                     @if($h->tipe == 'masuk')
-                                        <span class="inline-block px-5 py-2.5 rounded-full bg-green-600 text-white font-bold shadow">
-                                            <i class="ph ph-arrow-down mr-2"></i> Masuk
+                                        <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-green-600 text-white font-bold shadow">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M12 5v14"/>
+                                                <path d="m19 12-7 7-7-7"/>
+                                            </svg>
+                                            Masuk
                                         </span>
                                     @else
-                                        <span class="inline-block px-5 py-2.5 rounded-full bg-orange-600 text-white font-bold shadow">
-                                            <i class="ph ph-arrow-up mr-2"></i> Keluar
+                                        <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-600 text-white font-bold shadow">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M12 19V5"/>
+                                                <path d="m5 12 7-7 7 7"/>
+                                            </svg>
+                                            Keluar
                                         </span>
                                     @endif
                                 </td>
@@ -134,7 +85,11 @@
                             <tr>
                                 <td colspan="6" class="text-center py-20">
                                     <div class="text-gray-400">
-                                        <i class="ph ph-clock-counter-clockwise text-9xl mb-6 opacity-20"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-6 opacity-20">
+                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                            <path d="M3 3v5h5"/>
+                                            <path d="M12 7v5l4 2"/>
+                                        </svg>
                                         <p class="text-2xl font-medium">Belum ada riwayat stok</p>
                                     </div>
                                 </td>
@@ -152,33 +107,9 @@
                 </div>
             </div>
 
-        </main>
+            </main>
+        </div>
     </div>
-</div>
-
-<!-- SCRIPT HAMBURGER MENU -->
-<script>
-    const menuBtn = document.getElementById('menuBtn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-
-    menuBtn?.addEventListener('click', () => {
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
-    });
-
-    overlay?.addEventListener('click', () => {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-    });
-
-    document.querySelectorAll('#sidebar a').forEach(link => {
-        link.addEventListener('click', () => {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        });
-    });
-</script>
 
 </body>
 </html>

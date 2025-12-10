@@ -7,236 +7,206 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .ph { font-family: 'Phosphor'; }
-        /* Pastikan header fixed dan tidak ikut scroll */
-        .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-        }
-        /* Konten utama mulai dari bawah header */
-        .main-content {
-            margin-top: 70px; /* Sesuaikan dengan tinggi header */
-        }
-        @media (min-width: 768px) {
-            .main-content {
-                margin-top: 0;
-            }
-        }
-    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
 
 <div class="flex min-h-screen">
 
-    <!-- SIDEBAR -->
-    <aside id="sidebar"
-           class="fixed md:static inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200 p-6 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto">
-        <div>
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-white">POS ADMIN</h2>
-                <hr class="border-gray-600 my-4">
-                <p class="text-gray-300 text-lg">{{ auth()->user()->name }}</p>
-                <p class="text-sm text-yellow-400">{{ ucfirst(auth()->user()->role) }}</p>
-            </div>
-
-            <nav class="space-y-3">
-                @php $current = request()->path(); @endphp
-
-                <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ $current == 'admin/dashboard' ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-house text-2xl"></i> Dashboard
-                </a>
-                <a href="{{ url('/admin/users') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'users') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-users text-2xl"></i> Manajemen User
-                </a>
-                <a href="{{ url('/admin/produk') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'produk') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-package text-2xl"></i> Produk
-                </a>
-                <a href="{{ url('/admin/stok') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'stok') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-chart-bar text-2xl"></i> Stok
-                </a>
-                <a href="{{ url('/admin/void') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'void') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-arrow-counter-clockwise text-2xl"></i> Void
-                </a>
-                <a href="{{ url('/admin/laporan') }}" class="flex items-center gap-4 px-5 py-4 rounded-xl text-lg {{ str_contains($current,'laporan') ? 'bg-blue-700 text-white shadow-lg' : 'hover:bg-gray-700' }} transition">
-                    <i class="ph ph-chart-line-up text-2xl"></i> Laporan
-                </a>
-            </nav>
-        </div>
-
-        <form action="{{ url('/logout') }}" method="POST" class="mt-8">
-            @csrf
-            <button class="flex items-center gap-4 px-5 py-4 rounded-xl w-full text-left text-red-400 hover:bg-red-600 hover:text-white text-lg transition">
-                <i class="ph ph-sign-out text-2xl"></i> Logout
-            </button>
-        </form>
-    </aside>
-
-    <!-- OVERLAY -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-60 z-40 md:hidden hidden"></div>
+    <!-- SIDEBAR COMPONENT -->
+    @include('components.sidebar')
 
     <!-- KONTEN UTAMA -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <div class="flex-1 flex flex-col min-w-0 min-h-screen overflow-hidden">
 
-        <!-- HEADER FIXED (hanya muncul di mobile & tablet) -->
-        <header class="fixed-header bg-white shadow-lg px-6 py-4 flex items-center justify-between md:hidden">
-            <button id="menuBtn" class="text-3xl text-gray-800 hover:text-blue-600 transition">
-                <i class="ph ph-list"></i>
-            </button>
-            <h1 class="text-xl font-bold text-blue-700">Dashboard</h1>
-            <div class="w-10"></div>
-        </header>
+        <!-- TOPBAR COMPONENT -->
+        @include('components.topbar')
 
-        <!-- MAIN CONTENT (dengan margin atas agar tidak tertutup header) -->
-        <main class="main-content flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto">
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
 
-            <h2 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 flex items-center gap-4">
-                <i class="ph ph-speedometer text-5xl md:text-6xl"></i>
-                Dashboard Utama
-            </h2>
-
-            <!-- 8 KARTU STATISTIK -->
+            <!-- 8 KARTU STATISTIK dengan Desain Modern -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                <!-- Kartu-kartu sama seperti sebelumnya -->
-                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border-l-8 border-green-500 hover:shadow-2xl transition">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-gray-600 text-sm md:text-base">Penjualan Hari Ini</p>
-                            <p class="text-2xl md:text-3xl font-bold text-green-600 mt-2">Rp {{ number_format($penjualanHariIni) }}</p>
+                
+                <!-- 1. Penjualan Hari Ini -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-green-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-trend-up text-green-600"></i>
+                                Penjualan Hari Ini
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-green-600">Rp {{ number_format($penjualanHariIni, 0, ',', '.') }}</p>
                         </div>
-                        <i class="ph ph-money text-6xl text-green-500 opacity-20"></i>
+                        <div class="bg-green-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-money text-3xl text-green-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-calendar"></i>
+                        <span>{{ now()->format('d M Y') }}</span>
                     </div>
                 </div>
-               <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-blue-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Transaksi Hari Ini</p>
-                        <p class="text-3xl font-bold text-blue-600">{{ $transaksiHariIni }}</p>
+
+                <!-- 2. Transaksi Hari Ini -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-blue-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-receipt text-blue-600"></i>
+                                Transaksi Hari Ini
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-blue-600">{{ $transaksiHariIni }}</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-receipt text-3xl text-blue-600"></i>
+                        </div>
                     </div>
-                    <i class="ph ph-receipt text-5xl text-blue-500 opacity-20"></i>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-clock"></i>
+                        <span>Real-time</span>
+                    </div>
                 </div>
+
+                <!-- 3. Stok Kritis -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-yellow-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-warning text-yellow-600"></i>
+                                Stok Kritis (≤ 10)
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-yellow-600">{{ $stokKritis }}</p>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-warning text-3xl text-yellow-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-package"></i>
+                        <span>Perlu restock</span>
+                    </div>
+                </div>
+
+                <!-- 4. Kasir Aktif -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-purple-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-user-focus text-purple-600"></i>
+                                Kasir Aktif
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-purple-600">{{ $kasirAktif }}</p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-user-focus text-3xl text-purple-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-users"></i>
+                        <span>Sedang bertugas</span>
+                    </div>
+                </div>
+
+                <!-- 5. Total Produk -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-indigo-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-cube text-indigo-600"></i>
+                                Total Produk
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-indigo-600">{{ $totalProduk }}</p>
+                        </div>
+                        <div class="bg-indigo-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-cube text-3xl text-indigo-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-list-bullets"></i>
+                        <span>Katalog produk</span>
+                    </div>
+                </div>
+
+                <!-- 6. Transaksi Void -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-red-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-x-circle text-red-600"></i>
+                                Transaksi Dibatalkan
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-red-600">{{ $voidHariIni }}</p>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-x-circle text-3xl text-red-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-prohibit"></i>
+                        <span>Hari ini</span>
+                    </div>
+                </div>
+
+                <!-- 7. Penjualan Bulan Ini -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-teal-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-trend-up text-teal-600"></i>
+                                Penjualan Bulan Ini
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-teal-600">Rp {{ number_format($penjualanBulanIni, 0, ',', '.') }}</p>
+                        </div>
+                        <div class="bg-teal-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-trend-up text-3xl text-teal-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-calendar-blank"></i>
+                        <span>{{ now()->format('F Y') }}</span>
+                    </div>
+                </div>
+
+                <!-- 8. Shift Kasir Hari Ini -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-orange-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-clock-countdown text-orange-600"></i>
+                                Shift Kasir Hari Ini
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-orange-600">{{ $shiftHariIni }}</p>
+                        </div>
+                        <div class="bg-orange-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-clock-countdown text-3xl text-orange-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-users-three"></i>
+                        <span>Total shift</span>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- 3. Stok Kritis -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-yellow-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Stok Kritis (≤ 10)</p>
-                        <p class="text-3xl font-bold text-yellow-600">{{ $stokKritis }}</p>
+            <!-- GRAFIK dengan Desain Modern -->
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl mb-10 border-t-4 border-gradient-to-r from-blue-600 to-purple-600">
+                <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-200">
+                    <div class="bg-gradient-to-r from-teal-500 to-emerald-500 p-4 rounded-xl">
+                        <i class="ph ph-chart-line text-4xl text-white"></i>
                     </div>
-                    <i class="ph ph-warning text-5xl text-yellow-500 opacity-20"></i>
-                </div>
-            </div>
-
-            <!-- 4. Kasir Aktif -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-purple-500">
-                <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-500 text-sm">Kasir Aktif</p>
-                        <p class="text-3xl font-bold text-purple-600">{{ $kasirAktif }}</p>
+                        <h3 class="text-2xl md:text-3xl font-bold text-gray-800">Grafik Penjualan</h3>
+                        <p class="text-gray-500 text-sm">30 Hari Terakhir</p>
                     </div>
-                    <i class="ph ph-user-focus text-5xl text-purple-500 opacity-20"></i>
                 </div>
-            </div>
-
-            <!-- 5. Total Produk -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-indigo-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Total Produk</p>
-                        <p class="text-3xl font-bold text-indigo-600">{{ $totalProduk }}</p>
-                    </div>
-                    <i class="ph ph-cube text-5xl text-indigo-500 opacity-20"></i>
-                </div>
-            </div>
-
-            <!-- 6. Transaksi Void Hari Ini -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-red-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Transaksi Dibatalkan</p>
-                        <p class="text-3xl font-bold text-red-600">{{ $voidHariIni }}</p>
-                    </div>
-                    <i class="ph ph-x-circle text-5xl text-red-500 opacity-20"></i>
-                </div>
-            </div>
-
-            <!-- 7. Penjualan Bulan Ini -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-teal-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Penjualan Bulan Ini</p>
-                        <p class="text-3xl font-bold text-teal-600">Rp {{ number_format($penjualanBulanIni) }}</p>
-                    </div>
-                    <i class="ph ph-trend-up text-5xl text-teal-500 opacity-20"></i>
-                </div>
-            </div>
-
-            <!-- 8. Shift Kasir Hari Ini -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition border-l-4 border-orange-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Shift Kasir Hari Ini</p>
-                        <p class="text-3xl font-bold text-orange-600">{{ $shiftHariIni }}</p>
-                    </div>
-                    <i class="ph ph-clock-countdown text-5xl text-orange-500 opacity-20"></i>
-                </div>
-            </div>
-            </div>
-
-            <!-- GRAFIK -->
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl mt-10">
-                <h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 flex items-center gap-4">
-                    <i class="ph ph-trend-up text-4xl text-teal-600"></i>
-                    Grafik Penjualan 30 Hari Terakhir
-                </h3>
                 <div class="h-80 md:h-96 lg:h-[500px]">
                     <canvas id="salesChart"></canvas>
                 </div>
             </div>
-
-            <!-- Welcome Card -->
-            <div class="mt-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-2xl shadow-2xl">
-                <div class="flex flex-col md:flex-row items-center gap-6">
-                    <i class="ph ph-info text-5xl md:text-6xl"></i>
-                    <div class="text-center md:text-left">
-                        <h4 class="text-2xl md:text-3xl font-bold">Selamat Datang kembali, {{ auth()->user()->name }}!</h4>
-                        <p class="text-lg md:text-xl mt-2">Kelola toko dengan mudah dari tablet atau desktop.</p>
-                    </div>
-                </div>
-            </div>
-
         </main>
     </div>
 </div>
-
-<!-- SCRIPT HAMBURGER MENU -->
-<script>
-    const menuBtn = document.getElementById('menuBtn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-
-    menuBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
-    });
-
-    overlay.addEventListener('click', () => {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-    });
-
-    // Tutup sidebar saat klik link
-    document.querySelectorAll('#sidebar a').forEach(link => {
-        link.addEventListener('click', () => {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        });
-    });
-</script>
 
 <!-- CHART.JS -->
 <script>
@@ -258,11 +228,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 label: 'Penjualan',
                 data: values,
                 borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                borderWidth: 4,
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 3,
                 pointBackgroundColor: '#10b981',
-                pointRadius: 6,
-                pointHoverRadius: 10,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: '#10b981',
+                pointHoverBorderColor: '#fff',
                 tension: 0.4,
                 fill: true
             }]
@@ -271,15 +245,40 @@ document.addEventListener('DOMContentLoaded', function () {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
+                legend: { 
+                    display: true,
+                    labels: {
+                        font: { size: 14, weight: 'bold' },
+                        color: '#374151'
+                    }
+                },
                 tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 13 },
                     callbacks: {
-                        label: ctx => 'Rp ' + ctx.parsed.y.toLocaleString('id-ID')
+                        label: ctx => 'Penjualan: Rp ' + ctx.parsed.y.toLocaleString('id-ID')
                     }
                 }
             },
             scales: {
-                y: { beginAtZero: true, ticks: { callback: v => 'Rp ' + v.toLocaleString('id-ID') } }
+                y: { 
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                    ticks: { 
+                        font: { size: 12 },
+                        callback: v => 'Rp ' + v.toLocaleString('id-ID')
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 12 } }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
             }
         }
     });
