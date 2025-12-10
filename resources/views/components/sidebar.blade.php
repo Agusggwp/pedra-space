@@ -1,21 +1,17 @@
 <!-- SIDEBAR COMPONENT -->
 <aside id="sidebar"
-       class="fixed md:sticky inset-y-0 left-0 top-0 z-50 w-64 h-screen bg-gray-900 text-gray-300 p-4 flex flex-col transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out overflow-y-auto">
-    <div class="flex-1 overflow-y-auto">
+       class="fixed md:sticky inset-y-0 left-0 top-0 z-50 w-64 h-screen bg-gray-900 text-gray-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out overflow-y-auto shadow-2xl">
+    <div class="flex-1 overflow-y-auto px-4 py-6">
         <!-- HEADER SIDEBAR -->
-        <div class="mb-8 pb-4 border-b border-gray-800">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden p-1.5">
+        <div class="mb-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden p-2">
                     <img src="{{ asset('storage/logo/pedra.png') }}" alt="Pedra Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
-                    <h2 class="text-white font-bold text-lg">POS ADMIN</h2>
-                    <p class="text-xs text-gray-500">Point of Sale</p>
+                    <h2 class="text-white font-bold text-base">{{ auth()->user()->name }}</h2>
+                    <p class="text-xs text-gray-400">{{ ucfirst(auth()->user()->role) }}</p>
                 </div>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-3">
-                <p class="text-white text-sm font-medium">{{ auth()->user()->name }}</p>
-                <p class="text-xs text-gray-400 mt-0.5">{{ ucfirst(auth()->user()->role) }}</p>
             </div>
         </div>
 
@@ -23,11 +19,11 @@
         <nav class="space-y-1">
             @php $current = request()->path(); @endphp
 
-            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-3">Menu</div>
+            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-3">MENU</div>
 
             <a href="{{ url('/admin/dashboard') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ $current == 'admin/dashboard' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ $current == 'admin/dashboard' ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect width="7" height="9" x="3" y="3" rx="1"/>
                     <rect width="7" height="5" x="14" y="3" rx="1"/>
                     <rect width="7" height="9" x="14" y="12" rx="1"/>
@@ -37,8 +33,8 @@
             </a>
 
             <a href="{{ url('/admin/users') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ str_contains($current,'users') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'users') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
                     <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
@@ -48,8 +44,8 @@
             </a>
 
             <a href="{{ url('/admin/produk') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ str_contains($current,'produk') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'produk') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M16 16h3a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3"/>
                     <path d="M8 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3"/>
                     <path d="M12 3v18"/>
@@ -58,8 +54,8 @@
             </a>
 
             <a href="{{ url('/admin/stok') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ str_contains($current,'stok') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'stok') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" x2="12" y1="20" y2="10"/>
                     <line x1="18" x2="18" y1="20" y2="4"/>
                     <line x1="6" x2="6" y1="20" y2="16"/>
@@ -68,8 +64,8 @@
             </a>
 
             <a href="{{ url('/admin/void') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ str_contains($current,'void') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'void') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="m4.9 4.9 14.2 14.2"/>
                 </svg>
@@ -77,8 +73,8 @@
             </a>
 
             <a href="{{ url('/admin/laporan') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ str_contains($current,'laporan') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'laporan') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 3v18h18"/>
                     <path d="m19 9-5 5-4-4-3 3"/>
                 </svg>
@@ -87,47 +83,29 @@
         </nav>
     </div>
 
-    <!-- LOGOUT BUTTON -->
-    <div class="mt-4 pt-4 border-t border-gray-800 flex-shrink-0">
+    <!-- SETTINGS & PROFILE SECTION -->
+    <div class="px-4 pb-6 space-y-1">
+        <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm text-gray-400 hover:text-white font-normal transition-colors duration-150">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span>Settings</span>
+        </a>
+
         <form action="{{ url('/logout') }}" method="POST">
             @csrf
             <button type="submit" 
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg w-full text-left text-gray-300 hover:bg-gray-800 hover:text-white text-sm font-medium transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" x2="9" y1="12" y2="12"/>
+                    class="flex items-center gap-3 px-3 py-3 rounded-lg w-full text-left text-gray-400 hover:text-white text-sm font-normal transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
                 </svg>
-                <span>Logout</span>
+                <span>Profile</span>
             </button>
         </form>
     </div>
 </aside>
 
 <!-- OVERLAY untuk Mobile -->
-<div id="overlay" class="fixed inset-0 bg-black bg-opacity-60 z-40 md:hidden hidden"></div>
-
-<!-- SCRIPT HAMBURGER MENU -->
-<script>
-    const menuBtn = document.getElementById('menuBtn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-
-    menuBtn?.addEventListener('click', () => {
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
-    });
-
-    overlay?.addEventListener('click', () => {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-    });
-
-    // Tutup sidebar saat klik link
-    document.querySelectorAll('#sidebar a').forEach(link => {
-        link.addEventListener('click', () => {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        });
-    });
-</script>
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-60 z-30 md:hidden hidden"></div>

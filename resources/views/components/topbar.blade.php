@@ -1,10 +1,10 @@
 <!-- TOPBAR COMPONENT -->
-<header class="fixed top-0 right-0 left-0 md:left-64 z-30 bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
+<header class="fixed top-0 right-0 left-0 md:left-64 z-40 bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
     <div class="flex items-center justify-between">
         <!-- Left: Hamburger Menu (Mobile) + Search -->
         <div class="flex items-center gap-4 flex-1">
             <!-- Hamburger Button -->
-            <button id="menuBtn" class="md:hidden text-gray-600 hover:text-gray-900 transition-colors">
+            <button id="menuBtn" class="md:hidden text-gray-600 hover:text-gray-900 transition-colors z-50 relative p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="4" x2="20" y1="12" y2="12"/>
                     <line x1="4" x2="20" y1="6" y2="6"/>
@@ -56,3 +56,34 @@
         </div>
     </div>
 </header>
+
+<!-- SCRIPT HAMBURGER MENU -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        if (menuBtn && sidebar && overlay) {
+            menuBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            });
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            // Tutup sidebar saat klik link
+            document.querySelectorAll('#sidebar a').forEach(link => {
+                link.addEventListener('click', function() {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                });
+            });
+        }
+    });
+</script>
