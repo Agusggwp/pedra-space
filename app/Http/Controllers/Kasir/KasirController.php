@@ -96,7 +96,7 @@ class KasirController extends Controller
 
         $transaksis = Transaksi::with('details.produk')
             ->where('user_id', auth()->id())
-            ->whereIn('metode_pembayaran', ['Tunai', 'EDC'])
+            ->whereIn('metode_pembayaran', ['Tunai', 'QRIS', 'EDC'])
             ->when($shift, fn($q) => $q->where('created_at', '>=', $shift->dibuka_pada))
             ->latest()
             ->get();
