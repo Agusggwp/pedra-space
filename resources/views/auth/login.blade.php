@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — NexaPOS</title>
+    <title>Login — ARTDEVATA POS</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -62,7 +62,7 @@
         <!-- KANAN: Form Login -->
         <div class="flex flex-col justify-center px-10 py-16 lg:px-20 xl:px-28 bg-white">
             <div class="flex justify-center mb-12 lg:hidden">
-                <img src="{{ asset('storage/logo/nexapos.png') }}"
+                <img src="{{ asset('storage/logo/pedra.png') }}"
                      onerror="this.src='https://cdn-icons-png.flaticon.com/512/854/854866.png'"
                      class="w-28 h-28 rounded-3xl shadow-lg">
             </div>
