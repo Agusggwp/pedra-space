@@ -146,6 +146,8 @@ class KasirController extends Controller
             'total' => $total,
             'bayar' => $request->bayar,
             'kembalian' => $request->bayar - $total,
+            'nama_pelanggan' => $request->nama_pelanggan,
+            'nomor_meja' => $request->nomor_meja,
         ]);
 
         foreach ($keranjang as $id => $item) {
@@ -168,6 +170,7 @@ class KasirController extends Controller
         $transaksi = Transaksi::with('details.produk')->findOrFail($id);
         return view('kasir.cetak', compact('transaksi'));
     }
+
 
 
     // TAMPILKAN FORM UPDATE STOK

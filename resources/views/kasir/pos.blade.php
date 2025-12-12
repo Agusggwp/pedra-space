@@ -217,6 +217,16 @@
                             @csrf
 
                             <div class="mb-3">
+                                <label class="form-label fw-semibold">Nama Pelanggan</label>
+                                <input type="text" name="nama_pelanggan" class="form-control form-control-lg" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Nomor Meja</label>
+                                <input type="number" name="nomor_meja" class="form-control form-control-lg" required>
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="form-label fw-semibold">Metode Pembayaran</label>
                                 <select name="metode" class="form-select form-select-lg" required>
                                     <option value="Tunai">Tunai</option>
@@ -230,10 +240,20 @@
                                 <label class="form-label fw-semibold">Jumlah Bayar</label>
                                 <input type="number" 
                                        name="bayar" 
+                                       id="inputBayar"
                                        class="form-control form-control-lg text-end fw-bold" 
                                        min="{{ collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah']) }}" 
                                        placeholder="0" 
                                        required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Kembalian</label>
+                                <input type="text" 
+                                       id="displayKembalian"
+                                       class="form-control form-control-lg text-end fw-bold text-success" 
+                                       value="Rp 0"
+                                       readonly>
                             </div>
 
                             <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow">
@@ -250,5 +270,28 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Hitung kembalian otomatis
+const inputBayar = document.getElementById('inputBayar');
+const displayKembalian = document.getElementById('displayKembalian');
+const totalBelanja = {{ collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah']) }};
+
+if (inputBayar) {
+    inputBayar.addEventListener('input', function() {
+        const bayar = parseFloat(this.value) || 0;
+        const kembalian = bayar - totalBelanja;
+        
+        if (kembalian < 0) {
+            displayKembalian.value = 'Rp 0';
+            displayKembalian.classList.remove('text-success');
+            displayKembalian.classList.add('text-danger');
+        } else {
+            displayKembalian.value = 'Rp ' + kembalian.toLocaleString('id-ID');
+            displayKembalian.classList.remove('text-danger');
+            displayKembalian.classList.add('text-success');
+        }
+    });
+}
+</script>
 </body>
 </html>

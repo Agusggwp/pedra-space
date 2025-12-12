@@ -85,6 +85,8 @@
                         <tr>
                             <th>No</th>
                             <th>Waktu</th>
+                            <th>Pelanggan</th>
+                            <th>Meja</th>
                             <th>Metode</th>
                             <th>Jumlah Item</th>
                             <th>Total</th>
@@ -97,6 +99,8 @@
                         <tr>
                             <td><strong>{{ $i + 1 }}</strong></td>
                             <td>{{ $t->created_at->format('H:i') }}</td>
+                            <td>{{ $t->nama_pelanggan ?? '-' }}</td>
+                            <td>{{ $t->nomor_meja ?? '-' }}</td>
                             <td>
                                 <span class="badge bg-success">
                                     {{ $t->metode_pembayaran }}

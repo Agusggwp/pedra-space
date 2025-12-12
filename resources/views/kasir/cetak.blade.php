@@ -22,8 +22,8 @@
 
 <div class="struk">
     <div class="text-center">
-        <h2 style="margin:0; padding:0;">TOKO KITA</h2>
-        <p style="margin:5px 0;">Jl. Contoh No.123, Kota<br>Telp: 0812-3456-7890</p>
+        <h2 style="margin:0; padding:0;"><P>PEDRA SPACE</P></h2>
+        <p style="margin:5px 0;">Jl. Raya Bilukan<br>Telp: 0812-3456-7890</p>
     </div>
     <div class="line"></div>
 
@@ -39,6 +39,14 @@
         <tr>
             <td>Kasir</td>
             <td class="text-right">{{ auth()->user()->name }}</td>
+        </tr>
+        <tr>
+            <td>Pelanggan</td>
+            <td class="text-right">{{ $transaksi->nama_pelanggan ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td>Meja</td>
+            <td class="text-right">{{ $transaksi->nomor_meja ?? '-' }}</td>
         </tr>
     </table>
 
