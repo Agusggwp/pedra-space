@@ -69,6 +69,12 @@ Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('laporan
 Route::get('/admin/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
 Route::get('/admin/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
 
+// 🔥 NEW Routes for Shift Report
+Route::get('/admin/laporan-shift', [LaporanController::class, 'laporanShift'])->name('laporan.shift');
+Route::get('/admin/laporan-shift/{id}', [LaporanController::class, 'showShift'])->name('laporan.shift.show');
+Route::get('/admin/laporan-shift/{id}/export/pdf', [LaporanController::class, 'exportShiftDetailPdf'])->name('laporan.shift.detail.pdf');
+Route::get('/admin/laporan-shift/{id}/export/excel', [LaporanController::class, 'exportShiftDetailExcel'])->name('laporan.shift.detail.excel');
+
 
 use App\Http\Controllers\Admin\ProdukController;
 

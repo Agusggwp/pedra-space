@@ -7,8 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Transaksi extends Model
 {
     protected $fillable = [
-        'user_id', 'metode_pembayaran', 'total', 'bayar', 'kembalian',
-        'status', 'keterangan_void', 'void_at', 'void_by'
+        'user_id',
+        'shift_kasir_id',
+        'metode_pembayaran',
+        'total',
+        'bayar',
+        'kembalian',
+        'status',
+        'keterangan_void',
+        'void_at',
+        'void_by'
     ];
 
     public function details()
@@ -21,14 +29,19 @@ class Transaksi extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function kasir()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function voidBy()
     {
         return $this->belongsTo(User::class, 'void_by');
     }
 
-    public function kasir()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
-
+    // 🔥 Relasi ke shift sesi kasir
+    public function shiftKasir()
+    {
+        return $this->belongsTo(ShiftKasir::class, 'shift_kasir_id');
+    }
 }

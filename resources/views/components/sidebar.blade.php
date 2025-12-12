@@ -72,14 +72,42 @@
                 <span>Void / Refund</span>
             </a>
 
-            <a href="{{ url('/admin/laporan') }}" 
-               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'laporan') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 3v18h18"/>
-                    <path d="m19 9-5 5-4-4-3 3"/>
-                </svg>
-                <span>Laporan Penjualan</span>
-            </a>
+            <!-- Laporan Penjualan with Submenu -->
+            <div class="group">
+                <button class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm w-full {{ str_contains($current,'laporan') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150" onclick="toggleSubmenu(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18"/>
+                        <path d="m19 9-5 5-4-4-3 3"/>
+                    </svg>
+                    <span>Laporan Penjualan</span>
+                    <svg class="ml-auto w-4 h-4 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                
+                <!-- Submenu -->
+                <div class="submenu hidden pl-4 space-y-1 mt-1">
+                    <a href="{{ url('/admin/laporan') }}" 
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm {{ $current == 'admin/laporan' ? 'bg-blue-600 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                            <path d="M12 6v6l4 2.4"/>
+                        </svg>
+                        <span>Laporan Umum</span>
+                    </a>
+                    
+                    <a href="{{ url('/admin/laporan-shift') }}" 
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm {{ str_contains($current,'laporan-shift') ? 'bg-blue-600 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <span>Laporan Per Shift User</span>
+                    </a>
+                </div>
+            </div>
         </nav>
     </div>
 
@@ -102,3 +130,15 @@
 
 <!-- OVERLAY untuk Mobile -->
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-60 z-30 md:hidden hidden"></div>
+
+<!-- Submenu Toggle Script -->
+<script>
+function toggleSubmenu(event) {
+    event.preventDefault();
+    const submenu = event.target.closest('.group').querySelector('.submenu');
+    const arrow = event.target.closest('button').querySelector('svg:last-child');
+    
+    submenu.classList.toggle('hidden');
+    arrow.classList.toggle('rotate-180');
+}
+</script>
