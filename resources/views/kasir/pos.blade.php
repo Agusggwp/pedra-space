@@ -117,11 +117,13 @@
 
                         @forelse($produks as $p)
                         <div class="col-6 col-md-4 col-lg-3 position-relative">
-                            <form action="{{ route('kasir.tambah') }}" method="POST">
+                            <form action="{{ route('kasir.tambah') }}" method="POST" class="form-tambah-produk h-100">
                                 @csrf
                                 <input type="hidden" name="produk_id" value="{{ $p->id }}">
+                                <input type="hidden" class="stok-produk" value="{{ $p->stok }}">
+                                <input type="hidden" class="nama-produk" value="{{ $p->nama }}">
 
-                                <button type="submit" class="produk-card border-0 p-0 w-100 text-start">
+                                <div class="produk-card border-0 p-0 w-100 text-start d-flex flex-column h-100" style="cursor: pointer;">
 
                                     <!-- FOTO PRODUK – SEKARANG PAKAI LARAVEL STORAGE -->
                                     @if($p->foto)
@@ -139,12 +141,17 @@
                                         Stok: {{ $p->stok }}
                                     </span>
 
-                                    <div class="p-3 text-center">
-                                        <h6 class="fw-semibold mb-1">{{ Str::limit($p->nama, 20) }}</h6>
-                                        <div class="harga">Rp {{ number_format($p->harga_jual) }}</div>
+                                    <div class="p-3 text-center flex-grow-1 d-flex flex-column justify-content-between">
+                                        <div>
+                                            <h6 class="fw-semibold mb-1">{{ Str::limit($p->nama, 20) }}</h6>
+                                            <div class="harga">Rp {{ number_format($p->harga_jual) }}</div>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-outline-success mt-2 w-100">
+                                            <i class="bi bi-cart-plus"></i> Tambah
+                                        </button>
                                     </div>
 
-                                </button>
+                                </div>
                             </form>
                         </div>
                         @empty
@@ -271,6 +278,52 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// 🔥 VALIDASI STOK SAAT MENAMBAHKAN PRODUK
+document.querySelectorAll('.form-tambah-produk').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const stok = parseInt(this.querySelector('.stok-produk').value);
+        const namaProduk = this.querySelector('.nama-produk').value;
+        
+        // Hitung berapa banyak produk ini sudah di keranjang
+        let jmlhDiKeranjang = 0;
+        const keranjangTable = document.querySelector('.keranjang-table');
+        
+        if (keranjangTable) {
+            const rows = keranjangTable.querySelectorAll('tr');
+            rows.forEach(row => {
+                const firstTd = row.querySelector('td:first-child');
+                if (firstTd) {
+                    const strong = firstTd.querySelector('strong');
+                    if (strong && strong.textContent.trim() === namaProduk.trim()) {
+                        const small = firstTd.querySelector('small');
+                        if (small) {
+                            const match = small.textContent.match(/(\d+)\s×/);
+                            jmlhDiKeranjang = match ? parseInt(match[1]) : 0;
+                        }
+                    }
+                }
+            });
+        }
+        
+        const totalSetelahTambah = jmlhDiKeranjang + 1;
+        
+        // Validasi stok
+        if (stok <= 0) {
+            e.preventDefault();
+            alert(`❌ Stok "${namaProduk}" sudah habis!`);
+            return false;
+        }
+        
+        if (totalSetelahTambah > stok) {
+            e.preventDefault();
+            alert(`❌ Stok "${namaProduk}" tidak cukup!\n\nStok tersedia: ${stok}\nSudah di keranjang: ${jmlhDiKeranjang}\nDiminta tambah: 1\n\nTotal akan menjadi: ${totalSetelahTambah}`);
+            return false;
+        }
+        
+        return true;
+    });
+});
+
 // Hitung kembalian otomatis
 const inputBayar = document.getElementById('inputBayar');
 const displayKembalian = document.getElementById('displayKembalian');

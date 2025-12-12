@@ -106,6 +106,16 @@
                         </svg>
                         <span>Laporan Per Shift User</span>
                     </a>
+
+                    <a href="{{ url('/admin/laporan-keuntungan') }}" 
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm {{ str_contains($current,'laporan-keuntungan') ? 'bg-blue-600 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" x2="12" y1="20" y2="10"/>
+                            <line x1="18" x2="18" y1="20" y2="4"/>
+                            <line x1="6" x2="6" y1="20" y2="16"/>
+                        </svg>
+                        <span>Laporan Keuntungan</span>
+                    </a>
                 </div>
             </div>
         </nav>

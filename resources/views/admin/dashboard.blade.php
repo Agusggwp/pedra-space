@@ -24,189 +24,212 @@
         <!-- MAIN CONTENT -->
         <main class="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
 
-            <!-- 8 KARTU STATISTIK dengan Desain Modern -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 mt-20">
-                
-                <!-- 1. Penjualan Hari Ini -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-green-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-trend-up text-green-600"></i>
-                                Penjualan Hari Ini
-                            </p>
-                            <p class="text-2xl md:text-3xl font-bold text-green-600">Rp {{ number_format($penjualanHariIni, 0, ',', '.') }}</p>
-                        </div>
-                        <div class="bg-green-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-money text-3xl text-green-600"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-calendar"></i>
-                        <span>{{ now()->format('d M Y') }}</span>
-                    </div>
-                </div>
-
-                <!-- 2. Transaksi Hari Ini -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-blue-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-receipt text-blue-600"></i>
-                                Transaksi Hari Ini
-                            </p>
-                            <p class="text-2xl md:text-3xl font-bold text-blue-600">{{ $transaksiHariIni }}</p>
-                        </div>
-                        <div class="bg-blue-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-receipt text-3xl text-blue-600"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-clock"></i>
-                        <span>Real-time</span>
-                    </div>
-                </div>
-
-                <!-- 3. Stok Kritis -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-yellow-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-warning text-yellow-600"></i>
-                                Stok Kritis (≤ 10)
-                            </p>
-                            <p class="text-2xl md:text-3xl font-bold text-yellow-600">{{ $stokKritis }}</p>
-                        </div>
-                        <div class="bg-yellow-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-warning text-3xl text-yellow-600"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-package"></i>
-                        <span>Perlu restock</span>
-                    </div>
-                </div>
-
-                <!-- 4. Kasir Aktif -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-purple-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-user-focus text-purple-600"></i>
-                                Kasir Aktif
-                            </p>
-                            <p class="text-2xl md:text-3xl font-bold text-purple-600">{{ $kasirAktif }}</p>
-                        </div>
-                        <div class="bg-purple-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-user-focus text-3xl text-purple-600"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-users"></i>
-                        <span>Sedang bertugas</span>
-                    </div>
-                </div>
-
-                <!-- 5. Total Produk -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-indigo-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-cube text-indigo-600"></i>
-                                Total Produk
-                            </p>
-                            <p class="text-2xl md:text-3xl font-bold text-indigo-600">{{ $totalProduk }}</p>
-                        </div>
-                        <div class="bg-indigo-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-cube text-3xl text-indigo-600"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-list-bullets"></i>
-                        <span>Katalog produk</span>
-                    </div>
-                </div>
-
-                <!-- 6. Total Uang (dari saldo_akhir semua shift) -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-emerald-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-wallet text-emerald-600"></i>
+            <!-- TOTAL UANG - CENTER FOCUS -->
+            <div class="mb-12 mt-20">
+                <div class="max-w-2xl mx-auto">
+                    <div class="group bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 p-10 md:p-12 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-3">
+                        <div class="text-center">
+                            <div class="flex justify-center mb-4">
+                                <div class="bg-white/20 p-5 rounded-2xl backdrop-blur-sm">
+                                    <i class="ph ph-wallet text-5xl text-white"></i>
+                                </div>
+                            </div>
+                            <p class="text-white/80 text-base font-medium mb-3 flex items-center justify-center gap-2">
+                                <i class="ph ph-currency-circle-dollar"></i>
                                 Total Uang
                             </p>
-                            <p class="text-2xl md:text-3xl font-bold text-emerald-600">Rp {{ number_format($totalUang, 0, ',', '.') }}</p>
+                            <p class="text-4xl md:text-5xl font-bold text-white mb-2">Rp {{ number_format($totalUang, 0, ',', '.') }}</p>
+                            <p class="text-white/70 text-sm">Saldo akhir dari semua shift kasir</p>
                         </div>
-                        <div class="bg-emerald-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-wallet text-3xl text-emerald-600"></i>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-currency-circle-dollar"></i>
-                        <span>Jumlah saldo akhir (semua shift)</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- 6. Transaksi Void -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-red-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-x-circle text-red-600"></i>
-                                Transaksi Dibatalkan
-                            </p>
-                            <p class="text-2xl md:text-3xl font-bold text-red-600">{{ $voidHariIni }}</p>
+            <!-- ROW 1: PENJUALAN & TRANSAKSI -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="ph ph-chart-line text-emerald-600"></i>
+                    Penjualan & Transaksi
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 1. Penjualan Hari Ini -->
+                    <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-green-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-trend-up text-green-600"></i>
+                                    Penjualan Hari Ini
+                                </p>
+                                <p class="text-3xl font-bold text-green-600">Rp {{ number_format($penjualanHariIni, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-money text-3xl text-green-600"></i>
+                            </div>
                         </div>
-                        <div class="bg-red-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-x-circle text-3xl text-red-600"></i>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="ph ph-calendar"></i>
+                            <span>{{ now()->format('d M Y') }}</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-prohibit"></i>
-                        <span>Hari ini</span>
+
+                    <!-- 2. Penjualan Bulan Ini -->
+                    <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-teal-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-trend-up text-teal-600"></i>
+                                    Penjualan Bulan Ini
+                                </p>
+                                <p class="text-3xl font-bold text-teal-600">Rp {{ number_format($penjualanBulanIni, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="bg-teal-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-trend-up text-3xl text-teal-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="ph ph-calendar-blank"></i>
+                            <span>{{ now()->format('F Y') }}</span>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 7. Penjualan Bulan Ini -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-teal-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-trend-up text-teal-600"></i>
-                                Penjualan Bulan Ini
-                            </p>
-                            <p class="text-2xl md:text-3xl font-bold text-teal-600">Rp {{ number_format($penjualanBulanIni, 0, ',', '.') }}</p>
+            <!-- ROW 2: OPERASIONAL -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="ph ph-briefcase text-blue-600"></i>
+                    Operasional
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Transaksi Hari Ini -->
+                    <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-blue-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-receipt text-blue-600"></i>
+                                    Transaksi Hari Ini
+                                </p>
+                                <p class="text-3xl font-bold text-blue-600">{{ $transaksiHariIni }}</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-receipt text-3xl text-blue-600"></i>
+                            </div>
                         </div>
-                        <div class="bg-teal-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-trend-up text-3xl text-teal-600"></i>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="ph ph-clock"></i>
+                            <span>Real-time</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-calendar-blank"></i>
-                        <span>{{ now()->format('F Y') }}</span>
+
+                    <!-- Transaksi Void -->
+                    <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-red-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-x-circle text-red-600"></i>
+                                    Dibatalkan
+                                </p>
+                                <p class="text-3xl font-bold text-red-600">{{ $voidHariIni }}</p>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-x-circle text-3xl text-red-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="ph ph-prohibit"></i>
+                            <span>Hari ini</span>
+                        </div>
+                    </div>
+
+                    <!-- Shift Kasir Hari Ini -->
+                    <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-orange-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-clock-countdown text-orange-600"></i>
+                                    Shift Hari Ini
+                                </p>
+                                <p class="text-3xl font-bold text-orange-600">{{ $shiftHariIni }}</p>
+                            </div>
+                            <div class="bg-orange-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-clock-countdown text-3xl text-orange-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="ph ph-users-three"></i>
+                            <span>Total shift</span>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 8. Shift Kasir Hari Ini -->
-                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-orange-500 transform hover:-translate-y-2">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
-                                <i class="ph ph-clock-countdown text-orange-600"></i>
-                                Shift Kasir Hari Ini
-                            </p>
-                            <p class="text-2xl md:text-3xl font-bold text-orange-600">{{ $shiftHariIni }}</p>
+            <!-- ROW 3: INVENTORY & TEAM -->
+            <div class="mb-10">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="ph ph-package text-purple-600"></i>
+                    Inventory & Tim
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Stok Kritis -->
+                    <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-yellow-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-warning text-yellow-600"></i>
+                                    Stok Kritis (≤ 10)
+                                </p>
+                                <p class="text-3xl font-bold text-yellow-600">{{ $stokKritis }}</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-warning text-3xl text-yellow-600"></i>
+                            </div>
                         </div>
-                        <div class="bg-orange-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                            <i class="ph ph-clock-countdown text-3xl text-orange-600"></i>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="ph ph-package"></i>
+                            <span>Perlu restock</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="ph ph-users-three"></i>
-                        <span>Total shift</span>
+
+                    <!-- Total Produk -->
+                    <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-indigo-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-cube text-indigo-600"></i>
+                                    Total Produk
+                                </p>
+                                <p class="text-3xl font-bold text-indigo-600">{{ $totalProduk }}</p>
+                            </div>
+                            <div class="bg-indigo-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-cube text-3xl text-indigo-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="ph ph-list-bullets"></i>
+                            <span>Katalog produk</span>
+                        </div>
+                    </div>
+
+                    <!-- Kasir Aktif -->
+                    <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-purple-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-user-focus text-purple-600"></i>
+                                    Kasir Aktif
+                                </p>
+                                <p class="text-3xl font-bold text-purple-600">{{ $kasirAktif }}</p>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-user-focus text-3xl text-purple-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="ph ph-users"></i>
+                            <span>Sedang bertugas</span>
+                        </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- GRAFIK dengan Desain Modern -->

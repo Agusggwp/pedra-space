@@ -170,4 +170,124 @@ class LaporanController extends Controller
 
         return $query->get();
     }
+
+    // 🔥 NEW: Laporan Keuntungan Per Bulan
+    public function laporanKeuntungan(Request $request)
+    {
+        $tahun = $request->tahun ?? now()->year;
+        $bulan = $request->bulan ?? now()->month;
+
+        // Ambil semua transaksi detail untuk bulan dan tahun yang dipilih (hanya yang lunas)
+        $transaksiDetail = \App\Models\TransaksiDetail::with(['transaksi', 'produk'])
+            ->whereHas('transaksi', function ($q) use ($tahun, $bulan) {
+                $q->whereYear('created_at', $tahun)
+                  ->whereMonth('created_at', $bulan)
+                  ->where('status', 'lunas');
+            })
+            ->get();
+
+        // Hitung keuntungan per item
+        $keuntungan = $transaksiDetail->map(function ($detail) {
+            // Gunakan field yang benar dari database
+            $hargaSatuan = $detail->harga_satuan ?? $detail->harga ?? 0;
+            $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+            $hargaBeli = $detail->produk->harga_beli ?? 0;
+            $hargaJual = $hargaSatuan;
+            
+            $detail->keuntungan_per_item = ($hargaJual - $hargaBeli) * $jumlah;
+            return $detail;
+        });
+
+        // Summary
+        $totalPenjualan = $transaksiDetail->sum(function ($detail) {
+            $hargaSatuan = $detail->harga_satuan ?? $detail->harga ?? 0;
+            $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+            return $hargaSatuan * $jumlah;
+        });
+
+        $totalHargaBeli = $transaksiDetail->sum(function ($detail) {
+            $hargaBeli = $detail->produk->harga_beli ?? 0;
+            $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+            return $hargaBeli * $jumlah;
+        });
+
+        $totalKeuntungan = $keuntungan->sum('keuntungan_per_item');
+        $totalQty = $transaksiDetail->sum(function ($detail) {
+            return $detail->jumlah ?? $detail->qty ?? 0;
+        });
+
+        // Data untuk grafik (per hari dalam bulan)
+        $hariData = [];
+        $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
+        
+        for ($hari = 1; $hari <= $daysInMonth; $hari++) {
+            $tanggal = sprintf('%04d-%02d-%02d', $tahun, $bulan, $hari);
+            $dayProfit = $transaksiDetail->filter(function ($item) use ($tanggal) {
+                return $item->transaksi->created_at->format('Y-m-d') == $tanggal;
+            })->sum(function ($detail) {
+                $hargaJual = $detail->harga_satuan ?? $detail->harga ?? 0;
+                $hargaBeli = $detail->produk->harga_beli ?? 0;
+                $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+                return ($hargaJual - $hargaBeli) * $jumlah;
+            });
+            
+            $hariData[] = [
+                'tanggal' => $tanggal,
+                'keuntungan' => $dayProfit
+            ];
+        }
+
+        return view('admin.laporan.keuntungan', compact(
+            'keuntungan', 'tahun', 'bulan', 'totalPenjualan', 
+            'totalHargaBeli', 'totalKeuntungan', 'totalQty', 'hariData'
+        ));
+    }
+
+    // Export Laporan Keuntungan PDF
+    public function exportKeuntunganPdf(Request $request)
+    {
+        $tahun = $request->tahun ?? now()->year;
+        $bulan = $request->bulan ?? now()->month;
+
+        $transaksiDetail = \App\Models\TransaksiDetail::with(['transaksi', 'produk'])
+            ->whereHas('transaksi', function ($q) use ($tahun, $bulan) {
+                $q->whereYear('created_at', $tahun)
+                  ->whereMonth('created_at', $bulan)
+                  ->where('status', 'lunas');
+            })
+            ->get();
+
+        $keuntungan = $transaksiDetail->map(function ($detail) {
+            // Gunakan field yang benar dari database
+            $hargaSatuan = $detail->harga_satuan ?? $detail->harga ?? 0;
+            $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+            $hargaBeli = $detail->produk->harga_beli ?? 0;
+            $hargaJual = $hargaSatuan;
+            
+            $detail->keuntungan_per_item = ($hargaJual - $hargaBeli) * $jumlah;
+            return $detail;
+        });
+
+        // Summary
+        $totalPenjualan = $transaksiDetail->sum(function ($detail) {
+            $hargaSatuan = $detail->harga_satuan ?? $detail->harga ?? 0;
+            $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+            return $hargaSatuan * $jumlah;
+        });
+
+        $totalHargaBeli = $transaksiDetail->sum(function ($detail) {
+            $hargaBeli = $detail->produk->harga_beli ?? 0;
+            $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+            return $hargaBeli * $jumlah;
+        });
+
+        $totalKeuntungan = $keuntungan->sum('keuntungan_per_item');
+
+        $pdf = Pdf::loadView('admin.laporan.keuntungan-pdf', compact(
+            'keuntungan', 'tahun', 'bulan', 'totalPenjualan', 
+            'totalHargaBeli', 'totalKeuntungan'
+        ))->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-keuntungan-' . $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '.pdf');
+    }
 }

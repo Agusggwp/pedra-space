@@ -55,12 +55,37 @@ class KasirController extends Controller
             return redirect()->route('kasir.pos')->with('error', 'Kasir belum dibuka!');
         }
 
-        $transaksiTunaiEDC = Transaksi::where('user_id', auth()->id())
-            ->whereIn('metode_pembayaran', ['Tunai', 'EDC'])
+        // 🔥 PISAHKAN BERDASARKAN METODE PEMBAYARAN
+        $transaksiTunai = Transaksi::where('user_id', auth()->id())
+            ->where('metode_pembayaran', 'Tunai')
             ->where('created_at', '>=', $shift->dibuka_pada)
             ->sum('total');
 
-        return view('kasir.tutup', compact('shift', 'transaksiTunaiEDC'));
+        $transaksiEDC = Transaksi::where('user_id', auth()->id())
+            ->where('metode_pembayaran', 'EDC')
+            ->where('created_at', '>=', $shift->dibuka_pada)
+            ->sum('total');
+
+        $transaksiQRIS = Transaksi::where('user_id', auth()->id())
+            ->where('metode_pembayaran', 'QRIS')
+            ->where('created_at', '>=', $shift->dibuka_pada)
+            ->sum('total');
+
+        $transaksiTransfer = Transaksi::where('user_id', auth()->id())
+            ->where('metode_pembayaran', 'Transfer')
+            ->where('created_at', '>=', $shift->dibuka_pada)
+            ->sum('total');
+
+        $transaksiTunaiEDC = $transaksiTunai + $transaksiEDC;
+
+        return view('kasir.tutup', compact(
+            'shift', 
+            'transaksiTunaiEDC', 
+            'transaksiTunai', 
+            'transaksiEDC', 
+            'transaksiQRIS', 
+            'transaksiTransfer'
+        ));
     }
 
     public function tutupKasir(Request $request)
@@ -138,16 +163,37 @@ class KasirController extends Controller
         $keranjang = session('keranjang', []);
         if (empty($keranjang)) return back()->with('error', 'Keranjang kosong!');
 
+        // 🔥 VALIDASI STOK SEBELUM TRANSAKSI
+        $stokError = null;
+        foreach ($keranjang as $id => $item) {
+            $produk = Produk::find($id);
+            if (!$produk) {
+                $stokError = "Produk tidak ditemukan!";
+                break;
+            }
+            if ($produk->stok < $item['jumlah']) {
+                $stokError = "Stok {$produk->nama} tidak cukup! (Tersedia: {$produk->stok}, Diminta: {$item['jumlah']})";
+                break;
+            }
+        }
+
+        if ($stokError) {
+            return back()->with('error', $stokError);
+        }
+
+        $shift = ShiftKasir::buka()->where('user_id', auth()->id())->firstOrFail();
         $total = collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah']);
 
         $transaksi = Transaksi::create([
             'user_id' => auth()->id(),
+            'shift_kasir_id' => $shift->id,
             'metode_pembayaran' => $request->metode,
             'total' => $total,
             'bayar' => $request->bayar,
             'kembalian' => $request->bayar - $total,
             'nama_pelanggan' => $request->nama_pelanggan,
             'nomor_meja' => $request->nomor_meja,
+            'status' => 'lunas'
         ]);
 
         foreach ($keranjang as $id => $item) {

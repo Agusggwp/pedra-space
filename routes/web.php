@@ -75,6 +75,10 @@ Route::get('/admin/laporan-shift/{id}', [LaporanController::class, 'showShift'])
 Route::get('/admin/laporan-shift/{id}/export/pdf', [LaporanController::class, 'exportShiftDetailPdf'])->name('laporan.shift.detail.pdf');
 Route::get('/admin/laporan-shift/{id}/export/excel', [LaporanController::class, 'exportShiftDetailExcel'])->name('laporan.shift.detail.excel');
 
+// 🔥 NEW Routes for Keuntungan Report
+Route::get('/admin/laporan-keuntungan', [LaporanController::class, 'laporanKeuntungan'])->name('laporan.keuntungan');
+Route::get('/admin/laporan-keuntungan/export/pdf', [LaporanController::class, 'exportKeuntunganPdf'])->name('laporan.keuntungan.pdf');
+
 
 use App\Http\Controllers\Admin\ProdukController;
 

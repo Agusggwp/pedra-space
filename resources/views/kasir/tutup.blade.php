@@ -34,11 +34,36 @@
 
                 <div class="bg-white text-dark rounded p-4 mb-4">
                     <h5>Ringkasan Shift</h5>
-                    <table class="table table-bordered">
+                    <table class="table table-bordered mb-0">
                         <tr><th>Saldo Awal</th><td class="text-end"><strong>Rp {{ number_format($shift->saldo_awal) }}</strong></td></tr>
-                        <tr><th>Penjualan Tunai & EDC</th><td class="text-end"><strong>Rp {{ number_format($transaksiTunaiEDC) }}</strong></td></tr>
+                        
+                        <tr class="table-info">
+                            <th colspan="2" class="text-center fw-bold">📊 Rincian Penjualan</th>
+                        </tr>
+                        <tr>
+                            <th><i class="bi bi-cash-coin"></i> Penjualan Tunai</th>
+                            <td class="text-end"><strong>Rp {{ number_format($transaksiTunai) }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th><i class="bi bi-credit-card"></i> Penjualan EDC (Kartu)</th>
+                            <td class="text-end"><strong>Rp {{ number_format($transaksiEDC) }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th><i class="bi bi-qr-code"></i> Penjualan QRIS</th>
+                            <td class="text-end"><strong>Rp {{ number_format($transaksiQRIS) }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th><i class="bi bi-arrow-left-right"></i> Penjualan Transfer</th>
+                            <td class="text-end"><strong>Rp {{ number_format($transaksiTransfer) }}</strong></td>
+                        </tr>
+
+                        <tr class="table-warning">
+                            <th><i class="bi bi-currency-exchange"></i> Total Tunai & EDC (Harus Ada di Laci)</th>
+                            <td class="text-end"><strong>Rp {{ number_format($transaksiTunaiEDC) }}</strong></td>
+                        </tr>
+
                         <tr class="table-success">
-                            <th>Harusnya Ada</th>
+                            <th>Harusnya Ada (Saldo Awal + Tunai & EDC)</th>
                             <td class="text-end"><strong>Rp {{ number_format($shift->saldo_awal + $transaksiTunaiEDC) }}</strong></td>
                         </tr>
                     </table>
