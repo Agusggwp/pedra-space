@@ -14,10 +14,9 @@ class DashboardController extends Controller
     {
         $hariIni = now()->format('Y-m-d');
 
-        // 1. Penjualan Hari Ini
-        $penjualanHariIni = Transaksi::whereDate('created_at', $hariIni)
-            ->where('status', 'lunas')
-            ->sum('total') ?? 0;
+        // 1. Penjualan Hari Ini -> AMBIL DARI saldo_akhir
+        $penjualanHariIni = ShiftKasir::whereDate('dibuka_pada', $hariIni)
+            ->sum('saldo_akhir') ?? 0;
 
         // 2. Transaksi Hari Ini
         $transaksiHariIni = Transaksi::whereDate('created_at', $hariIni)
@@ -27,7 +26,7 @@ class DashboardController extends Controller
         // 3. Stok Kritis
         $stokKritis = Produk::where('stok', '<=', 10)->count();
 
-        // 4. Kasir Aktif (shift buka hari ini)
+        // 4. Kasir Aktif
         $kasirAktif = ShiftKasir::where('status', 'buka')
             ->whereDate('dibuka_pada', $hariIni)
             ->distinct('user_id')
@@ -41,16 +40,18 @@ class DashboardController extends Controller
             ->where('status', 'void')
             ->count();
 
-        // 7. Penjualan Bulan Ini
-        $penjualanBulanIni = Transaksi::whereYear('created_at', now()->year)
-            ->whereMonth('created_at', now()->month)
-            ->where('status', 'lunas')
-            ->sum('total') ?? 0;
+        // 7. Penjualan Bulan Ini -> AMBIL DARI saldo_akhir
+        $penjualanBulanIni = ShiftKasir::whereYear('dibuka_pada', now()->year)
+            ->whereMonth('dibuka_pada', now()->month)
+            ->sum('saldo_akhir') ?? 0;
 
         // 8. Shift Hari Ini
         $shiftHariIni = ShiftKasir::whereDate('dibuka_pada', $hariIni)->count();
 
-        // GRAFIK 30 HARI – DIPAKSA ADA 30 TITIK (tidak pernah kosong!)
+        // 9. TOTAL UANG (SELURUH saldo_akhir)
+        $totalUang = ShiftKasir::sum('saldo_akhir') ?? 0;
+
+        // 10. Grafik 30 hari (tetap dari transaksi)
         $sales = Transaksi::select(
                 DB::raw('DATE(created_at) as tanggal'),
                 DB::raw('SUM(total) as total')
@@ -78,6 +79,7 @@ class DashboardController extends Controller
             'voidHariIni',
             'penjualanBulanIni',
             'shiftHariIni',
+            'totalUang',
             'penjualan30Hari'
         ));
     }

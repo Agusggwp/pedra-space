@@ -127,6 +127,26 @@
                     </div>
                 </div>
 
+                <!-- 6. Total Uang (dari saldo_akhir semua shift) -->
+                <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-emerald-500 transform hover:-translate-y-2">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                <i class="ph ph-wallet text-emerald-600"></i>
+                                Total Uang
+                            </p>
+                            <p class="text-2xl md:text-3xl font-bold text-emerald-600">Rp {{ number_format($totalUang, 0, ',', '.') }}</p>
+                        </div>
+                        <div class="bg-emerald-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                            <i class="ph ph-wallet text-3xl text-emerald-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <i class="ph ph-currency-circle-dollar"></i>
+                        <span>Jumlah saldo akhir (semua shift)</span>
+                    </div>
+                </div>
+
                 <!-- 6. Transaksi Void -->
                 <div class="group bg-white p-6 md:p-7 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-red-500 transform hover:-translate-y-2">
                     <div class="flex justify-between items-start mb-4">
