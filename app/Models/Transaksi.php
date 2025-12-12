@@ -16,7 +16,9 @@ class Transaksi extends Model
         'status',
         'keterangan_void',
         'void_at',
-        'void_by'
+        'void_by', 
+        'nama_pelanggan', 
+        'nomor_meja'
     ];
 
     public function details()
