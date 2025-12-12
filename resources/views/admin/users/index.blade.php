@@ -100,7 +100,6 @@
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Email</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Role</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Join</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Project</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">Action</th>
                             </tr>
@@ -150,11 +149,6 @@
                                     <span class="text-gray-600 text-sm">{{ $user->created_at->format('d M Y') }}</span>
                                 </td>
 
-                                <!-- Project Count -->
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-gray-900 font-medium">0</span>
-                                </td>
-
                                 <!-- Status -->
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
@@ -164,50 +158,13 @@
 
                                 <!-- Action -->
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <div class="relative inline-block text-left">
-                                        <button type="button" class="text-gray-400 hover:text-gray-600 transition p-2 rounded-lg hover:bg-gray-100" onclick="toggleMenu({{ $user->id }})">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <circle cx="12" cy="12" r="1"/>
-                                                <circle cx="12" cy="5" r="1"/>
-                                                <circle cx="12" cy="19" r="1"/>
-                                            </svg>
-                                        </button>
-                                        
-                                        <div id="menu-{{ $user->id }}" class="hidden absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-xl z-50 py-2">
-                                            <a href="{{ url('/admin/users/'.$user->id) }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
-                                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                                                    <circle cx="12" cy="12" r="3"/>
-                                                </svg>
-                                                View Details
-                                            </a>
-                                            <a href="{{ url('/admin/users/'.$user->id.'/edit') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
-                                                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                                                </svg>
-                                                Edit User
-                                            </a>
-                                            <a href="#" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
-                                                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                                </svg>
-                                                Reset Password
-                                            </a>
-                                            <div class="border-t border-gray-200 my-1"></div>
-                                            <form action="{{ url('/admin/users/'.$user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus {{ $user->name }}?')">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
-                                                        <path d="M3 6h18"/>
-                                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-                                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                                                    </svg>
-                                                    Delete User
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
+                                    <button type="button" class="text-gray-400 hover:text-gray-600 transition p-2 rounded-lg hover:bg-gray-100" onclick="toggleMenu(event, {{ $user->id }})">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="1"/>
+                                            <circle cx="12" cy="5" r="1"/>
+                                            <circle cx="12" cy="19" r="1"/>
+                                        </svg>
+                                    </button>
                                 </td>
                             </tr>
                             @empty
@@ -226,31 +183,168 @@
                             </tr>
                             @endforelse
                         </tbody>
+
+                        <!-- Dropdown Menus (outside table) -->
+                        @foreach($users as $user)
+                        <div id="menu-{{ $user->id }}" class="hidden absolute w-52 bg-white border border-gray-200 rounded-lg shadow-xl z-[9999] py-2" style="position: absolute;">
+                            <a href="{{ url('/admin/users/'.$user->id) }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                View Details
+                            </a>
+                            <a href="{{ url('/admin/users/'.$user->id.'/edit') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
+                                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                                </svg>
+                                Edit User
+                            </a>
+                            <a href="#" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
+                                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                                Reset Password
+                            </a>
+                            <div class="border-t border-gray-200 my-1"></div>
+                            <form action="{{ url('/admin/users/'.$user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus {{ $user->name }}?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
+                                        <path d="M3 6h18"/>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                    </svg>
+                                    Delete User
+                                </button>
+                            </form>
+                        </div>
+                        @endforeach
                     </table>
                 </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+                    <div class="text-sm text-gray-600">
+                        Showing {{ $users->firstItem() ?? 0 }} - {{ $users->lastItem() ?? 0 }} dari {{ $users->total() }} users
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <!-- First Page -->
+                        <a href="{{ $users->url(1) }}" 
+                           class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition {{ $users->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}"
+                           {{ $users->onFirstPage() ? 'onclick="return false;"' : '' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m11 17-5-5 5-5"/>
+                                <path d="m18 17-5-5 5-5"/>
+                            </svg>
+                        </a>
+
+                        <!-- Previous Page -->
+                        <a href="{{ $users->previousPageUrl() }}" 
+                           class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition {{ $users->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}"
+                           {{ $users->onFirstPage() ? 'onclick="return false;"' : '' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m15 18-6-6 6-6"/>
+                            </svg>
+                        </a>
+
+                        <!-- Page Number -->
+                        <div class="px-4 py-2 text-sm font-medium text-gray-700">
+                            {{ $users->currentPage() }} / {{ $users->lastPage() }}
+                        </div>
+
+                        <!-- Next Page -->
+                        <a href="{{ $users->nextPageUrl() }}" 
+                           class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition {{ !$users->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}"
+                           {{ !$users->hasMorePages() ? 'onclick="return false;"' : '' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m9 18 6-6-6-6"/>
+                            </svg>
+                        </a>
+
+                        <!-- Last Page -->
+                        <a href="{{ $users->url($users->lastPage()) }}" 
+                           class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition {{ !$users->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}"
+                           {{ !$users->hasMorePages() ? 'onclick="return false;"' : '' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m13 17 5-5-5-5"/>
+                                <path d="m6 17 5-5-5-5"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="text-sm text-gray-600">
+                        Page {{ $users->currentPage() }} dari {{ $users->lastPage() }}
+                    </div>
+                </div>
             </div>
-
-
         </main>
     </div>
 </div>
 
 <script>
-function toggleMenu(userId) {
+function toggleMenu(event, userId) {
+    event.stopPropagation();
+    const button = event.currentTarget;
     const menu = document.getElementById('menu-' + userId);
+    const rect = button.getBoundingClientRect();
+    
     // Close all other menus
     document.querySelectorAll('[id^="menu-"]').forEach(m => {
         if (m.id !== 'menu-' + userId) {
             m.classList.add('hidden');
         }
     });
+    
+    // Position menu relative to button
+    if (menu.classList.contains('hidden')) {
+        const menuWidth = 208; // w-52 = 208px
+        const menuHeight = 200; // approximate height
+        const padding = 16;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // Calculate horizontal position (align to right of button by default)
+        let leftPosition = rect.right - menuWidth + window.scrollX;
+        
+        // Check if menu overflows right edge
+        if (rect.right - menuWidth + 208 > viewportWidth) {
+            // Align to left edge of button instead
+            leftPosition = rect.left + window.scrollX;
+        }
+        
+        // Check if still overflows right
+        if (leftPosition + menuWidth > viewportWidth + window.scrollX) {
+            leftPosition = viewportWidth + window.scrollX - menuWidth - padding;
+        }
+        
+        // Check if overflows left
+        if (leftPosition < window.scrollX + padding) {
+            leftPosition = window.scrollX + padding;
+        }
+        
+        // Calculate vertical position
+        let topPosition = rect.bottom + window.scrollY + 8;
+        
+        // Check if menu overflows bottom
+        if (rect.bottom + menuHeight > viewportHeight) {
+            // Show above button instead
+            topPosition = rect.top + window.scrollY - menuHeight - 8;
+        }
+        
+        menu.style.top = topPosition + 'px';
+        menu.style.left = leftPosition + 'px';
+    }
+    
     // Toggle current menu
     menu.classList.toggle('hidden');
 }
 
 // Close menus when clicking outside
 document.addEventListener('click', function(event) {
-    if (!event.target.closest('[onclick^="toggleMenu"]') && !event.target.closest('[id^="menu-"]')) {
+    if (!event.target.closest('button[onclick^="toggleMenu"]') && !event.target.closest('[id^="menu-"]')) {
         document.querySelectorAll('[id^="menu-"]').forEach(m => m.classList.add('hidden'));
     }
 });
