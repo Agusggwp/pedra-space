@@ -58,13 +58,13 @@
                         </tr>
 
                         <tr class="table-warning">
-                            <th><i class="bi bi-currency-exchange"></i> Total Tunai & EDC (Harus Ada di Laci)</th>
-                            <td class="text-end"><strong>Rp {{ number_format($transaksiTunaiEDC) }}</strong></td>
+                            <th><i class="bi bi-currency-exchange"></i> Total Penjualan (Semua Metode)</th>
+                            <td class="text-end"><strong>Rp {{ number_format($transaksiTunai + $transaksiEDC + $transaksiQRIS + $transaksiTransfer) }}</strong></td>
                         </tr>
 
                         <tr class="table-success">
-                            <th>Harusnya Ada (Saldo Awal + Tunai & EDC)</th>
-                            <td class="text-end"><strong>Rp {{ number_format($shift->saldo_awal + $transaksiTunaiEDC) }}</strong></td>
+                            <th>Harusnya Ada (Saldo Awal + Penjualan Tunai)</th>
+                            <td class="text-end"><strong>Rp {{ number_format($shift->saldo_awal + $transaksiTunai) }}</strong></td>
                         </tr>
                     </table>
                 </div>

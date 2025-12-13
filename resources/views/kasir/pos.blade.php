@@ -107,59 +107,207 @@
         <div class="col-lg-8">
             <div class="card bg-white shadow-sm">
                 <div class="card-header bg-white border-bottom py-3">
-                    <h4 class="mb-0 fw-semibold text-dark">
-                        <i class="bi bi-box"></i> Pilih Produk
-                    </h4>
+                    <!-- TAB NAVIGATION -->
+                    <ul class="nav nav-tabs" id="produkMenuTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="produk-tab" data-bs-toggle="tab" data-bs-target="#produk-pane" type="button" role="tab">
+                                <i class="bi bi-box"></i> Produk
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu-pane" type="button" role="tab">
+                                <i class="bi bi-cup-hot"></i> Menu
+                            </button>
+                        </li>
+                    </ul>
                 </div>
 
                 <div class="card-body p-4">
-                    <div class="row g-4">
+                    <!-- TAB CONTENT -->
+                    <div class="tab-content" id="produkMenuTabContent">
 
-                        @forelse($produks as $p)
-                        <div class="col-6 col-md-4 col-lg-3 position-relative">
-                            <form action="{{ route('kasir.tambah') }}" method="POST" class="form-tambah-produk h-100">
-                                @csrf
-                                <input type="hidden" name="produk_id" value="{{ $p->id }}">
-                                <input type="hidden" class="stok-produk" value="{{ $p->stok }}">
-                                <input type="hidden" class="nama-produk" value="{{ $p->nama }}">
+                        <!-- TAB PRODUK -->
+                        <div class="tab-pane fade show active" id="produk-pane" role="tabpanel">
+                            <div class="row g-4">
+                                @forelse($produks as $p)
+                                <div class="col-6 col-md-4 col-lg-3 position-relative">
+                                    <form action="{{ route('kasir.tambah') }}" method="POST" class="form-tambah-produk h-100">
+                                        @csrf
+                                        <input type="hidden" name="produk_id" value="{{ $p->id }}">
+                                        <input type="hidden" class="stok-produk" value="{{ $p->stok }}">
+                                        <input type="hidden" class="nama-produk" value="{{ $p->nama }}">
 
-                                <div class="produk-card border-0 p-0 w-100 text-start d-flex flex-column h-100" style="cursor: pointer;">
+                                        <div class="produk-card border-0 p-0 w-100 text-start d-flex flex-column h-100" style="cursor: pointer;">
 
-                                    <!-- FOTO PRODUK – SEKARANG PAKAI LARAVEL STORAGE -->
-                                    @if($p->foto)
-                                        <img src="{{ Storage::url($p->foto) }}"
-                                             alt="{{ $p->nama }}"
-                                             class="produk-img"
-                                             onerror="this.src='https://via.placeholder.com/300x200/E5E7EB/9CA3AF?text=No+Image'">
-                                    @else
-                                        <div class="produk-img d-flex align-items-center justify-content-center no-image">
-                                            <i class="bi bi-image fs-1 text-secondary opacity-50"></i>
+                                            <!-- FOTO PRODUK – SEKARANG PAKAI LARAVEL STORAGE -->
+                                            @if($p->foto)
+                                                <img src="{{ Storage::url($p->foto) }}"
+                                                     alt="{{ $p->nama }}"
+                                                     class="produk-img"
+                                                     onerror="this.src='https://via.placeholder.com/300x200/E5E7EB/9CA3AF?text=No+Image'">
+                                            @else
+                                                <div class="produk-img d-flex align-items-center justify-content-center no-image">
+                                                    <i class="bi bi-image fs-1 text-secondary opacity-50"></i>
+                                                </div>
+                                            @endif
+
+                                            <span class="badge bg-success stok-badge">
+                                                Stok: {{ $p->stok }}
+                                            </span>
+
+                                            <div class="p-3 text-center flex-grow-1 d-flex flex-column justify-content-between">
+                                                <div>
+                                                    <h6 class="fw-semibold mb-1">{{ Str::limit($p->nama, 20) }}</h6>
+                                                    <div class="harga">Rp {{ number_format($p->harga_jual) }}</div>
+                                                </div>
+                                                <button type="submit" class="btn btn-sm btn-outline-success mt-2 w-100">
+                                                    <i class="bi bi-cart-plus"></i> Tambah
+                                                </button>
+                                            </div>
+
                                         </div>
-                                    @endif
-
-                                    <span class="badge bg-success stok-badge">
-                                        Stok: {{ $p->stok }}
-                                    </span>
-
-                                    <div class="p-3 text-center flex-grow-1 d-flex flex-column justify-content-between">
-                                        <div>
-                                            <h6 class="fw-semibold mb-1">{{ Str::limit($p->nama, 20) }}</h6>
-                                            <div class="harga">Rp {{ number_format($p->harga_jual) }}</div>
-                                        </div>
-                                        <button type="submit" class="btn btn-sm btn-outline-success mt-2 w-100">
-                                            <i class="bi bi-cart-plus"></i> Tambah
-                                        </button>
-                                    </div>
-
+                                    </form>
                                 </div>
-                            </form>
-                        </div>
-                        @empty
-                            <div class="col-12 text-center py-5">
-                                <i class="bi bi-box-seam display-3 text-muted"></i>
-                                <p class="mt-2">Tidak ada produk tersedia</p>
+                                @empty
+                                    <div class="col-12 text-center py-5">
+                                        <i class="bi bi-box-seam display-3 text-muted"></i>
+                                        <p class="mt-2">Tidak ada produk tersedia</p>
+                                    </div>
+                                @endforelse
                             </div>
-                        @endforelse
+                        </div>
+
+                        <!-- TAB MENU -->
+                        <div class="tab-pane fade" id="menu-pane" role="tabpanel">
+                            <div class="row g-4">
+                                @forelse($menus as $menu)
+                                <div class="col-6 col-md-4 col-lg-3 position-relative">
+                                    <div class="produk-card border-0 p-0 w-100 text-start d-flex flex-column h-100" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#menuModal{{ $menu->id }}">
+
+                                        <!-- FOTO MENU -->
+                                        @if($menu->foto)
+                                            <img src="{{ Storage::url($menu->foto) }}"
+                                                 alt="{{ $menu->nama }}"
+                                                 class="produk-img"
+                                                 onerror="this.src='https://via.placeholder.com/300x200/E5E7EB/9CA3AF?text=No+Image'">
+                                        @else
+                                            <div class="produk-img d-flex align-items-center justify-content-center no-image">
+                                                <i class="bi bi-image fs-1 text-secondary opacity-50"></i>
+                                            </div>
+                                        @endif
+
+                                        <span class="badge bg-primary stok-badge">
+                                            {{ $menu->kategori }}
+                                        </span>
+
+                                        <div class="p-3 text-center flex-grow-1 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <h6 class="fw-semibold mb-1">{{ Str::limit($menu->nama, 20) }}</h6>
+                                                <div class="harga">Rp {{ number_format($menu->harga_base) }}</div>
+                                                @if($menu->options->count() > 0)
+                                                    <small class="text-muted d-block mt-1">
+                                                        <i class="bi bi-gear"></i> {{ $menu->options->count() }} Pilihan
+                                                    </small>
+                                                @endif
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary mt-2 w-100" data-bs-toggle="modal" data-bs-target="#menuModal{{ $menu->id }}">
+                                                <i class="bi bi-cart-plus"></i> Pilih
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- MODAL UNTUK PILIHAN MENU -->
+                                <div class="modal fade" id="menuModal{{ $menu->id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">{{ $menu->nama }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form action="{{ route('kasir.tambah.menu') }}" method="POST">
+                                                @csrf
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+
+                                                    <!-- DESKRIPSI -->
+                                                    @if($menu->deskripsi)
+                                                        <p class="text-muted mb-3">{{ $menu->deskripsi }}</p>
+                                                    @endif
+
+                                                    <!-- HARGA BASE -->
+                                                    <div class="mb-3">
+                                                        <strong>Harga Dasar: Rp {{ number_format($menu->harga_base) }}</strong>
+                                                    </div>
+
+                                                    <!-- PILIHAN CUSTOMIZATION -->
+                                                    @if($menu->options->count() > 0)
+                                                        <h6 class="fw-semibold mb-3">Pilihan Khusus:</h6>
+                                                        @php
+                                                            $groupedOptions = $menu->options->groupBy('tipe');
+                                                        @endphp
+                                                        @foreach($groupedOptions as $tipe => $opts)
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-semibold">
+                                                                    @php
+                                                                        $tipeLabel = [
+                                                                            'sugar_level' => 'Tingkat Gula',
+                                                                            'milk_type' => 'Jenis Susu',
+                                                                            'temperature' => 'Suhu Minuman',
+                                                                            'size' => 'Ukuran',
+                                                                            'extra' => 'Tambahan'
+                                                                        ];
+                                                                    @endphp
+                                                                    {{ $tipeLabel[$tipe] ?? $tipe }}
+                                                                </label>
+                                                                <select name="options[{{ $tipe }}]" class="form-select">
+                                                                    <option value="">-- Tidak Pilih --</option>
+                                                                    @foreach($opts as $opt)
+                                                                        <option value="{{ $opt->id }}" data-harga="{{ $opt->nilai }}">
+                                                                            {{ $opt->nama_option }}
+                                                                            @if($opt->nilai > 0)
+                                                                                (+Rp {{ number_format($opt->nilai) }})
+                                                                            @elseif($opt->nilai < 0)
+                                                                                (-Rp {{ number_format(abs($opt->nilai)) }})
+                                                                            @endif
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+
+                                                    <!-- JUMLAH -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">Jumlah</label>
+                                                        <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
+                                                    </div>
+
+                                                    <!-- TOTAL HARGA -->
+                                                    <div class="alert alert-info mb-0">
+                                                        <strong>Total: <span id="totalHargaMenu{{ $menu->id }}">Rp {{ number_format($menu->harga_base) }}</span></strong>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bi bi-cart-plus"></i> Tambah ke Keranjang
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @empty
+                                    <div class="col-12 text-center py-5">
+                                        <i class="bi bi-cup-hot display-3 text-muted"></i>
+                                        <p class="mt-2">Tidak ada menu tersedia</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -322,6 +470,54 @@ document.querySelectorAll('.form-tambah-produk').forEach(form => {
         
         return true;
     });
+});
+
+// 🔥 HITUNG TOTAL HARGA UNTUK MENU DENGAN OPTIONS
+document.querySelectorAll('[id^="menuModal"]').forEach(modal => {
+    const menuId = modal.id.replace('menuModal', '');
+    const hargaBaseSpan = modal.querySelector('#totalHargaMenu' + menuId);
+    
+    if (hargaBaseSpan) {
+        const hargaBase = parseFloat(hargaBaseSpan.textContent.replace(/[^0-9]/g, ''));
+        
+        // Dengarkan semua select options
+        modal.querySelectorAll('select[name^="options"]').forEach(select => {
+            select.addEventListener('change', function() {
+                const jumlahInput = modal.querySelector('input[name="jumlah"]');
+                const jumlah = parseInt(jumlahInput.value) || 1;
+                
+                // Hitung total tambahan dari semua options
+                let totalTambahan = 0;
+                modal.querySelectorAll('select[name^="options"]').forEach(sel => {
+                    const selectedOption = sel.options[sel.selectedIndex];
+                    const hargaOption = parseFloat(selectedOption.getAttribute('data-harga')) || 0;
+                    totalTambahan += hargaOption;
+                });
+                
+                const totalHarga = (hargaBase + totalTambahan) * jumlah;
+                hargaBaseSpan.textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
+            });
+        });
+        
+        // Dengarkan perubahan jumlah
+        const jumlahInput = modal.querySelector('input[name="jumlah"]');
+        if (jumlahInput) {
+            jumlahInput.addEventListener('input', function() {
+                const jumlah = parseInt(this.value) || 1;
+                
+                // Hitung total tambahan dari semua options
+                let totalTambahan = 0;
+                modal.querySelectorAll('select[name^="options"]').forEach(sel => {
+                    const selectedOption = sel.options[sel.selectedIndex];
+                    const hargaOption = parseFloat(selectedOption.getAttribute('data-harga')) || 0;
+                    totalTambahan += hargaOption;
+                });
+                
+                const totalHarga = (hargaBase + totalTambahan) * jumlah;
+                hargaBaseSpan.textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
+            });
+        }
+    }
 });
 
 // Hitung kembalian otomatis

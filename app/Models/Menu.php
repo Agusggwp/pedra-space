@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Menu extends Model
+{
+    protected $table = 'menus';
+    protected $fillable = [
+        'nama',
+        'deskripsi',
+        'harga_base',
+        'harga_beli',
+        'kategori',
+        'foto',
+        'is_active'
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'harga_base' => 'float'
+    ];
+
+    // Relasi ke menu options (customization)
+    public function options()
+    {
+        return $this->hasMany(MenuOption::class);
+    }
+}

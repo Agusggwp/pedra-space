@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransaksiDetail extends Model
 {
-    protected $fillable = ['transaksi_id', 'produk_id', 'jumlah', 'harga_satuan', 'subtotal'];
+    protected $fillable = ['transaksi_id', 'produk_id', 'menu_id', 'jumlah', 'harga_satuan', 'subtotal', 'options'];
+
+    protected $casts = [
+        'options' => 'array'
+    ];
 
     public function transaksi()
     {
@@ -15,6 +19,11 @@ class TransaksiDetail extends Model
 
     public function produk()
     {
-        return $this->belongsTo(Produk::class);
+        return $this->belongsTo(Produk::class)->withDefault();
+    }
+
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class);
     }
 }

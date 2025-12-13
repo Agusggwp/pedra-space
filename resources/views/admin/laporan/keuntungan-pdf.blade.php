@@ -102,14 +102,15 @@
     </div>
 </div>
 
-<h2>Detail Keuntungan per Produk</h2>
+<h2>Detail Keuntungan per Item (Produk & Menu)</h2>
 
 @if($keuntungan->count() > 0)
     <table>
         <thead>
             <tr>
                 <th>#</th>
-                <th>Nama Produk</th>
+                <th>Tipe</th>
+                <th>Nama Item</th>
                 <th class="text-right">Qty</th>
                 <th class="text-right">Harga Beli</th>
                 <th class="text-right">Harga Jual</th>
@@ -119,7 +120,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($keuntungan->groupBy('produk_id') as $items)
+            @foreach($keuntungan->groupBy(function($item) { return ($item->tipe ?? 'produk') . '_' . ($item->produk_id ?? $item->menu_id); }) as $items)
                 @php
                     $first = $items->first();
                     $totalQty = $items->sum(function($item) { return $item->jumlah ?? $item->qty ?? 0; });
@@ -128,23 +129,44 @@
                         $jumlah = $item->jumlah ?? $item->qty ?? 0;
                         return $hargaSatuan * $jumlah;
                     });
-                    $totalBeli = $items->sum(function($item) { 
-                        $hargaBeli = $item->produk->harga_beli ?? 0;
-                        $jumlah = $item->jumlah ?? $item->qty ?? 0;
-                        return $hargaBeli * $jumlah;
-                    });
-                    $totalKeuntunganProduk = $totalJual - $totalBeli;
+                    
+                    if ($first->tipe === 'produk') {
+                        $totalBeli = $items->sum(function($item) { 
+                            $hargaBeli = $item->produk->harga_beli ?? 0;
+                            $jumlah = $item->jumlah ?? $item->qty ?? 0;
+                            return $hargaBeli * $jumlah;
+                        });
+                        $namaItem = $first->produk->nama ?? 'N/A';
+                        $hargaBeli = $first->produk->harga_beli ?? 0;
+                    } else {
+                        $totalBeli = $items->sum(function($item) { 
+                            $hargaBeli = $item->menu->harga_beli ?? 0;
+                            $jumlah = $item->jumlah ?? $item->qty ?? 0;
+                            return $hargaBeli * $jumlah;
+                        });
+                        $namaItem = $first->menu->nama ?? 'N/A';
+                        $hargaBeli = $first->menu->harga_beli ?? 0;
+                    }
+                    
+                    $totalKeuntunganItem = $totalJual - $totalBeli;
                     $hargaSatuanDisplay = $first->harga_satuan ?? $first->harga ?? 0;
                 @endphp
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $first->produk->nama ?? 'N/A' }}</td>
+                    <td>{{ $first->tipe === 'menu' ? 'Menu' : 'Produk' }}</td>
+                    <td>{{ $namaItem }}</td>
                     <td class="text-right">{{ $totalQty }}</td>
-                    <td class="text-right">Rp {{ number_format($first->produk->harga_beli, 0, ',', '.') }}</td>
+                    <td class="text-right">
+                        @if($hargaBeli > 0)
+                            Rp {{ number_format($hargaBeli, 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td class="text-right">Rp {{ number_format($hargaSatuanDisplay, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($totalBeli, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($totalJual, 0, ',', '.') }}</td>
-                    <td class="text-right"><strong>Rp {{ number_format($totalKeuntunganProduk, 0, ',', '.') }}</strong></td>
+                    <td class="text-right"><strong>Rp {{ number_format($totalKeuntunganItem, 0, ',', '.') }}</strong></td>
                 </tr>
             @endforeach
         </tbody>

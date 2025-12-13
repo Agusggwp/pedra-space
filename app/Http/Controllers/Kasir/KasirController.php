@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Kasir;
 
 use App\Http\Controllers\Controller;
 use App\Models\Produk;
+use App\Models\Menu;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use App\Models\ShiftKasir;
@@ -20,9 +21,10 @@ class KasirController extends Controller
         }
 
         $produks = Produk::where('stok', '>', 0)->orderBy('nama')->get();
+        $menus = Menu::where('is_active', true)->with('options')->orderBy('nama')->get();
         $keranjang = session('keranjang', []);
 
-        return view('kasir.pos', compact('produks', 'keranjang', 'shift'));
+        return view('kasir.pos', compact('produks', 'menus', 'keranjang', 'shift'));
     }
 
     // BUKA KASIR
@@ -149,6 +151,54 @@ class KasirController extends Controller
         return back()->with('success', $produk->nama . ' ditambahkan!');
     }
 
+    // TAMBAH MENU KE KERANJANG DENGAN OPTIONS
+    public function tambahMenuKeKeranjang(Request $request)
+    {
+        $menu = Menu::findOrFail($request->menu_id);
+        $keranjang = session('keranjang', []);
+
+        // Hitung harga total: harga_base + tambahan dari options
+        $totalTambahan = 0;
+        $selectedOptions = [];
+        
+        if ($request->has('options')) {
+            foreach ($request->options as $tipe => $optionId) {
+                if ($optionId) {
+                    $option = \App\Models\MenuOption::find($optionId);
+                    if ($option) {
+                        $totalTambahan += $option->nilai;
+                        $selectedOptions[$tipe] = $option->nama_option;
+                    }
+                }
+            }
+        }
+
+        $hargaFinal = $menu->harga_base + $totalTambahan;
+        $jumlah = $request->jumlah ?? 1;
+
+        // Key unik berdasarkan menu_id + options combo
+        $optionHash = md5(json_encode($selectedOptions));
+        $key = 'menu_' . $menu->id . '_' . $optionHash;
+
+        if (isset($keranjang[$key])) {
+            $keranjang[$key]['jumlah'] += $jumlah;
+        } else {
+            $keranjang[$key] = [
+                'type' => 'menu',
+                'menu_id' => $menu->id,
+                'nama' => $menu->nama,
+                'harga' => $hargaFinal,
+                'jumlah' => $jumlah,
+                'options' => $selectedOptions,
+                'harga_base' => $menu->harga_base,
+                'tambahan' => $totalTambahan
+            ];
+        }
+
+        session(['keranjang' => $keranjang]);
+        return back()->with('success', $menu->nama . ' ditambahkan!');
+    }
+
     public function hapusDariKeranjang($id)
     {
         $keranjang = session('keranjang', []);
@@ -163,9 +213,14 @@ class KasirController extends Controller
         $keranjang = session('keranjang', []);
         if (empty($keranjang)) return back()->with('error', 'Keranjang kosong!');
 
-        // 🔥 VALIDASI STOK SEBELUM TRANSAKSI
+        // 🔥 VALIDASI STOK HANYA UNTUK PRODUK (BUKAN MENU)
         $stokError = null;
         foreach ($keranjang as $id => $item) {
+            // Skip validasi untuk menu items
+            if (isset($item['type']) && $item['type'] === 'menu') {
+                continue;
+            }
+
             $produk = Produk::find($id);
             if (!$produk) {
                 $stokError = "Produk tidak ditemukan!";
@@ -197,14 +252,27 @@ class KasirController extends Controller
         ]);
 
         foreach ($keranjang as $id => $item) {
-            TransaksiDetail::create([
-                'transaksi_id' => $transaksi->id,
-                'produk_id' => $id,
-                'jumlah' => $item['jumlah'],
-                'harga_satuan' => $item['harga'],
-                'subtotal' => $item['harga'] * $item['jumlah']
-            ]);
-            Produk::find($id)->decrement('stok', $item['jumlah']);
+            // Untuk produk: simpan produk_id dan kurangi stok
+            if (!isset($item['type']) || $item['type'] !== 'menu') {
+                TransaksiDetail::create([
+                    'transaksi_id' => $transaksi->id,
+                    'produk_id' => $id,
+                    'jumlah' => $item['jumlah'],
+                    'harga_satuan' => $item['harga'],
+                    'subtotal' => $item['harga'] * $item['jumlah']
+                ]);
+                Produk::find($id)->decrement('stok', $item['jumlah']);
+            } else {
+                // Untuk menu: simpan menu_id tanpa kurangi stok
+                TransaksiDetail::create([
+                    'transaksi_id' => $transaksi->id,
+                    'menu_id' => $item['menu_id'],
+                    'jumlah' => $item['jumlah'],
+                    'harga_satuan' => $item['harga'],
+                    'subtotal' => $item['harga'] * $item['jumlah'],
+                    'options' => $item['options'] ?? null
+                ]);
+            }
         }
 
         session()->forget('keranjang');

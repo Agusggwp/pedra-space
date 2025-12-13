@@ -55,8 +55,27 @@
     @foreach($transaksi->details as $d)
     <table>
         <tr>
-            <td colspan="3">{{ $d->produk->nama }}</td>
+            <td colspan="3" class="bold">
+                @if($d->produk_id)
+                    {{ $d->produk->nama }}
+                @elseif($d->menu_id)
+                    {{ $d->menu->nama }}
+                @else
+                    Item
+                @endif
+            </td>
         </tr>
+        @if($d->options && count($d->options) > 0)
+        <tr>
+            <td colspan="3">
+                <small>
+                    @foreach($d->options as $key => $value)
+                        • {{ $value }}<br>
+                    @endforeach
+                </small>
+            </td>
+        </tr>
+        @endif
         <tr>
             <td>{{ $d->jumlah }} × Rp {{ number_format($d->harga_satuan) }}</td>
             <td></td>

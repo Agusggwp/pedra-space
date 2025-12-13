@@ -53,6 +53,16 @@
                 <span>Produk</span>
             </a>
 
+            <a href="{{ route('admin.menu.index') }}" 
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'menu') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 7h16"/>
+                    <path d="M4 12h16"/>
+                    <path d="M4 17h16"/>
+                </svg>
+                <span>Manajemen Menu</span>
+            </a>
+
             <a href="{{ url('/admin/stok') }}" 
                class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'stok') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

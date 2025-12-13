@@ -170,7 +170,7 @@
                     <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 py-4">
                         <h3 class="text-2xl font-bold flex items-center gap-3">
                             <i class="ph ph-list text-3xl"></i>
-                            Detail Keuntungan per Produk
+                            Detail Keuntungan per Item (Produk & Menu)
                         </h3>
                     </div>
 
@@ -180,7 +180,8 @@
                                 <thead class="bg-gray-100 border-b-2 border-gray-300">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">#</th>
-                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Nama Produk</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Tipe</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Nama Item</th>
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Qty</th>
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Harga Beli</th>
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Harga Jual</th>
@@ -190,7 +191,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
-                                    @foreach($keuntungan->groupBy('produk_id') as $items)
+                                    @foreach($keuntungan->groupBy(function($item) { return ($item->tipe ?? 'produk') . '_' . ($item->produk_id ?? $item->menu_id); }) as $items)
                                         @php
                                             $first = $items->first();
                                             $totalQty = $items->sum(function($item) { return $item->jumlah ?? $item->qty ?? 0; });
@@ -199,23 +200,50 @@
                                                 $jumlah = $item->jumlah ?? $item->qty ?? 0;
                                                 return $hargaSatuan * $jumlah; 
                                             });
-                                            $totalBeli = $items->sum(function($item) { 
-                                                $hargaBeli = $item->produk->harga_beli ?? 0;
-                                                $jumlah = $item->jumlah ?? $item->qty ?? 0;
-                                                return $hargaBeli * $jumlah;
-                                            });
-                                            $totalKeuntunganProduk = $totalJual - $totalBeli;
+                                            
+                                            if ($first->tipe === 'produk') {
+                                                $totalBeli = $items->sum(function($item) { 
+                                                    $hargaBeli = $item->produk->harga_beli ?? 0;
+                                                    $jumlah = $item->jumlah ?? $item->qty ?? 0;
+                                                    return $hargaBeli * $jumlah;
+                                                });
+                                                $namaItem = $first->produk->nama ?? 'N/A';
+                                                $hargaBeli = $first->produk->harga_beli ?? 0;
+                                            } else {
+                                                $totalBeli = $items->sum(function($item) { 
+                                                    $hargaBeli = $item->menu->harga_beli ?? 0;
+                                                    $jumlah = $item->jumlah ?? $item->qty ?? 0;
+                                                    return $hargaBeli * $jumlah;
+                                                });
+                                                $namaItem = $first->menu->nama ?? 'N/A';
+                                                $hargaBeli = $first->menu->harga_beli ?? 0;
+                                            }
+                                            
+                                            $totalKeuntunganItem = $totalJual - $totalBeli;
                                             $hargaSatuanDisplay = $first->harga_satuan ?? $first->harga ?? 0;
                                         @endphp
                                         <tr class="hover:bg-gray-50 transition-colors duration-150">
                                             <td class="px-6 py-4 text-sm text-gray-700">{{ $loop->iteration }}</td>
-                                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $first->produk->nama ?? 'N/A' }}</td>
+                                            <td class="px-6 py-4 text-sm font-medium">
+                                                @if($first->tipe === 'menu')
+                                                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">Menu</span>
+                                                @else
+                                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">Produk</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $namaItem }}</td>
                                             <td class="px-6 py-4 text-sm text-right text-gray-700">{{ $totalQty }}</td>
-                                            <td class="px-6 py-4 text-sm text-right text-gray-700">Rp {{ number_format($first->produk->harga_beli, 0, ',', '.') }}</td>
+                                            <td class="px-6 py-4 text-sm text-right text-gray-700">
+                                                @if($hargaBeli > 0)
+                                                    Rp {{ number_format($hargaBeli, 0, ',', '.') }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
                                             <td class="px-6 py-4 text-sm text-right text-gray-700">Rp {{ number_format($hargaSatuanDisplay, 0, ',', '.') }}</td>
                                             <td class="px-6 py-4 text-sm text-right font-medium text-gray-900">Rp {{ number_format($totalBeli, 0, ',', '.') }}</td>
                                             <td class="px-6 py-4 text-sm text-right font-medium text-gray-900">Rp {{ number_format($totalJual, 0, ',', '.') }}</td>
-                                            <td class="px-6 py-4 text-sm text-right font-bold text-green-600">Rp {{ number_format($totalKeuntunganProduk, 0, ',', '.') }}</td>
+                                            <td class="px-6 py-4 text-sm text-right font-bold {{ $first->tipe === 'menu' ? 'text-purple-600' : 'text-green-600' }}">Rp {{ number_format($totalKeuntunganItem, 0, ',', '.') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
