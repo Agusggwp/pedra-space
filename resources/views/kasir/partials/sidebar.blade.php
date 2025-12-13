@@ -1,41 +1,48 @@
 <!-- SIDEBAR KASIR -->
-<div id="sidebar" class="fixed top-0 left-0 h-screen w-80 sidebar-kasir text-white transform -translate-x-full transition-transform duration-300 lg:translate-x-0 z-50 flex flex-col overflow-hidden">
+<div id="sidebar" class="fixed top-0 left-0 h-screen w-72 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 lg:translate-x-0 z-50 flex flex-col">
     
     <!-- Logo & User -->
-    <div class="p-6 bg-gradient-to-br from-emerald-600 to-teal-700 flex-shrink-0">
+    <div class="p-6 bg-emerald-600 flex-shrink-0">
         <div class="flex items-center gap-3">
-            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-emerald-600 text-xl font-bold shadow-xl flex-shrink-0">
+            <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-emerald-600 text-2xl font-bold flex-shrink-0">
                 {{ Str::substr(auth()->user()->name, 0, 1) }}
             </div>
             <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-bold text-white truncate">{{ auth()->user()->name }}</h3>
-                <p class="text-emerald-100 text-xs font-medium whitespace-nowrap">👤 Kasir Aktif</p>
+                <h3 class="text-base font-bold text-white truncate">{{ auth()->user()->name }}</h3>
+                <p class="text-emerald-100 text-xs font-medium">👤 Kasir Aktif</p>
             </div>
         </div>
     </div>
 
     <!-- Menu Section -->
-    <div class="flex-1 p-6 bg-gradient-to-b from-emerald-50 to-teal-50 flex-shrink-0 min-h-0">
+    <div class="flex-1 p-6 bg-gray-50 overflow-y-auto">
         <!-- Menu Label -->
-        <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3 px-3 whitespace-nowrap">📋 Menu Kasir</p>
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-3">📋 Menu Kasir</p>
 
         <!-- Menu -->
         <nav class="space-y-2">
-            <a href="{{ route('kasir.dashboard') }}" class="menu-item-kasir {{ request()->routeIs('kasir.dashboard') ? 'active-kasir' : '' }} flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
-                <i class="ph ph-house text-2xl flex-shrink-0"></i>
-                <span class="font-semibold text-sm whitespace-nowrap">Dashboard</span>
+            <a href="{{ route('kasir.dashboard') }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('kasir.dashboard') ? 'bg-emerald-600 text-white border-emerald-700' : 'bg-white text-gray-700 hover:bg-gray-100 hover:border-emerald-300 border-transparent' }} border-2">
+                <i class="ph ph-house text-xl flex-shrink-0"></i>
+                <span class="font-semibold text-sm">Dashboard</span>
             </a>
-            <a href="{{ route('kasir.pos') }}" class="menu-item-kasir {{ request()->routeIs('kasir.pos') ? 'active-kasir' : '' }} flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
-                <i class="ph ph-shopping-cart text-2xl flex-shrink-0"></i>
-                <span class="font-semibold text-sm whitespace-nowrap">Penjualan (POS)</span>
+            
+            <a href="{{ route('kasir.pos') }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('kasir.pos') ? 'bg-emerald-600 text-white border-emerald-700' : 'bg-white text-gray-700 hover:bg-gray-100 hover:border-emerald-300 border-transparent' }} border-2">
+                <i class="ph ph-shopping-cart text-xl flex-shrink-0"></i>
+                <span class="font-semibold text-sm">Penjualan (POS)</span>
             </a>
-            <a href="{{ route('kasir.daftar') }}" class="menu-item-kasir {{ request()->routeIs('kasir.daftar') ? 'active-kasir' : '' }} flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
-                <i class="ph ph-receipt text-2xl flex-shrink-0"></i>
-                <span class="font-semibold text-sm whitespace-nowrap">Daftar Penjualan</span>
+            
+            <a href="{{ route('kasir.daftar') }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('kasir.daftar') ? 'bg-emerald-600 text-white border-emerald-700' : 'bg-white text-gray-700 hover:bg-gray-100 hover:border-emerald-300 border-transparent' }} border-2">
+                <i class="ph ph-receipt text-xl flex-shrink-0"></i>
+                <span class="font-semibold text-sm">Daftar Penjualan</span>
             </a>
-            <a href="{{ route('kasir.update-stok') }}" class="menu-item-kasir {{ request()->routeIs('kasir.update-stok') ? 'active-kasir' : '' }} flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
-                <i class="ph ph-package text-2xl flex-shrink-0"></i>
-                <span class="font-semibold text-sm whitespace-nowrap">Update Stok</span>
+            
+            <a href="{{ route('kasir.update-stok') }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('kasir.update-stok') ? 'bg-emerald-600 text-white border-emerald-700' : 'bg-white text-gray-700 hover:bg-gray-100 hover:border-emerald-300 border-transparent' }} border-2">
+                <i class="ph ph-package text-xl flex-shrink-0"></i>
+                <span class="font-semibold text-sm">Update Stok</span>
             </a>
 
             @php
@@ -43,76 +50,77 @@
             @endphp
 
             @if($shiftAktif)
-            <a href="{{ route('kasir.tutup.form') }}" class="menu-item-kasir {{ request()->routeIs('kasir.tutup.form') ? 'active-kasir' : '' }} flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
-                <i class="ph ph-door text-2xl flex-shrink-0"></i>
-                <span class="font-semibold text-sm whitespace-nowrap">Tutup Kasir</span>
+            <a href="{{ route('kasir.tutup.form') }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('kasir.tutup.form') ? 'bg-emerald-600 text-white border-emerald-700' : 'bg-white text-gray-700 hover:bg-gray-100 hover:border-emerald-300 border-transparent' }} border-2">
+                <i class="ph ph-door text-xl flex-shrink-0"></i>
+                <span class="font-semibold text-sm">Tutup Kasir</span>
             </a>
             @else
-            <div class="menu-item-kasir flex items-center gap-3 px-4 py-3 rounded-xl opacity-40 cursor-not-allowed">
-                <i class="ph ph-door text-2xl flex-shrink-0"></i>
-                <span class="font-semibold text-sm whitespace-nowrap">Tutup Kasir</span>
+            <div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-white text-gray-400 border-2 border-transparent opacity-50 cursor-not-allowed">
+                <i class="ph ph-door text-xl flex-shrink-0"></i>
+                <span class="font-semibold text-sm">Tutup Kasir</span>
             </div>
             @endif
         </nav>
     </div>
 
     <!-- LOGOUT BUTTON & FOOTER -->
-    <div class="p-6 bg-gradient-to-br from-emerald-600 to-teal-700 flex-shrink-0">
+    <div class="p-6 bg-white flex-shrink-0 border-t border-gray-200">
         <form action="{{ url('/logout') }}" method="POST" class="mb-4">
             @csrf
-            <button class="w-full flex items-center justify-center gap-3 px-5 py-3 rounded-xl bg-red-600 text-white hover:bg-red-700 transition font-bold shadow-xl hover:shadow-2xl transform hover:scale-105">
-                <i class="ph ph-sign-out text-xl flex-shrink-0"></i>
-                <span class="text-sm whitespace-nowrap">Logout</span>
+            <button type="submit" class="w-full flex items-center justify-center gap-3 px-5 py-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition font-bold shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                <i class="ph ph-sign-out text-lg flex-shrink-0"></i>
+                <span class="text-sm">Logout</span>
             </button>
         </form>
 
-        <!-- FOOTER ARTDEVATA -->
-        <div class="text-center border-t border-emerald-400 pt-4">
-            <p class="text-xs text-emerald-100 mb-1">Dibuat oleh</p>
-            <a href="https://artdevata.net" target="_blank" class="text-base font-bold text-white hover:text-emerald-200 transition">
+        <!-- FOOTER ARTDEVATA (Optional - Uncomment if needed) -->
+        <!-- <div class="text-center border-t border-gray-200 pt-4">
+            <p class="text-xs text-gray-500 mb-1">Dibuat oleh</p>
+            <a href="https://artdevata.net" target="_blank" class="text-base font-bold text-emerald-600 hover:text-emerald-700 transition">
                 ArtDevata
             </a>
-            <p class="text-xs text-emerald-100 mt-1">artdevata.net • Bali</p>
-        </div>
+            <p class="text-xs text-gray-500 mt-1">artdevata.net • Bali</p>
+        </div> -->
     </div>
 </div>
 
 <!-- TOGGLE SIDEBAR (Mobile) -->
 <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"
-        class="lg:hidden fixed top-6 left-6 bg-emerald-600 shadow-xl text-white p-4 rounded-2xl z-50 border-2 border-emerald-500 hover:bg-emerald-700 transition">
+        class="lg:hidden fixed top-5 left-5 bg-emerald-600 text-white p-3 rounded-lg z-40 shadow-lg hover:bg-emerald-700 transition">
     <i class="ph ph-list text-2xl"></i>
 </button>
 
 <style>
-.sidebar-kasir {
-    width: 320px !important;
-    max-width: 320px !important;
-    min-width: 320px !important;
-    box-shadow: 8px 0 30px rgba(16, 185, 129, 0.3);
+/* Force consistent sidebar width - EXACTLY 288px (w-72) */
+#sidebar {
+    width: 288px !important;
+    max-width: 288px !important;
+    min-width: 288px !important;
 }
+
+/* Ensure sidebar stays fixed on desktop */
 @media (min-width: 1024px) {
-    .sidebar-kasir {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        height: 100vh !important;
+    #sidebar {
         transform: translateX(0) !important;
     }
 }
-.menu-item-kasir {
-    color: #047857;
-    background: white;
-    border: 2px solid transparent;
+
+/* Custom scrollbar for menu area */
+#sidebar > div:nth-child(2)::-webkit-scrollbar {
+    width: 6px;
 }
-.menu-item-kasir:hover {
-    background: #d1fae5;
-    border-color: #10b981;
-    transform: translateX(4px);
+
+#sidebar > div:nth-child(2)::-webkit-scrollbar-track {
+    background: transparent;
 }
-.menu-item-kasir.active-kasir {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    border-color: #047857;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+
+#sidebar > div:nth-child(2)::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+#sidebar > div:nth-child(2)::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
 }
 </style>
