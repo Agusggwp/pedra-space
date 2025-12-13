@@ -15,9 +15,10 @@ class DashboardController extends Controller
     {
         $hariIni = now()->format('Y-m-d');
 
-        // 1. Penjualan Hari Ini -> AMBIL DARI saldo_akhir
-        $penjualanHariIni = ShiftKasir::whereDate('dibuka_pada', $hariIni)
-            ->sum('saldo_akhir') ?? 0;
+        // 1. Penjualan Hari Ini -> AMBIL DARI Transaksi (exclude void)
+        $penjualanHariIni = Transaksi::whereDate('created_at', $hariIni)
+            ->where('status', '!=', 'void')
+            ->sum('total') ?? 0;
 
         // 2. Transaksi Hari Ini
         $transaksiHariIni = Transaksi::whereDate('created_at', $hariIni)
@@ -41,10 +42,11 @@ class DashboardController extends Controller
             ->where('status', 'void')
             ->count();
 
-        // 7. Penjualan Bulan Ini -> AMBIL DARI saldo_akhir
-        $penjualanBulanIni = ShiftKasir::whereYear('dibuka_pada', now()->year)
-            ->whereMonth('dibuka_pada', now()->month)
-            ->sum('saldo_akhir') ?? 0;
+        // 7. Penjualan Bulan Ini -> AMBIL DARI Transaksi (exclude void)
+        $penjualanBulanIni = Transaksi::whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->where('status', '!=', 'void')
+            ->sum('total') ?? 0;
 
         // 8. Shift Hari Ini
         $shiftHariIni = ShiftKasir::whereDate('dibuka_pada', $hariIni)->count();

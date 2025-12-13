@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
+use App\Models\TotalEarnings;
 use Illuminate\Http\Request;
 
 class VoidController extends Controller
@@ -49,6 +50,13 @@ class VoidController extends Controller
             'void_by'          => auth()->id(),
         ]);
 
-        return back()->with('success', "Transaksi #{$transaksi->id} berhasil DIBATALKAN & stok dikembalikan!");
+        // 🔥 CATAT KE TOTAL_EARNINGS SEBAGAI REFUND (NILAI NEGATIF)
+        TotalEarnings::create([
+            'user_id' => auth()->id(),
+            'saldo_akhir' => -$transaksi->total,
+            'keterangan' => "Refund/Void Transaksi #{$transaksi->id} - Rp " . number_format($transaksi->total) . " | Alasan: {$request->keterangan}"
+        ]);
+
+        return back()->with('success', "Transaksi #{$transaksi->id} berhasil DIBATALKAN, stok dikembalikan, & refund Rp " . number_format($transaksi->total) . " dicatat!");
     }
 }
