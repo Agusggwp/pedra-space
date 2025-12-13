@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Produk;
 use App\Models\Category;
+use App\Models\TotalEarnings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -50,11 +51,19 @@ class ProdukController extends Controller
             $data['foto'] = 'produk/' . $filename;        // atau langsung $path
         }
 
-        Produk::create($data);
+        $produk = Produk::create($data);
+
+        // 🔥 CATAT KE TOTAL_EARNINGS SEBAGAI PENGELUARAN (NILAI NEGATIF)
+        $pengeluaran = $request->harga_beli * $request->stok;
+        TotalEarnings::create([
+            'user_id' => auth()->id(),
+            'saldo_akhir' => -$pengeluaran,
+            'keterangan' => "Pembelian produk baru {$request->nama} - {$request->stok} unit @ Rp " . number_format($request->harga_beli)
+        ]);
 
         return redirect()
             ->route('admin.produk.index')
-            ->with('success', 'Produk berhasil ditambahkan!');
+            ->with('success', "Produk berhasil ditambahkan! Pengeluaran: Rp " . number_format($pengeluaran));
     }
 
     public function edit(Produk $produk)

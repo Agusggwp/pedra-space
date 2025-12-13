@@ -8,6 +8,7 @@ use App\Models\Menu;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use App\Models\ShiftKasir;
+use App\Models\TotalEarnings;
 use Illuminate\Http\Request;
 
 class KasirController extends Controller
@@ -108,6 +109,13 @@ class KasirController extends Controller
             'selisih' => $selisih,
             'ditutup_pada' => now(),
             'status' => 'tutup'
+        ]);
+
+        // 🔥 OTOMATIS SIMPAN KE TOTAL_EARNINGS
+        TotalEarnings::create([
+            'user_id' => auth()->id(),
+            'saldo_akhir' => $request->saldo_akhir,
+            'keterangan' => 'Penutupan kasir - Selisih: Rp ' . number_format($selisih)
         ]);
 
         session()->forget('keranjang');

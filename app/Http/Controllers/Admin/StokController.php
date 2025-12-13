@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Produk;
 use App\Models\StokHistory;
+use App\Models\TotalEarnings;
 use Illuminate\Http\Request;
 
 class StokController extends Controller
@@ -39,16 +40,27 @@ class StokController extends Controller
         $produk = Produk::findOrFail($request->produk_id);
         $produk->increment('stok', $request->jumlah);
 
+        // Hitung pengeluaran: harga_beli * jumlah
+        $pengeluaran = $produk->harga_beli * $request->jumlah;
+
         StokHistory::create([
             'produk_id'   => $produk->id,
             'tipe'        => 'masuk',
             'jumlah'      => $request->jumlah,
+            'biaya'       => $pengeluaran,
             'keterangan'  => $request->keterangan,
             'user_id'     => auth()->id()
         ]);
 
+        // 🔥 CATAT KE TOTAL_EARNINGS SEBAGAI PENGELUARAN (NILAI NEGATIF)
+        TotalEarnings::create([
+            'user_id' => auth()->id(),
+            'saldo_akhir' => -$pengeluaran,
+            'keterangan' => "Pembelian stok {$produk->nama} - {$request->jumlah} unit @ Rp " . number_format($produk->harga_beli)
+        ]);
+
         return redirect()->route('admin.stok.index')
-            ->with('success', "Stok {$produk->nama} +{$request->jumlah} (Total: {$produk->stok})");
+            ->with('success', "Stok {$produk->nama} +{$request->jumlah} (Total: {$produk->stok}). Pengeluaran: Rp " . number_format($pengeluaran));
     }
 
     // 3. Form Stok Keluar

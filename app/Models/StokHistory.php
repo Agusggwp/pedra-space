@@ -13,8 +13,13 @@ class StokHistory extends Model
         'produk_id',
         'tipe',
         'jumlah',
+        'biaya',
         'keterangan',
         'user_id'
+    ];
+
+    protected $casts = [
+        'biaya' => 'decimal:2'
     ];
 
     public function produk(): BelongsTo

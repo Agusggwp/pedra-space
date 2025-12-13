@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\Produk;
 use App\Models\ShiftKasir;
+use App\Models\TotalEarnings;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -48,8 +49,8 @@ class DashboardController extends Controller
         // 8. Shift Hari Ini
         $shiftHariIni = ShiftKasir::whereDate('dibuka_pada', $hariIni)->count();
 
-        // 9. TOTAL UANG (SELURUH saldo_akhir)
-        $totalUang = ShiftKasir::sum('saldo_akhir') ?? 0;
+        // 9. TOTAL UANG (DARI total_earnings)
+        $totalUang = TotalEarnings::sum('saldo_akhir') ?? 0;
 
         // 10. Grafik 30 hari (tetap dari transaksi)
         $sales = Transaksi::select(

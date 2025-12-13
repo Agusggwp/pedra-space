@@ -38,6 +38,7 @@
                                 <th class="py-5 px-5 text-left text-sm font-bold uppercase tracking-wider">Produk</th>
                                 <th class="py-5 px-5 text-left text-sm font-bold uppercase tracking-wider">Tipe</th>
                                 <th class="py-5 px-5 text-center text-sm font-bold uppercase tracking-wider">Jumlah</th>
+                                <th class="py-5 px-5 text-right text-sm font-bold uppercase tracking-wider">Biaya</th>
                                 <th class="py-5 px-5 text-left text-sm font-bold uppercase tracking-wider">Keterangan</th>
                                 <th class="py-5 px-5 text-left text-sm font-bold uppercase tracking-wider">User</th>
                             </tr>
@@ -73,6 +74,13 @@
                                 </td>
                                 <td class="py-5 px-5 text-center">
                                     <span class="text-xl font-bold text-gray-800">{{ $h->jumlah }}</span>
+                                </td>
+                                <td class="py-5 px-5 text-right">
+                                    @if($h->biaya)
+                                        <span class="font-bold text-red-600">Rp {{ number_format($h->biaya, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
                                 </td>
                                 <td class="py-5 px-5 text-gray-600">
                                     {{ $h->keterangan ?: '-' }}
