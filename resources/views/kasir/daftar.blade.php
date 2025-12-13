@@ -198,6 +198,8 @@
                         </tr>
                     </tfoot>
 
+                    @include('kasir.partials.footer')
+
                 </table>
             </div>
         </div>

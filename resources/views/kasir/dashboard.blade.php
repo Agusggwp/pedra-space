@@ -158,10 +158,7 @@
         </div>
 
         <!-- INFO FOOTER -->
-        <div class="mt-8 text-center text-sm text-gray-500">
-            <p>© 2024 Sistem POS - Kasir {{ auth()->user()->name }}</p>
-        </div>
-
+        @include('kasir.partials.footer')
     </div>
 </div>
 

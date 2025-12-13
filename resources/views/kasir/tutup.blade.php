@@ -190,6 +190,8 @@
             <p>Sistem akan otomatis menghitung selisih antara saldo akhir dengan harusnya ada</p>
         </div>
 
+        @include('kasir.partials.footer')
+
     </div>
 </div>
 

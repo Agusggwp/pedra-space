@@ -366,6 +366,7 @@
 
         </div>
     </div>
+    @include('kasir.partials.footer')
 </div>
 
 <style>
