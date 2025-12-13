@@ -4,133 +4,164 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Kasir - POS</title>
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        body {
-            background: #f8fafc;
-            color: #1e293b;
-        }
-        .sidebar {
-            background: #1e293b;
-            box-shadow: 8px 0 30px rgba(0,0,0,0.3);
-        }
-        .card-hover {
-            background: white;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border-color: #3b82f6;
-        }
-        .btn-primary { background: #3b82f6; }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-success { background: #10b981; }
-        .btn-success:hover { background: #059669; }
-        .btn-danger { background: #ef4444; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-info { background: #0ea5e9; }
-        .btn-info:hover { background: #0284c7; }
-        .text-gradient {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .menu-item {
-            color: #94a3b8;
-            transition: all 0.2s ease;
-        }
-        .menu-item:hover {
-            color: #e2e8f0;
-            background: rgba(255,255,255,0.05);
-        }
-        .menu-item.active {
-            background: #3b82f6;
-            color: white;
-        }
-    </style>
 </head>
 <body class="bg-gray-50">
 
 @include('kasir.partials.sidebar')
 
 <!-- MAIN CONTENT -->
-<div class="lg:ml-[320px] p-8">
+<div class="lg:ml-72 p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
 
-    <div class="text-center mb-12">
-        <h1 class="text-5xl font-bold text-gradient">
-            Selamat Datang, {{ auth()->user()->name }}!
-        </h1>
-        <p class="text-xl text-gray-600 mt-3">Kasir Sistem POS — Siap Melayani Pelanggan</p>
-    </div>
-
-    <!-- Shift Status -->
-    @php
-        $shiftAktif = \App\Models\ShiftKasir::buka()->where('user_id', auth()->id())->first();
-    @endphp
-
-    @if(!$shiftAktif)
-    <div class="max-w-3xl mx-auto bg-yellow-50 border-2 border-yellow-300 text-yellow-800 p-10 rounded-3xl text-center mb-12 shadow-lg">
-        <i class="ph ph-warning-circle text-7xl mb-6"></i>
-        <h2 class="text-3xl font-bold mb-4">Kasir Belum Dibuka!</h2>
-        <p class="text-lg mb-8">Silakan buka kasir untuk memulai penjualan hari ini.</p>
-        <a href="{{ route('kasir.buka') }}" class="bg-green-600 hover:bg-green-700 text-white px-10 py-5 rounded-2xl text-2xl font-bold inline-flex items-center gap-4 shadow-lg">
-            <i class="ph ph-cash-register text-3xl"></i> Buka Kasir Sekarang
-        </a>
-    </div>
-    @else
-    <div class="max-w-3xl mx-auto bg-green-50 border-2 border-green-300 text-green-800 p-10 rounded-3xl text-center mb-12 shadow-lg">
-        <i class="ph ph-check-circle text-7xl text-green-500 mb-6"></i>
-        <h2 class="text-3xl font-bold mb-4">Kasir Sudah Dibuka</h2>
-        <p class="text-2xl">Saldo Awal: <strong>Rp {{ number_format($shiftAktif->saldo_awal) }}</strong></p>
-    </div>
-    @endif
-
-    <!-- Menu Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-        <div class="card-hover rounded-3xl p-10 text-center">
-            <i class="ph ph-shopping-cart text-7xl text-blue-500 mb-6"></i>
-            <h3 class="text-3xl font-bold mb-3">Penjualan</h3>
-            <p class="text-gray-600 mb-8">Mulai transaksi baru sekarang</p>
-            <a href="{{ route('kasir.pos') }}" class="btn-primary text-white px-8 py-4 rounded-2xl text-xl font-bold shadow-lg block">
-                Buka POS
-            </a>
+        <!-- HEADER -->
+        <div class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                Selamat Datang, {{ auth()->user()->name }}! 👋
+            </h1>
+            <p class="text-gray-600">Kasir Sistem POS — Siap Melayani Pelanggan</p>
         </div>
-        <div class="card-hover rounded-3xl p-10 text-center">
-            <i class="ph ph-receipt text-7xl text-sky-500 mb-6"></i>
-            <h3 class="text-3xl font-bold mb-3">Daftar Penjualan</h3>
-            <p class="text-gray-600 mb-8">Lihat semua transaksi hari ini</p>
-            <a href="{{ route('kasir.daftar') }}" class="btn-info text-white px-8 py-4 rounded-2xl text-xl font-bold shadow-lg block">
-                Lihat Daftar
-            </a>
+
+        <!-- SHIFT STATUS -->
+        @php
+            $shiftAktif = \App\Models\ShiftKasir::buka()->where('user_id', auth()->id())->first();
+        @endphp
+
+        @if(!$shiftAktif)
+        <!-- KASIR BELUM DIBUKA -->
+        <div class="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-8 mb-8 shadow-lg">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <div class="flex-shrink-0">
+                    <div class="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center">
+                        <i class="ph-fill ph-warning-circle text-5xl text-white"></i>
+                    </div>
+                </div>
+                <div class="flex-1 text-center md:text-left">
+                    <h2 class="text-2xl font-bold text-yellow-800 mb-2">Kasir Belum Dibuka!</h2>
+                    <p class="text-yellow-700 mb-4">Silakan buka kasir untuk memulai penjualan hari ini.</p>
+                    <a href="{{ route('kasir.buka') }}" 
+                       class="inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition transform hover:scale-105">
+                        <i class="ph-fill ph-cash-register text-2xl"></i>
+                        <span>Buka Kasir Sekarang</span>
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="card-hover rounded-3xl p-10 text-center border-2 border-green-300">
-            <i class="ph ph-package text-7xl text-green-500 mb-6"></i>
-            <h3 class="text-3xl font-bold mb-3">Update Stok</h3>
-            <p class="text-gray-600 mb-8">Tambah/kurangi stok dengan cepat</p>
-            <a href="{{ route('kasir.update-stok') }}" class="btn-success text-white px-8 py-4 rounded-2xl text-xl font-bold shadow-lg block">
-                Update Stok
-            </a>
+        @else
+        <!-- KASIR SUDAH DIBUKA -->
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-2xl p-8 mb-8 shadow-lg">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <div class="flex-shrink-0">
+                    <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="ph-fill ph-check-circle text-5xl text-white"></i>
+                    </div>
+                </div>
+                <div class="flex-1 text-center md:text-left">
+                    <h2 class="text-2xl font-bold text-green-800 mb-2">Kasir Sudah Dibuka ✓</h2>
+                    <p class="text-green-700 text-lg">
+                        Saldo Awal: <span class="font-bold text-xl">Rp {{ number_format($shiftAktif->saldo_awal) }}</span>
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="card-hover rounded-3xl p-10 text-center">
-            <i class="ph ph-door text-7xl text-red-500 mb-6"></i>
-            <h3 class="text-3xl font-bold mb-3">Tutup Kasir</h3>
-            <p class="text-gray-600 mb-8">Selesaikan shift hari ini</p>
+        @endif
+
+        <!-- MENU CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- PENJUALAN POS -->
+            <a href="{{ route('kasir.pos') }}" 
+               class="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-2 border-2 border-transparent hover:border-blue-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition">
+                        <i class="ph-fill ph-shopping-cart text-4xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Penjualan</h3>
+                    <p class="text-sm text-gray-600 mb-4">Mulai transaksi baru</p>
+                    <div class="mt-auto w-full">
+                        <span class="inline-flex items-center justify-center w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold group-hover:bg-blue-700 transition">
+                            Buka POS
+                        </span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- DAFTAR PENJUALAN -->
+            <a href="{{ route('kasir.daftar') }}" 
+               class="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-2 border-2 border-transparent hover:border-sky-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-sky-200 transition">
+                        <i class="ph-fill ph-receipt text-4xl text-sky-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Daftar Penjualan</h3>
+                    <p class="text-sm text-gray-600 mb-4">Lihat transaksi hari ini</p>
+                    <div class="mt-auto w-full">
+                        <span class="inline-flex items-center justify-center w-full px-4 py-2 bg-sky-600 text-white rounded-lg font-semibold group-hover:bg-sky-700 transition">
+                            Lihat Daftar
+                        </span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- UPDATE STOK -->
+            <a href="{{ route('kasir.update-stok') }}" 
+               class="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-2 border-2 border-transparent hover:border-green-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-green-200 transition">
+                        <i class="ph-fill ph-package text-4xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Update Stok</h3>
+                    <p class="text-sm text-gray-600 mb-4">Kelola stok produk</p>
+                    <div class="mt-auto w-full">
+                        <span class="inline-flex items-center justify-center w-full px-4 py-2 bg-green-600 text-white rounded-lg font-semibold group-hover:bg-green-700 transition">
+                            Update Stok
+                        </span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- TUTUP KASIR -->
             @if($shiftAktif)
-                <a href="{{ route('kasir.tutup.form') }}" class="btn-danger text-white px-8 py-4 rounded-2xl text-xl font-bold shadow-lg block">
-                    Tutup Kasir
-                </a>
+            <a href="{{ route('kasir.tutup.form') }}" 
+               class="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-2 border-2 border-transparent hover:border-red-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-red-200 transition">
+                        <i class="ph-fill ph-door text-4xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Tutup Kasir</h3>
+                    <p class="text-sm text-gray-600 mb-4">Selesaikan shift hari ini</p>
+                    <div class="mt-auto w-full">
+                        <span class="inline-flex items-center justify-center w-full px-4 py-2 bg-red-600 text-white rounded-lg font-semibold group-hover:bg-red-700 transition">
+                            Tutup Kasir
+                        </span>
+                    </div>
+                </div>
+            </a>
             @else
-                <button disabled class="bg-gray-400 text-white px-8 py-4 rounded-2xl text-xl cursor-not-allowed">
-                    Tutup Kasir
-                </button>
+            <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-gray-200 opacity-60 cursor-not-allowed">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+                        <i class="ph-fill ph-door text-4xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-400 mb-2">Tutup Kasir</h3>
+                    <p class="text-sm text-gray-400 mb-4">Tidak tersedia</p>
+                    <div class="mt-auto w-full">
+                        <span class="inline-flex items-center justify-center w-full px-4 py-2 bg-gray-300 text-gray-500 rounded-lg font-semibold cursor-not-allowed">
+                            Tutup Kasir
+                        </span>
+                    </div>
+                </div>
+            </div>
             @endif
+
         </div>
+
+        <!-- INFO FOOTER -->
+        <div class="mt-8 text-center text-sm text-gray-500">
+            <p>© 2024 Sistem POS - Kasir {{ auth()->user()->name }}</p>
+        </div>
+
     </div>
 </div>
 

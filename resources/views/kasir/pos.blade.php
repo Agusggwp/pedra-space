@@ -4,307 +4,241 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kasir POS</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        body {
-            background: #f7f7f7;
-            color: #333;
-            min-height: 100vh;
-        }
-
-        .card {
-            border-radius: 20px;
-        }
-
-        .produk-card {
-            background: #ffffff;
-            color: #333;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid #e5e5e5;
-            transition: 0.2s;
-            height: 100%;
-        }
-
-        .produk-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        .produk-img {
-            width: 100%;
-            height: 130px;
-            object-fit: cover;
-            background: #fafafa;
-        }
-
-        .stok-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 0.8rem;
-        }
-
-        .harga {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #157347;
-        }
-
-        .keranjang-card {
-            background: #ffffff !important;
-            color: #333 !important;
-            border: 1px solid #e5e5e5;
-        }
-
-        .table-white {
-            background: #ffffff;
-        }
-
-        .table-white td, .table-white th {
-            background: #ffffff;
-            color: #333;
-        }
-
-        .table-total {
-            background: #e8f5e9 !important;
-            color: #2e7d32 !important;
-        }
-
-        /* Placeholder untuk produk tanpa foto */
-        .no-image {
-            background: linear-gradient(135deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%);
-            background-size: 20px 20px;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body>
+<body class="bg-gray-50">
 
-<div class="container py-4">
+@include('kasir.partials.sidebar')
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
-        <h3 class="mb-0 fw-bold">
-            Kasir: <span class="text-primary">{{ auth()->user()->name }}</span>
-        </h3>
+<!-- MAIN CONTENT -->
+<div class="lg:ml-72 p-6 md:p-8">
+    <div class="max-w-[1600px] mx-auto">
 
-        <div class="d-flex gap-2">
-            <a href="{{ route('kasir.daftar') }}" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-receipt"></i> Daftar Penjualan
-            </a>
-            <a href="{{ route('kasir.tutup.form') }}" class="btn btn-outline-danger btn-lg">
-                <i class="bi bi-lock-fill"></i> Tutup Kasir
-            </a>
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-1">Point of Sale</h1>
+                <p class="text-gray-600">Kasir: <span class="font-semibold">{{ auth()->user()->name }}</span></p>
+            </div>
+
+            <div class="flex gap-2">
+                <a href="{{ route('kasir.daftar') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 transition font-semibold border border-gray-200">
+                    <i class="ph ph-receipt text-lg"></i>
+                    <span class="hidden sm:inline">Daftar Penjualan</span>
+                </a>
+                <a href="{{ route('kasir.tutup.form') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg shadow-sm hover:shadow-md hover:bg-red-700 transition font-semibold">
+                    <i class="ph ph-lock text-lg"></i>
+                    <span class="hidden sm:inline">Tutup Kasir</span>
+                </a>
+            </div>
         </div>
-    </div>
 
-    <div class="row g-4">
+        <div class="grid lg:grid-cols-3 gap-6">
 
-        <!-- DAFTAR PRODUK -->
-        <div class="col-lg-8">
-            <div class="card bg-white shadow-sm">
-                <div class="card-header bg-white border-bottom py-3">
-                    <!-- TAB NAVIGATION -->
-                    <ul class="nav nav-tabs" id="produkMenuTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="produk-tab" data-bs-toggle="tab" data-bs-target="#produk-pane" type="button" role="tab">
-                                <i class="bi bi-box"></i> Produk
+            <!-- DAFTAR PRODUK & MENU -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    
+                    <!-- TABS -->
+                    <div class="border-b border-gray-200">
+                        <nav class="flex" id="tabs">
+                            <button onclick="switchTab('produk')" 
+                                    id="tab-produk"
+                                    class="tab-button active px-6 py-4 font-semibold border-b-2 transition">
+                                <i class="ph ph-package mr-2"></i>Produk
                             </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu-pane" type="button" role="tab">
-                                <i class="bi bi-cup-hot"></i> Menu
+                            <button onclick="switchTab('menu')" 
+                                    id="tab-menu"
+                                    class="tab-button px-6 py-4 font-semibold border-b-2 transition">
+                                <i class="ph ph-coffee mr-2"></i>Menu
                             </button>
-                        </li>
-                    </ul>
-                </div>
+                        </nav>
+                    </div>
 
-                <div class="card-body p-4">
                     <!-- TAB CONTENT -->
-                    <div class="tab-content" id="produkMenuTabContent">
-
+                    <div class="p-6" style="max-height: 75vh; overflow-y: auto;">
+                        
                         <!-- TAB PRODUK -->
-                        <div class="tab-pane fade show active" id="produk-pane" role="tabpanel">
-                            <div class="row g-4">
+                        <div id="content-produk" class="tab-content">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                 @forelse($produks as $p)
-                                <div class="col-6 col-md-4 col-lg-3 position-relative">
-                                    <form action="{{ route('kasir.tambah') }}" method="POST" class="form-tambah-produk h-100">
-                                        @csrf
-                                        <input type="hidden" name="produk_id" value="{{ $p->id }}">
-                                        <input type="hidden" class="stok-produk" value="{{ $p->stok }}">
-                                        <input type="hidden" class="nama-produk" value="{{ $p->nama }}">
+                                <form action="{{ route('kasir.tambah') }}" method="POST" class="form-tambah-produk">
+                                    @csrf
+                                    <input type="hidden" name="produk_id" value="{{ $p->id }}">
+                                    <input type="hidden" class="stok-produk" value="{{ $p->stok }}">
+                                    <input type="hidden" class="nama-produk" value="{{ $p->nama }}">
 
-                                        <div class="produk-card border-0 p-0 w-100 text-start d-flex flex-column h-100" style="cursor: pointer;">
-
-                                            <!-- FOTO PRODUK – SEKARANG PAKAI LARAVEL STORAGE -->
+                                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-300 transition group cursor-pointer">
+                                        
+                                        <!-- FOTO PRODUK -->
+                                        <div class="relative">
                                             @if($p->foto)
                                                 <img src="{{ Storage::url($p->foto) }}"
                                                      alt="{{ $p->nama }}"
-                                                     class="produk-img"
+                                                     class="w-full h-32 object-cover"
                                                      onerror="this.src='https://via.placeholder.com/300x200/E5E7EB/9CA3AF?text=No+Image'">
                                             @else
-                                                <div class="produk-img d-flex align-items-center justify-content-center no-image">
-                                                    <i class="bi bi-image fs-1 text-secondary opacity-50"></i>
+                                                <div class="w-full h-32 bg-gray-100 flex items-center justify-center">
+                                                    <i class="ph ph-image text-4xl text-gray-300"></i>
                                                 </div>
                                             @endif
-
-                                            <span class="badge bg-success stok-badge">
+                                            
+                                            <!-- BADGE STOK -->
+                                            <span class="absolute top-2 right-2 px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded-full">
                                                 Stok: {{ $p->stok }}
                                             </span>
-
-                                            <div class="p-3 text-center flex-grow-1 d-flex flex-column justify-content-between">
-                                                <div>
-                                                    <h6 class="fw-semibold mb-1">{{ Str::limit($p->nama, 20) }}</h6>
-                                                    <div class="harga">Rp {{ number_format($p->harga_jual) }}</div>
-                                                </div>
-                                                <button type="submit" class="btn btn-sm btn-outline-success mt-2 w-100">
-                                                    <i class="bi bi-cart-plus"></i> Tambah
-                                                </button>
-                                            </div>
-
                                         </div>
-                                    </form>
-                                </div>
-                                @empty
-                                    <div class="col-12 text-center py-5">
-                                        <i class="bi bi-box-seam display-3 text-muted"></i>
-                                        <p class="mt-2">Tidak ada produk tersedia</p>
+
+                                        <!-- INFO PRODUK -->
+                                        <div class="p-3">
+                                            <h3 class="font-semibold text-sm text-gray-800 mb-1 truncate">{{ $p->nama }}</h3>
+                                            <p class="text-lg font-bold text-gray-800 mb-2">Rp {{ number_format($p->harga_jual) }}</p>
+                                            
+                                            <button type="submit" class="w-full px-3 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition text-sm font-semibold">
+                                                <i class="ph ph-shopping-cart-simple mr-1"></i>Tambah
+                                            </button>
+                                        </div>
                                     </div>
+                                </form>
+                                @empty
+                                <div class="col-span-full text-center py-12">
+                                    <i class="ph ph-package text-6xl text-gray-300 mb-3"></i>
+                                    <p class="text-gray-500">Tidak ada produk tersedia</p>
+                                </div>
                                 @endforelse
                             </div>
                         </div>
 
                         <!-- TAB MENU -->
-                        <div class="tab-pane fade" id="menu-pane" role="tabpanel">
-                            <div class="row g-4">
+                        <div id="content-menu" class="tab-content hidden">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                 @forelse($menus as $menu)
-                                <div class="col-6 col-md-4 col-lg-3 position-relative">
-                                    <div class="produk-card border-0 p-0 w-100 text-start d-flex flex-column h-100" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#menuModal{{ $menu->id }}">
-
-                                        <!-- FOTO MENU -->
+                                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-300 transition cursor-pointer"
+                                     onclick="openMenuModal('{{ $menu->id }}')">
+                                    
+                                    <!-- FOTO MENU -->
+                                    <div class="relative">
                                         @if($menu->foto)
                                             <img src="{{ Storage::url($menu->foto) }}"
                                                  alt="{{ $menu->nama }}"
-                                                 class="produk-img"
+                                                 class="w-full h-32 object-cover"
                                                  onerror="this.src='https://via.placeholder.com/300x200/E5E7EB/9CA3AF?text=No+Image'">
                                         @else
-                                            <div class="produk-img d-flex align-items-center justify-content-center no-image">
-                                                <i class="bi bi-image fs-1 text-secondary opacity-50"></i>
+                                            <div class="w-full h-32 bg-gray-100 flex items-center justify-center">
+                                                <i class="ph ph-image text-4xl text-gray-300"></i>
                                             </div>
                                         @endif
-
-                                        <span class="badge bg-primary stok-badge">
+                                        
+                                        <!-- BADGE KATEGORI -->
+                                        <span class="absolute top-2 right-2 px-2 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full">
                                             {{ $menu->kategori }}
                                         </span>
+                                    </div>
 
-                                        <div class="p-3 text-center flex-grow-1 d-flex flex-column justify-content-between">
-                                            <div>
-                                                <h6 class="fw-semibold mb-1">{{ Str::limit($menu->nama, 20) }}</h6>
-                                                <div class="harga">Rp {{ number_format($menu->harga_base) }}</div>
-                                                @if($menu->options->count() > 0)
-                                                    <small class="text-muted d-block mt-1">
-                                                        <i class="bi bi-gear"></i> {{ $menu->options->count() }} Pilihan
-                                                    </small>
-                                                @endif
-                                            </div>
-                                            <button type="button" class="btn btn-sm btn-outline-primary mt-2 w-100" data-bs-toggle="modal" data-bs-target="#menuModal{{ $menu->id }}">
-                                                <i class="bi bi-cart-plus"></i> Pilih
-                                            </button>
-                                        </div>
-
+                                    <!-- INFO MENU -->
+                                    <div class="p-3">
+                                        <h3 class="font-semibold text-sm text-gray-800 mb-1 truncate">{{ $menu->nama }}</h3>
+                                        <p class="text-lg font-bold text-gray-800 mb-1">Rp {{ number_format($menu->harga_base) }}</p>
+                                        @if($menu->options->count() > 0)
+                                            <p class="text-xs text-gray-500 mb-2">
+                                                <i class="ph ph-gear-six"></i> {{ $menu->options->count() }} Pilihan
+                                            </p>
+                                        @endif
+                                        
+                                        <button type="button" class="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold">
+                                            <i class="ph ph-shopping-cart-simple mr-1"></i>Pilih
+                                        </button>
                                     </div>
                                 </div>
 
-                                <!-- MODAL UNTUK PILIHAN MENU -->
-                                <div class="modal fade" id="menuModal{{ $menu->id }}" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">{{ $menu->nama }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <form action="{{ route('kasir.tambah.menu') }}" method="POST">
-                                                @csrf
-                                                <div class="modal-body">
-                                                    <input type="hidden" name="menu_id" value="{{ $menu->id }}">
-
-                                                    <!-- DESKRIPSI -->
-                                                    @if($menu->deskripsi)
-                                                        <p class="text-muted mb-3">{{ $menu->deskripsi }}</p>
-                                                    @endif
-
-                                                    <!-- HARGA BASE -->
-                                                    <div class="mb-3">
-                                                        <strong>Harga Dasar: Rp {{ number_format($menu->harga_base) }}</strong>
-                                                    </div>
-
-                                                    <!-- PILIHAN CUSTOMIZATION -->
-                                                    @if($menu->options->count() > 0)
-                                                        <h6 class="fw-semibold mb-3">Pilihan Khusus:</h6>
-                                                        @php
-                                                            $groupedOptions = $menu->options->groupBy('tipe');
-                                                        @endphp
-                                                        @foreach($groupedOptions as $tipe => $opts)
-                                                            <div class="mb-3">
-                                                                <label class="form-label fw-semibold">
-                                                                    @php
-                                                                        $tipeLabel = [
-                                                                            'sugar_level' => 'Tingkat Gula',
-                                                                            'milk_type' => 'Jenis Susu',
-                                                                            'temperature' => 'Suhu Minuman',
-                                                                            'size' => 'Ukuran',
-                                                                            'extra' => 'Tambahan'
-                                                                        ];
-                                                                    @endphp
-                                                                    {{ $tipeLabel[$tipe] ?? $tipe }}
-                                                                </label>
-                                                                <select name="options[{{ $tipe }}]" class="form-select">
-                                                                    <option value="">-- Tidak Pilih --</option>
-                                                                    @foreach($opts as $opt)
-                                                                        <option value="{{ $opt->id }}" data-harga="{{ $opt->nilai }}">
-                                                                            {{ $opt->nama_option }}
-                                                                            @if($opt->nilai > 0)
-                                                                                (+Rp {{ number_format($opt->nilai) }})
-                                                                            @elseif($opt->nilai < 0)
-                                                                                (-Rp {{ number_format(abs($opt->nilai)) }})
-                                                                            @endif
-                                                                        </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        @endforeach
-                                                    @endif
-
-                                                    <!-- JUMLAH -->
-                                                    <div class="mb-3">
-                                                        <label class="form-label fw-semibold">Jumlah</label>
-                                                        <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
-                                                    </div>
-
-                                                    <!-- TOTAL HARGA -->
-                                                    <div class="alert alert-info mb-0">
-                                                        <strong>Total: <span id="totalHargaMenu{{ $menu->id }}">Rp {{ number_format($menu->harga_base) }}</span></strong>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="bi bi-cart-plus"></i> Tambah ke Keranjang
-                                                    </button>
-                                                </div>
-                                            </form>
+                                <!-- MODAL MENU -->
+                                <div id="menuModal{{ $menu->id }}" class="modal-menu hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                                    <div class="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                                        <div class="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+                                            <h3 class="text-xl font-bold text-gray-800">{{ $menu->nama }}</h3>
+                                            <button onclick="closeMenuModal('{{ $menu->id }}')" class="text-gray-400 hover:text-gray-600">
+                                                <i class="ph ph-x text-2xl"></i>
+                                            </button>
                                         </div>
+
+                                        <form action="{{ route('kasir.tambah.menu') }}" method="POST" class="p-4">
+                                            @csrf
+                                            <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+
+                                            @if($menu->deskripsi)
+                                                <p class="text-gray-600 mb-4">{{ $menu->deskripsi }}</p>
+                                            @endif
+
+                                            <div class="mb-4">
+                                                <strong class="text-gray-800">Harga Dasar: Rp {{ number_format($menu->harga_base) }}</strong>
+                                            </div>
+
+                                            <!-- OPTIONS -->
+                                            @if($menu->options->count() > 0)
+                                                <h4 class="font-semibold text-gray-800 mb-3">Pilihan Khusus:</h4>
+                                                @php
+                                                    $groupedOptions = $menu->options->groupBy('tipe');
+                                                    $tipeLabel = [
+                                                        'sugar_level' => 'Tingkat Gula',
+                                                        'milk_type' => 'Jenis Susu',
+                                                        'temperature' => 'Suhu Minuman',
+                                                        'size' => 'Ukuran',
+                                                        'extra' => 'Tambahan'
+                                                    ];
+                                                @endphp
+                                                @foreach($groupedOptions as $tipe => $opts)
+                                                    <div class="mb-3">
+                                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                            {{ $tipeLabel[$tipe] ?? $tipe }}
+                                                        </label>
+                                                        <select name="options[{{ $tipe }}]" class="menu-option-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
+                                                            <option value="">-- Tidak Pilih --</option>
+                                                            @foreach($opts as $opt)
+                                                                <option value="{{ $opt->id }}" data-harga="{{ $opt->nilai }}">
+                                                                    {{ $opt->nama_option }}
+                                                                    @if($opt->nilai > 0)
+                                                                        (+Rp {{ number_format($opt->nilai) }})
+                                                                    @elseif($opt->nilai < 0)
+                                                                        (-Rp {{ number_format(abs($opt->nilai)) }})
+                                                                    @endif
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+
+                                            <!-- JUMLAH -->
+                                            <div class="mb-4">
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">Jumlah</label>
+                                                <input type="number" name="jumlah" class="menu-jumlah w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" value="1" min="1" required>
+                                            </div>
+
+                                            <!-- TOTAL -->
+                                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                                                <strong class="text-gray-800">Total: <span class="totalHargaMenu" data-base="{{ $menu->harga_base }}">Rp {{ number_format($menu->harga_base) }}</span></strong>
+                                            </div>
+
+                                            <div class="flex gap-2">
+                                                <button type="button" onclick="closeMenuModal('{{ $menu->id }}')" class="flex-1 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold">
+                                                    Batal
+                                                </button>
+                                                <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                                                    <i class="ph ph-shopping-cart-simple mr-1"></i>Tambah
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
 
                                 @empty
-                                    <div class="col-12 text-center py-5">
-                                        <i class="bi bi-cup-hot display-3 text-muted"></i>
-                                        <p class="mt-2">Tidak ada menu tersedia</p>
-                                    </div>
+                                <div class="col-span-full text-center py-12">
+                                    <i class="ph ph-coffee text-6xl text-gray-300 mb-3"></i>
+                                    <p class="text-gray-500">Tidak ada menu tersedia</p>
+                                </div>
                                 @endforelse
                             </div>
                         </div>
@@ -312,78 +246,73 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- KERANJANG -->
-        <div class="col-lg-4">
-            <div class="card keranjang-card shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-bottom">
-                    <h4 class="mb-0 fw-bold">Keranjang ({{ count($keranjang) }})</h4>
-
-                    @if(!empty($keranjang))
-                        <span class="fw-semibold text-success">
-                            Total: Rp {{ number_format(collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah'])) }}
-                        </span>
-                    @endif
-                </div>
-
-                <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
-
-                    @if(empty($keranjang))
-                        <div class="text-center py-5">
-                            <i class="bi bi-cart-x display-1 text-muted"></i>
-                            <p class="mt-3 text-muted">Keranjang kosong</p>
+            <!-- KERANJANG -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-6">
+                    
+                    <!-- HEADER KERANJANG -->
+                    <div class="border-b border-gray-200 p-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-gray-800">Keranjang</h2>
+                            <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full font-semibold text-sm">
+                                {{ count($keranjang) }} item
+                            </span>
                         </div>
+                        @if(!empty($keranjang))
+                            <p class="text-sm text-gray-600 mt-1">
+                                Total: <span class="font-bold text-gray-800">Rp {{ number_format(collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah'])) }}</span>
+                            </p>
+                        @endif
+                    </div>
 
-                    @else
-                        <table class="table table-white table-hover keranjang-table mb-0">
-                            @foreach($keranjang as $id => $item)
-                            <tr>
-                                <td>
-                                    <strong>{{ $item['nama'] }}</strong><br>
-                                    <small>{{ $item['jumlah'] }} × Rp {{ number_format($item['harga']) }}</small>
-                                </td>
-
-                                <td class="text-end fw-bold">
-                                    Rp {{ number_format($item['harga'] * $item['jumlah']) }}
-                                </td>
-
-                                <td class="text-center">
-                                    <form action="{{ route('kasir.hapus', $id) }}" method="POST" class="d-inline">
+                    <!-- ISI KERANJANG -->
+                    <div class="p-4" style="max-height: 40vh; overflow-y: auto;">
+                        @if(empty($keranjang))
+                            <div class="text-center py-8">
+                                <i class="ph ph-shopping-cart text-6xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500">Keranjang kosong</p>
+                            </div>
+                        @else
+                            <div class="space-y-3">
+                                @foreach($keranjang as $id => $item)
+                                <div class="flex gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-sm text-gray-800">{{ $item['nama'] }}</h3>
+                                        <p class="text-xs text-gray-600">{{ $item['jumlah'] }} × Rp {{ number_format($item['harga']) }}</p>
+                                        <p class="text-sm font-bold text-gray-800 mt-1">Rp {{ number_format($item['harga'] * $item['jumlah']) }}</p>
+                                    </div>
+                                    <form action="{{ route('kasir.hapus', $id) }}" method="POST">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">
-                                            <i class="bi bi-x-lg"></i>
+                                        <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
+                                            <i class="ph ph-trash text-lg"></i>
                                         </button>
                                     </form>
-                                </td>
-                            </tr>
-                            @endforeach
+                                </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
 
-                            <tr class="table-total fw-bold">
-                                <td colspan="2" class="text-end">TOTAL BELANJA</td>
-                                <td>
-                                    Rp {{ number_format(collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah'])) }}
-                                </td>
-                            </tr>
-                        </table>
-
-                        <!-- FORM PEMBAYARAN -->
-                        <form action="{{ route('kasir.bayar') }}" method="POST" class="mt-4">
+                    <!-- FORM PEMBAYARAN -->
+                    @if(!empty($keranjang))
+                    <div class="border-t border-gray-200 p-4">
+                        <form action="{{ route('kasir.bayar') }}" method="POST" class="space-y-3">
                             @csrf
 
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Nama Pelanggan</label>
-                                <input type="text" name="nama_pelanggan" class="form-control form-control-lg" required>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Pelanggan <span class="text-red-500">*</span></label>
+                                <input type="text" name="nama_pelanggan" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Nomor Meja</label>
-                                <input type="number" name="nomor_meja" class="form-control form-control-lg" required>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Meja <span class="text-red-500">*</span></label>
+                                <input type="number" name="nomor_meja" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Metode Pembayaran</label>
-                                <select name="metode" class="form-select form-select-lg" required>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Metode Pembayaran <span class="text-red-500">*</span></label>
+                                <select name="metode" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" required>
                                     <option value="Tunai">Tunai</option>
                                     <option value="EDC">EDC / Kartu</option>
                                     <option value="QRIS">QRIS</option>
@@ -391,136 +320,109 @@
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Jumlah Bayar</label>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah Bayar <span class="text-red-500">*</span></label>
                                 <input type="number" 
                                        name="bayar" 
                                        id="inputBayar"
-                                       class="form-control form-control-lg text-end fw-bold" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 text-right font-bold" 
                                        min="{{ collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah']) }}" 
                                        placeholder="0" 
                                        required>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Kembalian</label>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Kembalian</label>
                                 <input type="text" 
                                        id="displayKembalian"
-                                       class="form-control form-control-lg text-end fw-bold text-success" 
+                                       class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-right font-bold text-green-600" 
                                        value="Rp 0"
                                        readonly>
                             </div>
 
-                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow">
-                                <i class="bi bi-printer"></i> BAYAR & CETAK STRUK
+                            <button type="submit" class="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-bold shadow-md hover:shadow-lg">
+                                <i class="ph ph-printer mr-2"></i>BAYAR & CETAK STRUK
                             </button>
                         </form>
+                    </div>
                     @endif
 
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+.tab-button {
+    color: #6b7280;
+    border-bottom-color: transparent;
+}
+.tab-button.active {
+    color: #1f2937;
+    border-bottom-color: #1f2937;
+}
+</style>
+
 <script>
-// 🔥 VALIDASI STOK SAAT MENAMBAHKAN PRODUK
+// TAB SWITCHING
+function switchTab(tab) {
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+    
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('content-' + tab).classList.remove('hidden');
+}
+
+// MENU MODAL
+function openMenuModal(menuId) {
+    document.getElementById('menuModal' + menuId).classList.remove('hidden');
+}
+
+function closeMenuModal(menuId) {
+    document.getElementById('menuModal' + menuId).classList.add('hidden');
+}
+
+// VALIDASI STOK
 document.querySelectorAll('.form-tambah-produk').forEach(form => {
     form.addEventListener('submit', function(e) {
         const stok = parseInt(this.querySelector('.stok-produk').value);
         const namaProduk = this.querySelector('.nama-produk').value;
         
-        // Hitung berapa banyak produk ini sudah di keranjang
-        let jmlhDiKeranjang = 0;
-        const keranjangTable = document.querySelector('.keranjang-table');
-        
-        if (keranjangTable) {
-            const rows = keranjangTable.querySelectorAll('tr');
-            rows.forEach(row => {
-                const firstTd = row.querySelector('td:first-child');
-                if (firstTd) {
-                    const strong = firstTd.querySelector('strong');
-                    if (strong && strong.textContent.trim() === namaProduk.trim()) {
-                        const small = firstTd.querySelector('small');
-                        if (small) {
-                            const match = small.textContent.match(/(\d+)\s×/);
-                            jmlhDiKeranjang = match ? parseInt(match[1]) : 0;
-                        }
-                    }
-                }
-            });
-        }
-        
-        const totalSetelahTambah = jmlhDiKeranjang + 1;
-        
-        // Validasi stok
         if (stok <= 0) {
             e.preventDefault();
             alert(`❌ Stok "${namaProduk}" sudah habis!`);
             return false;
         }
-        
-        if (totalSetelahTambah > stok) {
-            e.preventDefault();
-            alert(`❌ Stok "${namaProduk}" tidak cukup!\n\nStok tersedia: ${stok}\nSudah di keranjang: ${jmlhDiKeranjang}\nDiminta tambah: 1\n\nTotal akan menjadi: ${totalSetelahTambah}`);
-            return false;
-        }
-        
-        return true;
     });
 });
 
-// 🔥 HITUNG TOTAL HARGA UNTUK MENU DENGAN OPTIONS
+// HITUNG TOTAL MENU
 document.querySelectorAll('[id^="menuModal"]').forEach(modal => {
-    const menuId = modal.id.replace('menuModal', '');
-    const hargaBaseSpan = modal.querySelector('#totalHargaMenu' + menuId);
+    const totalSpan = modal.querySelector('.totalHargaMenu');
+    const hargaBase = parseFloat(totalSpan.dataset.base);
     
-    if (hargaBaseSpan) {
-        const hargaBase = parseFloat(hargaBaseSpan.textContent.replace(/[^0-9]/g, ''));
+    const updateTotal = () => {
+        const jumlah = parseInt(modal.querySelector('.menu-jumlah').value) || 1;
+        let totalTambahan = 0;
         
-        // Dengarkan semua select options
-        modal.querySelectorAll('select[name^="options"]').forEach(select => {
-            select.addEventListener('change', function() {
-                const jumlahInput = modal.querySelector('input[name="jumlah"]');
-                const jumlah = parseInt(jumlahInput.value) || 1;
-                
-                // Hitung total tambahan dari semua options
-                let totalTambahan = 0;
-                modal.querySelectorAll('select[name^="options"]').forEach(sel => {
-                    const selectedOption = sel.options[sel.selectedIndex];
-                    const hargaOption = parseFloat(selectedOption.getAttribute('data-harga')) || 0;
-                    totalTambahan += hargaOption;
-                });
-                
-                const totalHarga = (hargaBase + totalTambahan) * jumlah;
-                hargaBaseSpan.textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
-            });
+        modal.querySelectorAll('.menu-option-select').forEach(select => {
+            const option = select.options[select.selectedIndex];
+            totalTambahan += parseFloat(option.dataset.harga || 0);
         });
         
-        // Dengarkan perubahan jumlah
-        const jumlahInput = modal.querySelector('input[name="jumlah"]');
-        if (jumlahInput) {
-            jumlahInput.addEventListener('input', function() {
-                const jumlah = parseInt(this.value) || 1;
-                
-                // Hitung total tambahan dari semua options
-                let totalTambahan = 0;
-                modal.querySelectorAll('select[name^="options"]').forEach(sel => {
-                    const selectedOption = sel.options[sel.selectedIndex];
-                    const hargaOption = parseFloat(selectedOption.getAttribute('data-harga')) || 0;
-                    totalTambahan += hargaOption;
-                });
-                
-                const totalHarga = (hargaBase + totalTambahan) * jumlah;
-                hargaBaseSpan.textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
-            });
-        }
-    }
+        const total = (hargaBase + totalTambahan) * jumlah;
+        totalSpan.textContent = 'Rp ' + total.toLocaleString('id-ID');
+    };
+    
+    modal.querySelectorAll('.menu-option-select, .menu-jumlah').forEach(el => {
+        el.addEventListener('change', updateTotal);
+        el.addEventListener('input', updateTotal);
+    });
 });
 
-// Hitung kembalian otomatis
+// HITUNG KEMBALIAN
 const inputBayar = document.getElementById('inputBayar');
 const displayKembalian = document.getElementById('displayKembalian');
 const totalBelanja = {{ collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah']) }};
@@ -532,12 +434,12 @@ if (inputBayar) {
         
         if (kembalian < 0) {
             displayKembalian.value = 'Rp 0';
-            displayKembalian.classList.remove('text-success');
-            displayKembalian.classList.add('text-danger');
+            displayKembalian.classList.remove('text-green-600');
+            displayKembalian.classList.add('text-red-600');
         } else {
             displayKembalian.value = 'Rp ' + kembalian.toLocaleString('id-ID');
-            displayKembalian.classList.remove('text-danger');
-            displayKembalian.classList.add('text-success');
+            displayKembalian.classList.remove('text-red-600');
+            displayKembalian.classList.add('text-green-600');
         }
     });
 }
