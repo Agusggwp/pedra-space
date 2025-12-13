@@ -99,12 +99,51 @@ class StokController extends Controller
     }
 
     // 4. Riwayat Stok
-    public function riwayat()
+    public function riwayat(Request $request)
     {
-        $histories = StokHistory::with(['produk', 'user'])
-            ->orderByDesc('created_at')
+        $query = StokHistory::with(['produk', 'user']);
+
+        // Filter by month
+        if ($request->bulan) {
+            $query->whereMonth('created_at', $request->bulan);
+        }
+
+        // Filter by year
+        $tahun = $request->tahun ?? now()->year;
+        $query->whereYear('created_at', $tahun);
+
+        $histories = $query->orderByDesc('created_at')
             ->paginate(25);
 
-        return view('admin.stok.riwayat', compact('histories'));
+        return view('admin.stok.riwayat', compact('histories', 'tahun'));
+    }
+
+    // Export Stok History to PDF
+    public function exportRiwayatPdf(Request $request)
+    {
+        $query = StokHistory::with(['produk', 'user']);
+
+        // Filter by month
+        if ($request->bulan) {
+            $query->whereMonth('created_at', $request->bulan);
+        }
+
+        // Filter by year
+        $tahun = $request->tahun ?? now()->year;
+        $query->whereYear('created_at', $tahun);
+
+        $histories = $query->orderByDesc('created_at')->get();
+
+        if ($histories->count() == 0) {
+            return back()->with('error', 'Tidak ada data riwayat stok untuk periode ini.');
+        }
+
+        $bulan = $request->bulan ?? now()->month;
+        $namabulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][$bulan];
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.stok.riwayat-pdf', compact('histories', 'tahun', 'bulan', 'namabulan'))
+                    ->setPaper('a4', 'landscape');
+
+        return $pdf->download('riwayat-stok-' . $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '.pdf');
     }
 }

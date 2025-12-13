@@ -58,8 +58,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
 
-
-
 use App\Http\Controllers\Admin\LaporanController;
 
 Route::get('/admin/laporan', [LaporanController::class, 'index'])->middleware('auth');
@@ -102,6 +100,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.stok.')-
     Route::get('/stok/keluar', [StokController::class, 'keluar'])->name('keluar');
     Route::post('/stok/keluar', [StokController::class, 'storeKeluar']);
     Route::get('/stok/riwayat', [StokController::class, 'riwayat'])->name('riwayat');
+    Route::get('/stok/riwayat/export/pdf', [StokController::class, 'exportRiwayatPdf'])->name('riwayat.pdf');
 });
 
 
@@ -110,12 +109,11 @@ use App\Http\Controllers\Admin\VoidController;
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/void', [VoidController::class, 'index'])->name('void.index');
     Route::post('/void/{transaksi}', [VoidController::class, 'prosesVoid'])->name('void.proses');
+    Route::get('/void/export/pdf', [VoidController::class, 'exportVoidPdf'])->name('void.pdf');
 });
 
 
-
 ////KASIRRR
-
 
 use App\Http\Controllers\Kasir\KasirController;
 
@@ -131,8 +129,7 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::post('/tutup', [KasirController::class, 'tutupKasir'])->name('tutup');
     Route::get('/daftar', [KasirController::class, 'daftarPenjualan'])->name('daftar');
     Route::get('/cetak/{id}', [KasirController::class, 'cetak'])->name('cetak');
-
-
     Route::get('/update-stok', [KasirController::class, 'updateStokForm'])->name('update-stok');
     Route::post('/update-stok', [KasirController::class, 'updateStokProses']);
 });
+

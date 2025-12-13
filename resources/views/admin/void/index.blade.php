@@ -45,7 +45,51 @@
                 </div>
             @endif
 
-            <!-- Tabel Transaksi -->
+            <!-- Filter Section -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl mb-8">
+                <form method="GET" action="{{ route('admin.void.index') }}" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Filter Tahun -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Tahun</label>
+                            <select name="tahun" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                @for($y = 2020; $y <= now()->year; $y++)
+                                    <option value="{{ $y }}" {{ request('tahun', now()->year) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                                @endfor
+                            </select>
+                        </div>
+
+                        <!-- Filter Bulan -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Bulan</label>
+                            <select name="bulan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                <option value="">Semua Bulan</option>
+                                @foreach(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $index => $nama)
+                                    <option value="{{ $index + 1 }}" {{ request('bulan') == ($index + 1) ? 'selected' : '' }}>{{ $nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex items-end gap-3">
+                            <button type="submit" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-150 font-medium">
+                                Tampilkan
+                            </button>
+                            <a href="{{ route('admin.void.index') }}" class="flex-1 px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors duration-150 font-medium text-center">
+                                Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Export Button -->
+            <div class="mb-8 flex gap-3">
+                <a href="{{ route('admin.void.pdf', ['tahun' => request('tahun', now()->year), 'bulan' => request('bulan')]) }}" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-150 font-medium shadow-lg">
+                    <i class="ph ph-file-pdf text-xl"></i>
+                    Export PDF
+                </a>
+            </div>
             <!-- TABEL VOID/REFUND – SEMPURNA DI TABLET -->
 <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
     <div class="overflow-x-auto">
