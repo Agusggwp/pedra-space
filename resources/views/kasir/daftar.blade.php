@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Daftar Penjualan Hari Ini - Kasir</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -42,6 +44,10 @@
 </head>
 <body>
 
+@include('kasir.partials.sidebar')
+
+<!-- MAIN CONTENT -->
+<div class="lg:ml-[320px] p-8">
 <div class="container py-5">
 
     <!-- HEADER -->
@@ -135,17 +141,7 @@
 
     @endif
 
-    <!-- LOGOUT -->
-    <div class="text-center mt-4">
-        <form action="{{ url('/logout') }}" method="POST" class="d-inline">
-            @csrf
-            <button class="btn btn-outline-dark"
-                    onclick="return confirm('Yakin ingin logout?')">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </button>
-        </form>
-    </div>
-
+</div>
 </div>
 
 </body>

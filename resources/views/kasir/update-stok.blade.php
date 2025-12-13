@@ -12,6 +12,10 @@
             color: #1e293b;
             min-height: 100vh;
         }
+        .sidebar {
+            background: #1e293b;
+            box-shadow: 8px 0 30px rgba(0,0,0,0.3);
+        }
         .card {
             background: white;
             border-radius: 24px;
@@ -32,10 +36,32 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(59,130,246,0.3);
         }
+        .menu-item {
+            color: #94a3b8;
+            transition: all 0.2s ease;
+        }
+        .menu-item:hover {
+            color: #e2e8f0;
+            background: rgba(255,255,255,0.05);
+        }
+        .menu-item.active {
+            background: #3b82f6;
+            color: white;
+        }
+        .text-gradient {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
 
+@include('kasir.partials.sidebar')
+
+<!-- MAIN CONTENT -->
+<div class="lg:ml-[320px] p-8">
 <div class="container max-w-5xl mx-auto py-10 px-6">
 
     <!-- Header -->
@@ -123,6 +149,7 @@
         <p class="text-lg">Pastikan jumlah yang dimasukkan sudah benar sebelum update.</p>
         <p class="text-sm mt-2">Sistem akan otomatis mencegah pengurangan stok melebihi jumlah tersedia.</p>
     </div>
+</div>
 </div>
 
 </body>

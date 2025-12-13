@@ -4,9 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tutup Kasir - Sistem POS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        .sidebar {
+            background: #1e293b;
+            box-shadow: 8px 0 30px rgba(0,0,0,0.3);
+        }
+        .menu-item {
+            color: #94a3b8;
+            transition: all 0.2s ease;
+        }
+        .menu-item:hover {
+            color: #e2e8f0;
+            background: rgba(255,255,255,0.05);
+        }
+        .menu-item.active {
+            background: #3b82f6;
+            color: white;
+        }
+        .text-gradient {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         body {
             background: linear-gradient(135deg, #ff6b6b, #ee5a52);
             min-height: 100vh;
@@ -22,6 +46,10 @@
 </head>
 <body>
 
+@include('kasir.partials.sidebar')
+
+<!-- MAIN CONTENT -->
+<div class="lg:ml-[320px] p-8">
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-6">
@@ -96,6 +124,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
