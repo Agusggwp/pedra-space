@@ -55,7 +55,7 @@
 
     <!-- Footer -->
     <p class="text-center text-gray-500 text-sm mt-6">
-        POS by <a href="https://artdevata.com" class="underline hover:text-gray-700">ArtDevata</a>
+        POS by <a href="https://artdevata.net" class="underline hover:text-gray-700">ArtDevata</a>
     </p>
 
 </div>

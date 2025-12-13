@@ -23,6 +23,11 @@
             </div>
 
             <div class="flex gap-2">
+                <button onclick="toggleFullscreen(event)" 
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 transition font-semibold border border-gray-200">
+                    <i class="ph ph-arrows-out text-lg" id="fullscreenIcon"></i>
+                    <span class="hidden sm:inline">Fullscreen</span>
+                </button>
                 <a href="{{ route('kasir.daftar') }}" 
                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 transition font-semibold border border-gray-200">
                     <i class="ph ph-receipt text-lg"></i>
@@ -279,8 +284,17 @@
                                 <div class="flex gap-3 p-3 bg-gray-50 rounded-lg">
                                     <div class="flex-1">
                                         <h3 class="font-semibold text-sm text-gray-800">{{ $item['nama'] }}</h3>
-                                        <p class="text-xs text-gray-600">{{ $item['jumlah'] }} × Rp {{ number_format($item['harga']) }}</p>
+                                        <p class="text-xs text-gray-600">Rp {{ number_format($item['harga']) }}</p>
                                         <p class="text-sm font-bold text-gray-800 mt-1">Rp {{ number_format($item['harga'] * $item['jumlah']) }}</p>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <button type="button" onclick="updateJumlah('{{ $id }}', -1)" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm font-bold">
+                                            −
+                                        </button>
+                                        <span class="px-2 py-1 bg-white border border-gray-300 rounded text-center text-sm font-semibold w-10 jumlah-item-{{ $id }}">{{ $item['jumlah'] }}</span>
+                                        <button type="button" onclick="updateJumlah('{{ $id }}', 1)" class="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition text-sm font-bold">
+                                            +
+                                        </button>
                                     </div>
                                     <form action="{{ route('kasir.hapus', $id) }}" method="POST">
                                         @csrf @method('DELETE')
@@ -442,6 +456,45 @@ if (inputBayar) {
             displayKembalian.classList.add('text-green-600');
         }
     });
+}
+
+// FULLSCREEN
+function toggleFullscreen(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const elem = document.documentElement;
+    const icon = document.getElementById('fullscreenIcon');
+    
+    if (!document.fullscreenElement) {
+        elem.requestFullscreen().then(() => {
+            icon.classList.remove('ph-arrows-out');
+            icon.classList.add('ph-arrows-in');
+        }).catch(err => {
+            alert(`Fullscreen error: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen().then(() => {
+            icon.classList.remove('ph-arrows-in');
+            icon.classList.add('ph-arrows-out');
+        });
+    }
+}
+
+// UPDATE JUMLAH KERANJANG
+function updateJumlah(itemId, change) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ route("kasir.update.jumlah") }}';
+    
+    form.innerHTML = `
+        @csrf
+        <input type="hidden" name="item_id" value="${itemId}">
+        <input type="hidden" name="change" value="${change}">
+    `;
+    
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 </body>

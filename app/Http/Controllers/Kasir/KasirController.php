@@ -47,6 +47,13 @@ class KasirController extends Controller
             'status' => 'buka'
         ]);
 
+        // 🔥 KURANGI DARI TOTAL EARNINGS
+        TotalEarnings::create([
+            'user_id' => auth()->id(),
+            'saldo_akhir' => -$request->saldo_awal,
+            'keterangan' => 'Pembukaan kasir - Saldo awal: Rp ' . number_format($request->saldo_awal)
+        ]);
+
         return redirect()->route('kasir.pos')->with('success', 'Kasir berhasil dibuka!');
     }
 
@@ -215,6 +222,28 @@ class KasirController extends Controller
         return back();
     }
 
+    // UPDATE JUMLAH KERANJANG
+    public function updateJumlahKeranjang(Request $request)
+    {
+        $keranjang = session('keranjang', []);
+        $itemId = $request->item_id;
+        $change = (int)$request->change;
+
+        if (isset($keranjang[$itemId])) {
+            $newJumlah = $keranjang[$itemId]['jumlah'] + $change;
+            
+            if ($newJumlah > 0) {
+                $keranjang[$itemId]['jumlah'] = $newJumlah;
+            } else {
+                unset($keranjang[$itemId]);
+            }
+            
+            session(['keranjang' => $keranjang]);
+        }
+
+        return back();
+    }
+
     // BAYAR & CETAK STRUK
     public function bayar(Request $request)
     {
@@ -319,6 +348,16 @@ public function updateStokProses(Request $request)
     }
 
     $produk->increment('stok', $jumlah);
+
+    // 🔥 JIKA TAMBAH STOK (RESTOK), KURANGI DARI TOTAL EARNINGS
+    if ($jumlah > 0) {
+        $totalBiayaRestok = $jumlah * $produk->harga_beli;
+        TotalEarnings::create([
+            'user_id' => auth()->id(),
+            'saldo_akhir' => -$totalBiayaRestok,
+            'keterangan' => 'Restok dari kasir - ' . $produk->nama . ' (' . $jumlah . ' unit @ Rp ' . number_format($produk->harga_beli) . ')'
+        ]);
+    }
 
     // Catat ke riwayat stok (opsional, pakai tabel stok_histories kalau ada)
     // StokHistory::create([...]);

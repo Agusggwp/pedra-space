@@ -80,11 +80,13 @@ Route::get('/admin/laporan-keuntungan/export/pdf', [LaporanController::class, 'e
 
 use App\Http\Controllers\Admin\ProdukController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\CategoryController;
 
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        Route::resource('category', CategoryController::class);
         Route::resource('produk', ProdukController::class);
         Route::resource('menu', MenuController::class);
         Route::patch('menu/{menu}/toggle-status', [MenuController::class, 'toggleStatus'])->name('menu.toggle-status');
@@ -124,6 +126,7 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::post('/tambah', [KasirController::class, 'tambahKeKeranjang'])->name('tambah');
     Route::post('/tambah-menu', [KasirController::class, 'tambahMenuKeKeranjang'])->name('tambah.menu');
     Route::delete('/hapus/{id}', [KasirController::class, 'hapusDariKeranjang'])->name('hapus');
+    Route::post('/update-jumlah', [KasirController::class, 'updateJumlahKeranjang'])->name('update.jumlah');
     Route::post('/bayar', [KasirController::class, 'bayar'])->name('bayar');
     Route::get('/tutup', [KasirController::class, 'tutupKasirForm'])->name('tutup.form');
     Route::post('/tutup', [KasirController::class, 'tutupKasir'])->name('tutup');
