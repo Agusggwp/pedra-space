@@ -16,7 +16,7 @@ return new class extends Migration
             // Cek apakah kolom category_id sudah ada
             if (!Schema::hasColumn('menus', 'category_id')) {
                 // Tambah kolom category_id nullable dulu
-                $table->foreignId('category_id')->nullable()->after('harga_beli')->constrained('categories')->onDelete('cascade');
+                $table->foreignId('category_id')->nullable()->after('harga_base')->constrained('categories')->onDelete('cascade');
             }
         });
         
