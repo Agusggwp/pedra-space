@@ -153,6 +153,12 @@ class KasirController extends Controller
         $produk = Produk::findOrFail($request->produk_id);
         $keranjang = session('keranjang', []);
 
+        $jumlahSekarang = $keranjang[$produk->id]['jumlah'] ?? 0;
+
+        if ($jumlahSekarang + 1 > $produk->stok) {
+            return back()->with('error', 'Stok ' . $produk->nama . ' tidak cukup!');
+        }
+
         if (isset($keranjang[$produk->id])) {
             $keranjang[$produk->id]['jumlah']++;
         } else {
@@ -167,53 +173,54 @@ class KasirController extends Controller
         return back()->with('success', $produk->nama . ' ditambahkan!');
     }
 
-    // TAMBAH MENU KE KERANJANG DENGAN OPTIONS
-    public function tambahMenuKeKeranjang(Request $request)
-    {
-        $menu = Menu::findOrFail($request->menu_id);
-        $keranjang = session('keranjang', []);
 
-        // Hitung harga total: harga_base + tambahan dari options
-        $totalTambahan = 0;
-        $selectedOptions = [];
-        
-        if ($request->has('options')) {
-            foreach ($request->options as $tipe => $optionId) {
-                if ($optionId) {
-                    $option = \App\Models\MenuOption::find($optionId);
-                    if ($option) {
-                        $totalTambahan += $option->nilai;
-                        $selectedOptions[$tipe] = $option->nama_option;
+        // TAMBAH MENU KE KERANJANG DENGAN OPTIONS
+        public function tambahMenuKeKeranjang(Request $request)
+        {
+            $menu = Menu::findOrFail($request->menu_id);
+            $keranjang = session('keranjang', []);
+
+            // Hitung harga total: harga_base + tambahan dari options
+            $totalTambahan = 0;
+            $selectedOptions = [];
+            
+            if ($request->has('options')) {
+                foreach ($request->options as $tipe => $optionId) {
+                    if ($optionId) {
+                        $option = \App\Models\MenuOption::find($optionId);
+                        if ($option) {
+                            $totalTambahan += $option->nilai;
+                            $selectedOptions[$tipe] = $option->nama_option;
+                        }
                     }
                 }
             }
+
+            $hargaFinal = $menu->harga_base + $totalTambahan;
+            $jumlah = $request->jumlah ?? 1;
+
+            // Key unik berdasarkan menu_id + options combo
+            $optionHash = md5(json_encode($selectedOptions));
+            $key = 'menu_' . $menu->id . '_' . $optionHash;
+
+            if (isset($keranjang[$key])) {
+                $keranjang[$key]['jumlah'] += $jumlah;
+            } else {
+                $keranjang[$key] = [
+                    'type' => 'menu',
+                    'menu_id' => $menu->id,
+                    'nama' => $menu->nama,
+                    'harga' => $hargaFinal,
+                    'jumlah' => $jumlah,
+                    'options' => $selectedOptions,
+                    'harga_base' => $menu->harga_base,
+                    'tambahan' => $totalTambahan
+                ];
+            }
+
+            session(['keranjang' => $keranjang]);
+            return back()->with('success', $menu->nama . ' ditambahkan!');
         }
-
-        $hargaFinal = $menu->harga_base + $totalTambahan;
-        $jumlah = $request->jumlah ?? 1;
-
-        // Key unik berdasarkan menu_id + options combo
-        $optionHash = md5(json_encode($selectedOptions));
-        $key = 'menu_' . $menu->id . '_' . $optionHash;
-
-        if (isset($keranjang[$key])) {
-            $keranjang[$key]['jumlah'] += $jumlah;
-        } else {
-            $keranjang[$key] = [
-                'type' => 'menu',
-                'menu_id' => $menu->id,
-                'nama' => $menu->nama,
-                'harga' => $hargaFinal,
-                'jumlah' => $jumlah,
-                'options' => $selectedOptions,
-                'harga_base' => $menu->harga_base,
-                'tambahan' => $totalTambahan
-            ];
-        }
-
-        session(['keranjang' => $keranjang]);
-        return back()->with('success', $menu->nama . ' ditambahkan!');
-    }
 
     public function hapusDariKeranjang($id)
     {
@@ -230,20 +237,37 @@ class KasirController extends Controller
         $itemId = $request->item_id;
         $change = (int)$request->change;
 
-        if (isset($keranjang[$itemId])) {
-            $newJumlah = $keranjang[$itemId]['jumlah'] + $change;
-            
-            if ($newJumlah > 0) {
-                $keranjang[$itemId]['jumlah'] = $newJumlah;
-            } else {
-                unset($keranjang[$itemId]);
-            }
-            
-            session(['keranjang' => $keranjang]);
+        if (!isset($keranjang[$itemId])) {
+            return back();
         }
 
+        // Abaikan menu
+        if (isset($keranjang[$itemId]['type']) && $keranjang[$itemId]['type'] === 'menu') {
+            $keranjang[$itemId]['jumlah'] += $change;
+            session(['keranjang' => $keranjang]);
+            return back();
+        }
+
+        $produk = Produk::find($itemId);
+        if (!$produk) return back();
+
+        $newJumlah = $keranjang[$itemId]['jumlah'] + $change;
+
+        // ❌ CEK STOK
+        if ($newJumlah > $produk->stok) {
+            return back()->with('error', 'Stok ' . $produk->nama . ' tidak cukup!');
+        }
+
+        if ($newJumlah <= 0) {
+            unset($keranjang[$itemId]);
+        } else {
+            $keranjang[$itemId]['jumlah'] = $newJumlah;
+        }
+
+        session(['keranjang' => $keranjang]);
         return back();
     }
+
 
     // BAYAR & CETAK STRUK
     public function bayar(Request $request)

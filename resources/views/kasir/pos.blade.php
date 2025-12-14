@@ -498,5 +498,100 @@ function updateJumlah(itemId, change) {
     form.submit();
 }
 </script>
+<!-- MODAL STOK TIDAK CUKUP -->
+<div id="stokModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 text-center animate-scale">
+        <div class="flex justify-center mb-3">
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-red-100">
+                <i class="ph ph-warning text-red-600 text-2xl"></i>
+            </div>
+        </div>
+        <h3 class="text-lg font-bold text-gray-800 mb-2">Stok Tidak Cukup</h3>
+        <p id="stokModalText" class="text-gray-600 mb-5 text-sm">
+            Stok produk tidak mencukupi
+        </p>
+        <button onclick="closeStokModal()"
+            class="w-full px-4 py-2 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition">
+            OK
+        </button>
+    </div>
+</div>
+
+<style>
+@keyframes scale {
+    from { transform: scale(.9); opacity: 0 }
+    to { transform: scale(1); opacity: 1 }
+}
+.animate-scale {
+    animation: scale .2s ease-out;
+}
+</style>
+<script>
+function showStokModal(message) {
+    document.getElementById('stokModalText').innerText = message;
+    document.getElementById('stokModal').classList.remove('hidden');
+}
+
+function closeStokModal() {
+    document.getElementById('stokModal').classList.add('hidden');
+}
+</script>
+<script>
+document.querySelectorAll('.form-tambah-produk').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const stok = parseInt(this.querySelector('.stok-produk').value);
+        const nama = this.querySelector('.nama-produk').value;
+
+        if (stok <= 0) {
+            e.preventDefault();
+            showStokModal(`Stok "${nama}" sudah habis`);
+            return false;
+        }
+    });
+});
+</script>
+<script>
+function updateJumlah(itemId, change) {
+    const jumlahEl = document.querySelector('.jumlah-item-' + itemId);
+    if (!jumlahEl) return;
+
+    const jumlahSekarang = parseInt(jumlahEl.innerText);
+
+    // Ambil stok dari badge produk (fallback aman)
+    const produkCard = document.querySelector(`input[name="produk_id"][value="${itemId}"]`)
+        ?.closest('form')
+        ?.querySelector('.stok-produk');
+
+    if (produkCard) {
+        const stok = parseInt(produkCard.value);
+
+        if (change > 0 && jumlahSekarang + 1 > stok) {
+            showStokModal(`Jumlah melebihi stok tersedia (${stok})`);
+            return;
+        }
+    }
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ route("kasir.update.jumlah") }}';
+
+    form.innerHTML = `
+        @csrf
+        <input type="hidden" name="item_id" value="${itemId}">
+        <input type="hidden" name="change" value="${change}">
+    `;
+
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+@if(session('error'))
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        showStokModal("{{ session('error') }}");
+    });
+</script>
+@endif
+
 </body>
 </html>
