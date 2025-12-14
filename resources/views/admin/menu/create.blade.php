@@ -48,13 +48,13 @@
                             <!-- Kategori -->
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori <span class="text-red-500">*</span></label>
-                                <select name="kategori" class="form-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <select name="category_id" class="form-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                                     <option value="">-- Pilih Kategori --</option>
-                                    <option value="beverage">Minuman</option>
-                                    <option value="food">Makanan</option>
-                                    <option value="snack">Snack</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->nama }}</option>
+                                    @endforeach
                                 </select>
-                                @error('kategori') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                @error('category_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                             </div>
                         </div>
 

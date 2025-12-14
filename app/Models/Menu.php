@@ -12,7 +12,7 @@ class Menu extends Model
         'deskripsi',
         'harga_base',
         'harga_beli',
-        'kategori',
+        'category_id',
         'foto',
         'is_active'
     ];
@@ -21,6 +21,12 @@ class Menu extends Model
         'is_active' => 'boolean',
         'harga_base' => 'float'
     ];
+
+    // Relasi ke category
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     // Relasi ke menu options (customization)
     public function options()

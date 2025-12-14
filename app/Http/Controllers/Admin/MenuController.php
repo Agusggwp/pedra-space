@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\MenuOption;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class MenuController extends Controller
@@ -12,14 +13,15 @@ class MenuController extends Controller
     // LIST MENU
     public function index()
     {
-        $menus = Menu::with('options')->orderBy('kategori')->latest('id')->get();
+        $menus = Menu::with('options', 'category')->orderBy('category_id')->latest('id')->get();
         return view('admin.menu.index', compact('menus'));
     }
 
     // SHOW CREATE FORM
     public function create()
     {
-        return view('admin.menu.create');
+        $categories = Category::orderBy('nama')->get();
+        return view('admin.menu.create', compact('categories'));
     }
 
     // STORE MENU
@@ -29,7 +31,7 @@ class MenuController extends Controller
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'harga_base' => 'required|numeric|min:0',
-            'kategori' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -61,7 +63,8 @@ class MenuController extends Controller
     // SHOW EDIT FORM
     public function edit(Menu $menu)
     {
-        return view('admin.menu.edit', compact('menu'));
+        $categories = Category::orderBy('nama')->get();
+        return view('admin.menu.edit', compact('menu', 'categories'));
     }
 
     // UPDATE MENU
@@ -71,7 +74,7 @@ class MenuController extends Controller
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'harga_base' => 'required|numeric|min:0',
-            'kategori' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 

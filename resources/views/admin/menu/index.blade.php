@@ -59,7 +59,7 @@
                                     <div class="flex items-start justify-between mb-2">
                                         <div>
                                             <h3 class="text-xl font-bold text-gray-900">{{ $menu->nama }}</h3>
-                                            <p class="text-sm text-gray-500">{{ ucfirst($menu->kategori) }}</p>
+                                            <p class="text-sm text-gray-500">{{ $menu->category->nama ?? 'N/A' }}</p>
                                         </div>
                                         <span class="badge {{ $menu->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }} px-3 py-1 rounded-full text-sm font-semibold">
                                             {{ $menu->is_active ? 'Aktif' : 'Nonaktif' }}
