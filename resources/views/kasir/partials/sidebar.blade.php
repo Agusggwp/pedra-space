@@ -2,14 +2,14 @@
 <div id="sidebar" class="fixed top-0 left-0 h-screen w-72 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 lg:translate-x-0 z-50 flex flex-col">
     
     <!-- Logo & User -->
-    <div class="p-6 bg-emerald-600 flex-shrink-0">
-        <div class="flex items-center gap-3">
-            <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-emerald-600 text-2xl font-bold flex-shrink-0">
-                {{ Str::substr(auth()->user()->name, 0, 1) }}
+    <div class="p-4 bg-emerald-600 flex-shrink-0 flex justify-center items-center">
+        <div class="flex gap-3 items-center">
+            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden p-2">
+                <img src="{{ asset('storage/logo/pedra.png') }}" alt="Pedra Logo" class="w-full h-full object-contain">
             </div>
-            <div class="flex-1 min-w-0">
-                <h3 class="text-base font-bold text-white truncate">{{ auth()->user()->name }}</h3>
-                <p class="text-emerald-100 text-xs font-medium">👤 Kasir Aktif</p>
+            <div>
+                <h2 class="text-white font-bold text-base">Pedra Space</h2>
+                <p class="text-xs text-gray-400">Coffee Shop</p>
             </div>
         </div>
     </div>

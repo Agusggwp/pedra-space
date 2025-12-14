@@ -1,16 +1,16 @@
 <!-- SIDEBAR COMPONENT -->
 <aside id="sidebar"
        class="fixed md:sticky inset-y-0 left-0 top-0 z-50 w-64 h-screen bg-gray-900 text-gray-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out overflow-y-auto shadow-2xl">
-    <div class="flex-1 overflow-y-auto px-4 py-6">
+    <div class="flex-1 overflow-y-auto px-4 py-3">
         <!-- HEADER SIDEBAR -->
-        <div class="mb-6">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden p-2">
+        <div class="p-4 flex-shrink-0 flex justify-center items-center">
+            <div class="flex gap-3 items-center">
+                <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden p-2">
                     <img src="{{ asset('storage/logo/pedra.png') }}" alt="Pedra Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
-                    <h2 class="text-white font-bold text-base">{{ auth()->user()->name }}</h2>
-                    <p class="text-xs text-gray-400">{{ ucfirst(auth()->user()->role) }}</p>
+                    <h2 class="text-white font-bold text-base">Pedra Space</h2>
+                    <p class="text-xs text-gray-400">Coffee Shop</p>
                 </div>
             </div>
         </div>
