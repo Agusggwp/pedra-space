@@ -14,7 +14,7 @@ class ProdukController extends Controller
 {
     public function index()
     {
-        $produks = Produk::with('category')->orderBy('nama')->get();
+        $produks = Produk::with('category')->withoutTrashed()->orderBy('nama')->get();
         return view('admin.produk.index', compact('produks'));
     }
 
@@ -115,6 +115,7 @@ class ProdukController extends Controller
             Storage::disk('public')->delete($produk->foto);
         }
 
+        // Soft delete produk (tetap di database untuk referensi transaksi)
         $produk->delete();
 
         return back()->with('success', 'Produk berhasil dihapus!');
