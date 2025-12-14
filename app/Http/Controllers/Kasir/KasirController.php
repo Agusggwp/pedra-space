@@ -9,6 +9,7 @@ use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use App\Models\ShiftKasir;
 use App\Models\TotalEarnings;
+use App\Models\StokHistory;
 use Illuminate\Http\Request;
 
 class KasirController extends Controller
@@ -357,10 +358,26 @@ public function updateStokProses(Request $request)
             'saldo_akhir' => -$totalBiayaRestok,
             'keterangan' => 'Restok dari kasir - ' . $produk->nama . ' (' . $jumlah . ' unit @ Rp ' . number_format($produk->harga_beli) . ')'
         ]);
-    }
 
-    // Catat ke riwayat stok (opsional, pakai tabel stok_histories kalau ada)
-    // StokHistory::create([...]);
+        // Catat ke riwayat stok - MASUK
+        StokHistory::create([
+            'produk_id' => $produk->id,
+            'tipe' => 'masuk',
+            'jumlah' => $jumlah,
+            'biaya' => $totalBiayaRestok,
+            'keterangan' => $request->keterangan ?? 'Restok dari kasir',
+            'user_id' => auth()->id()
+        ]);
+    } else {
+        // Jika kurangi stok - KELUAR
+        StokHistory::create([
+            'produk_id' => $produk->id,
+            'tipe' => 'keluar',
+            'jumlah' => abs($jumlah),
+            'keterangan' => $request->keterangan ?? 'Pengurangan stok dari kasir',
+            'user_id' => auth()->id()
+        ]);
+    }
 
     $tipe = $jumlah > 0 ? 'ditambah' : 'dikurangi';
     $pesan = "Stok {$produk->nama} berhasil {$tipe} sebanyak " . abs($jumlah) . " (Total stok: {$produk->stok})";
