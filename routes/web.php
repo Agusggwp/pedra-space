@@ -76,6 +76,7 @@ Route::get('/admin/laporan-shift/{id}/export/excel', [LaporanController::class, 
 // 🔥 NEW Routes for Keuntungan Report
 Route::get('/admin/laporan-keuntungan', [LaporanController::class, 'laporanKeuntungan'])->name('laporan.keuntungan');
 Route::get('/admin/laporan-keuntungan/export/pdf', [LaporanController::class, 'exportKeuntunganPdf'])->name('laporan.keuntungan.pdf');
+Route::get('/admin/laporan-keuntungan/export/excel', [LaporanController::class, 'exportKeuntunganExcel'])->name('laporan.keuntungan.excel');
 
 
 use App\Http\Controllers\Admin\ProdukController;

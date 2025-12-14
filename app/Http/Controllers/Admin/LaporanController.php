@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TransaksiExport;
+use App\Exports\ShiftDetailExport;
+use App\Exports\KeuntunganExport;
 
 class LaporanController extends Controller
 {
@@ -44,13 +46,7 @@ class LaporanController extends Controller
     // 🔥 Export Shift Detail to Excel
     public function exportShiftDetailExcel($id)
     {
-        $shift = ShiftKasir::with('user')->findOrFail($id);
-        $transaksi = Transaksi::where('shift_kasir_id', $id)->get();
-
-        return Excel::download(
-            new \Maatwebsite\Excel\Concerns\WithHeadings,
-            'laporan-shift-detail-' . $shift->id . '.xlsx'
-        );
+        return Excel::download(new ShiftDetailExport($id), 'laporan-shift-detail-' . $id . '.xlsx');
     }
 
     public function laporanShift(Request $request)
@@ -377,5 +373,17 @@ class LaporanController extends Controller
         ))->setPaper('a4', 'landscape');
 
         return $pdf->download('laporan-keuntungan-' . $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '.pdf');
+    }
+
+    // Export Laporan Keuntungan Excel
+    public function exportKeuntunganExcel(Request $request)
+    {
+        $tahun = $request->tahun ?? now()->year;
+        $bulan = $request->bulan ?? now()->month;
+
+        return Excel::download(
+            new KeuntunganExport($tahun, $bulan),
+            'laporan-keuntungan-' . $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '.xlsx'
+        );
     }
 }

@@ -147,6 +147,9 @@
                     <a href="{{ route('laporan.keuntungan.pdf', ['tahun' => $tahun, 'bulan' => $bulan]) }}" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-150 font-medium shadow-lg">
                         <i class="ph ph-file-pdf"></i>Export PDF
                     </a>
+                    <a href="{{ route('laporan.keuntungan.excel', ['tahun' => $tahun, 'bulan' => $bulan]) }}" class="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-150 font-medium shadow-lg">
+                        <i class="ph ph-file-xls"></i>Export Excel
+                    </a>
                 </div>
 
                 <!-- GRAFIK KEUNTUNGAN HARIAN -->
