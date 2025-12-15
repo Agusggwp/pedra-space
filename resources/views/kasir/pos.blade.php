@@ -284,7 +284,20 @@
                                 <div class="flex gap-3 p-3 bg-gray-50 rounded-lg">
                                     <div class="flex-1">
                                         <h3 class="font-semibold text-sm text-gray-800">{{ $item['nama'] }}</h3>
-                                        <p class="text-xs text-gray-600">Rp {{ number_format($item['harga']) }}</p>
+                                        
+                                        <!-- TAMPILKAN OPTIONS MENU JIKA ADA -->
+                                        @if(isset($item['options']) && !empty($item['options']))
+                                            <div class="flex flex-wrap gap-1.5 mt-2">
+                                                @foreach($item['options'] as $tipeOption => $namaOption)
+                                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-full text-xs font-semibold text-blue-700">
+                                                        <i class="ph ph-check-circle text-blue-500"></i>
+                                                        {{ $namaOption }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                        
+                                        <p class="text-xs text-gray-600 mt-2">Rp {{ number_format($item['harga']) }}</p>
                                         <p class="text-sm font-bold text-gray-800 mt-1">Rp {{ number_format($item['harga'] * $item['jumlah']) }}</p>
                                     </div>
                                     <div class="flex items-center gap-1">

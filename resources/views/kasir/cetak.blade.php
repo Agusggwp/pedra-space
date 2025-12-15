@@ -23,8 +23,29 @@
 <div class="struk">
     <div class="text-center">
         <h2 style="margin:0; padding:0;"><P>PEDRA SPACE</P></h2>
-        <p style="margin:5px 0;">Jl. Raya Bilukan<br>Telp: 0812-3456-7890</p>
+        <p style="margin:5px 0;">Jl. Raya Bilukan<br>Telp: 085 1616 36684</p>
     </div>
+    <div class="line"></div>
+
+    <!-- SOCIAL MEDIA & WIFI INFO -->
+    <table style="font-size: 11px;">
+        <tr>
+            <td><strong>📱 TikTok:</strong></td>
+            <td class="text-right">@pedra.space</td>
+        </tr>
+        <tr>
+            <td><strong>📷 Instagram:</strong></td>
+            <td class="text-right">@pedra.space</td>
+        </tr>
+        <tr>
+            <td><strong>📡 WiFi:</strong></td>
+            <td class="text-right">PEDRASPACE</td>
+        </tr>
+        <tr>
+            <td><strong>🔐 Password:</strong></td>
+            <td class="text-right">Pedra123456</td>
+        </tr>
+    </table>
     <div class="line"></div>
 
     <table>
