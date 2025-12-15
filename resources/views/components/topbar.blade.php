@@ -1,6 +1,6 @@
 <!-- TOPBAR COMPONENT -->
-<header class="fixed top-0 right-0 left-0 md:left-72 z-40 bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
-    <div class="flex items-center justify-between">
+<header class="fixed top-0 right-0 left-0 z-40 bg-white border-b border-gray-200 px-6 py-3 shadow-sm w-full">
+    <div class="flex items-center justify-between w-full">
         <!-- Left: Hamburger Menu (Mobile) + Search -->
         <div class="flex items-center gap-4 flex-1">
             <!-- Hamburger Button Selalu di Topbar (Mobile & Desktop) -->
