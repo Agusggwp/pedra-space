@@ -33,20 +33,6 @@
                                         <span class="text-gray-700">{{ now()->format('d F Y') }}</span>
                                     </p>
                                 </div>
-
-                                <div class="flex gap-2">
-                                    <a href="{{ route('kasir.pos') }}" 
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 transition font-semibold border border-gray-200">
-                                        <i class="ph ph-arrow-left text-lg"></i> 
-                                        <span class="hidden sm:inline">Kembali ke POS</span>
-                                    </a>
-
-                                    <a href="{{ route('kasir.dashboard') }}" 
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-800 text-white rounded-lg shadow-sm hover:shadow-md hover:bg-gray-900 transition font-semibold">
-                                        <i class="ph ph-gauge text-lg"></i> 
-                                        <span class="hidden sm:inline">Dashboard</span>
-                                    </a>
-                                </div>
                             </div>
 
                             <!-- STATS SUMMARY -->
