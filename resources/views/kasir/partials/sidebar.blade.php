@@ -85,11 +85,7 @@
     </div>
 </div>
 
-<!-- TOGGLE SIDEBAR (Mobile) -->
-<button id="sidebarToggle"
-        class="lg:hidden fixed top-5 left-5 bg-emerald-600 text-white p-3 rounded-lg z-40 shadow-lg hover:bg-emerald-700 transition">
-    <i class="ph ph-list text-2xl"></i>
-</button>
+
 
 <style>
 /* Force consistent sidebar width - EXACTLY 288px (w-72) */
@@ -129,26 +125,7 @@
 }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('sidebarToggle');
-    
-    // Toggle sidebar when clicking hamburger
-    toggleBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        sidebar.classList.toggle('-translate-x-full');
-    });
-    
-    // Close sidebar when clicking outside sidebar
-    document.addEventListener('click', function(event) {
-        const isClickInsideSidebar = sidebar.contains(event.target);
-        const isClickOnToggle = toggleBtn.contains(event.target);
-        const isSidebarOpen = !sidebar.classList.contains('-translate-x-full');
-        
-        if (isSidebarOpen && !isClickInsideSidebar && !isClickOnToggle) {
-            sidebar.classList.add('-translate-x-full');
-        }
-    });
-});
-</script>
+
+<!-- OVERLAY untuk Mobile -->
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-60 z-30 lg:hidden hidden"></div>
+

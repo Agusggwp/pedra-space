@@ -1,6 +1,6 @@
 <!-- SIDEBAR COMPONENT -->
 <aside id="sidebar"
-       class="fixed md:sticky inset-y-0 left-0 top-0 z-50 w-64 h-screen bg-gray-900 text-gray-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out overflow-y-auto shadow-2xl">
+       class="fixed md:sticky inset-y-0 left-0 top-0 z-50 w-72 h-screen bg-gray-900 text-gray-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out overflow-y-auto shadow-2xl">
     <div class="flex-1 overflow-y-auto px-4 py-3">
         <!-- HEADER SIDEBAR -->
         <div class="p-4 flex-shrink-0 flex justify-center items-center">

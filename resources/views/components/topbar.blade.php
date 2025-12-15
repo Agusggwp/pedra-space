@@ -1,25 +1,16 @@
 <!-- TOPBAR COMPONENT -->
-<header class="fixed top-0 right-0 left-0 md:left-64 z-40 bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
+<header class="fixed top-0 right-0 left-0 md:left-72 z-40 bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
     <div class="flex items-center justify-between">
         <!-- Left: Hamburger Menu (Mobile) + Search -->
         <div class="flex items-center gap-4 flex-1">
-            <!-- Hamburger Button -->
-            <button id="menuBtn" class="md:hidden text-gray-600 hover:text-gray-900 transition-colors z-50 relative p-2">
+            <!-- Hamburger Button Selalu di Topbar (Mobile & Desktop) -->
+            <button id="menuBtn" class="text-gray-600 hover:text-gray-900 transition-colors z-50 relative p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="4" x2="20" y1="12" y2="12"/>
                     <line x1="4" x2="20" y1="6" y2="6"/>
                     <line x1="4" x2="20" y1="18" y2="18"/>
                 </svg>
             </button>
-
-            <!-- Search Bar -->
-            <div class="hidden sm:flex items-center bg-gray-100 rounded-lg px-4 py-2 w-full max-w-md">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.3-4.3"/>
-                </svg>
-                <input type="text" placeholder="Search products..." class="bg-transparent border-0 outline-none ml-3 text-sm text-gray-700 placeholder-gray-400 w-full">
-            </div>
         </div>
 
         <!-- Right: Role Badge + Notification + Profile -->
@@ -64,24 +55,30 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
 
-        if (menuBtn && sidebar && overlay) {
+        if (menuBtn && sidebar) {
             menuBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
+                if (overlay) {
+                    overlay.classList.toggle('hidden');
+                }
             });
 
-            overlay.addEventListener('click', function() {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            });
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                });
+            }
 
             // Tutup sidebar saat klik link
             document.querySelectorAll('#sidebar a').forEach(link => {
                 link.addEventListener('click', function() {
                     sidebar.classList.add('-translate-x-full');
-                    overlay.classList.add('hidden');
+                    if (overlay) {
+                        overlay.classList.add('hidden');
+                    }
                 });
             });
         }
