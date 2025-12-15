@@ -31,12 +31,6 @@
                                 <p class="text-gray-600">Tambah atau kurangi stok dengan cepat dan mudah</p>
                             </div>
                         </div>
-
-                        <a href="{{ route('kasir.dashboard') }}" 
-                        class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 font-semibold transition">
-                            <i class="ph ph-arrow-left"></i>
-                            <span>Kembali ke Dashboard</span>
-                        </a>
                     </div>
 
                     <!-- NOTIFIKASI -->
