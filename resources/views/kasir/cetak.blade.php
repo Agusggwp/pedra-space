@@ -22,31 +22,13 @@
 
 <div class="struk">
     <div class="text-center">
-        <h2 style="margin:0; padding:0;"><P>PEDRA SPACE</P></h2>
-        <p style="margin:5px 0;">Jl. Raya Bilukan<br>Telp: 085 1616 36684</p>
+        <img src="{{ Storage::url('public/logo/pedra1.png') }}" alt="PEDRA SPACE" style="width: 60mm; height: auto; margin: 0 auto -80px; display: block;">
+        <p style="margin:0; padding-top: 5px;">Jl. Raya Bilukan<br>Telp: 085 1616 36684</p>
     </div>
     <div class="line"></div>
 
     <!-- SOCIAL MEDIA & WIFI INFO -->
-    <table style="font-size: 11px;">
-        <tr>
-            <td><strong>📱 TikTok:</strong></td>
-            <td class="text-right">@pedra.space</td>
-        </tr>
-        <tr>
-            <td><strong>📷 Instagram:</strong></td>
-            <td class="text-right">@pedra.space</td>
-        </tr>
-        <tr>
-            <td><strong>📡 WiFi:</strong></td>
-            <td class="text-right">PEDRASPACE</td>
-        </tr>
-        <tr>
-            <td><strong>🔐 Password:</strong></td>
-            <td class="text-right">Pedra123456</td>
-        </tr>
-    </table>
-    <div class="line"></div>
+
 
     <table>
         <tr>
@@ -125,7 +107,7 @@
     <div class="line"></div>
 
     <div class="text-center">
-        <p style="margin:5px 0;"><strong>TERIMA KASIH</strong><br>Semoga Berkah & Selalu Sehat!</p>
+        <p style="margin:5px 0;"><strong> -Thank You-</strong><br></p>
         <small>Barang yang sudah dibeli tidak dapat ditukar/dikembalikan</small>
     </div>
 </div>
