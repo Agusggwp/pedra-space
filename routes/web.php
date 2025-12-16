@@ -6,6 +6,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+
 // Route khusus admin
 use App\Http\Controllers\Admin\DashboardController;
 
@@ -53,6 +54,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
+
+    // Route detail user untuk modal AJAX (paling bawah agar tidak menimpa /create)
+    Route::get('/users/{user}', [UserController::class, 'show'])
+        ->name('users.show');
 });
 
 

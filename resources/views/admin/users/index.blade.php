@@ -187,13 +187,13 @@
                         <!-- Dropdown Menus (outside table) -->
                         @foreach($users as $user)
                         <div id="menu-{{ $user->id }}" class="hidden absolute w-52 bg-white border border-gray-200 rounded-lg shadow-xl z-[9999] py-2" style="position: absolute;">
-                            <a href="{{ url('/admin/users/'.$user->id) }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                            <button type="button" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition view-user-btn" data-userid="{{ $user->id }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
                                     <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
                                     <circle cx="12" cy="12" r="3"/>
                                 </svg>
                                 View Details
-                            </a>
+                            </button>
                             <a href="{{ url('/admin/users/'.$user->id.'/edit') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
                                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
@@ -208,9 +208,9 @@
                                 Reset Password
                             </a>
                             <div class="border-t border-gray-200 my-1"></div>
-                            <form action="{{ url('/admin/users/'.$user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus {{ $user->name }}?')">
+                            <form action="{{ url('/admin/users/'.$user->id) }}" method="POST" class="delete-user-form" data-username="{{ $user->name }}">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
+                                <button type="button" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition delete-user-btn" data-userid="{{ $user->id }}" data-username="{{ $user->name }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
                                         <path d="M3 6h18"/>
                                         <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
@@ -219,6 +219,27 @@
                                     Delete User
                                 </button>
                             </form>
+                        </table>
+
+                        <!-- Delete Confirmation Modal -->
+                        <div id="deleteUserModal" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-40 hidden">
+                            <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-8 relative">
+                                <h3 class="text-lg font-semibold mb-4 text-gray-900">Konfirmasi Hapus User</h3>
+                                <p class="mb-6 text-gray-700" id="deleteUserModalText">Apakah anda yakin untuk hapus user ini?</p>
+                                <div class="flex justify-end gap-3">
+                                    <button id="cancelDeleteUserBtn" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">Batal</button>
+                                    <button id="confirmDeleteUserBtn" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">Hapus</button>
+                                </div>
+                                <button id="closeDeleteUserModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- View User Modal (Partial) -->
+                        @include('admin.users.view-modal')
                         </div>
                         @endforeach
                     </table>
@@ -290,14 +311,12 @@ function toggleMenu(event, userId) {
     const button = event.currentTarget;
     const menu = document.getElementById('menu-' + userId);
     const rect = button.getBoundingClientRect();
-    
     // Close all other menus
     document.querySelectorAll('[id^="menu-"]').forEach(m => {
         if (m.id !== 'menu-' + userId) {
             m.classList.add('hidden');
         }
     });
-    
     // Position menu relative to button
     if (menu.classList.contains('hidden')) {
         const menuWidth = 208; // w-52 = 208px
@@ -305,39 +324,31 @@ function toggleMenu(event, userId) {
         const padding = 16;
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        
         // Calculate horizontal position (align to right of button by default)
         let leftPosition = rect.right - menuWidth + window.scrollX;
-        
         // Check if menu overflows right edge
         if (rect.right - menuWidth + 208 > viewportWidth) {
             // Align to left edge of button instead
             leftPosition = rect.left + window.scrollX;
         }
-        
         // Check if still overflows right
         if (leftPosition + menuWidth > viewportWidth + window.scrollX) {
             leftPosition = viewportWidth + window.scrollX - menuWidth - padding;
         }
-        
         // Check if overflows left
         if (leftPosition < window.scrollX + padding) {
             leftPosition = window.scrollX + padding;
         }
-        
         // Calculate vertical position
         let topPosition = rect.bottom + window.scrollY + 8;
-        
         // Check if menu overflows bottom
         if (rect.bottom + menuHeight > viewportHeight) {
             // Show above button instead
             topPosition = rect.top + window.scrollY - menuHeight - 8;
         }
-        
         menu.style.top = topPosition + 'px';
         menu.style.left = leftPosition + 'px';
     }
-    
     // Toggle current menu
     menu.classList.toggle('hidden');
 }
@@ -348,6 +359,72 @@ document.addEventListener('click', function(event) {
         document.querySelectorAll('[id^="menu-"]').forEach(m => m.classList.add('hidden'));
     }
 });
+
+// Delete User Modal Logic
+let deleteUserForm = null;
+let deleteUserName = '';
+let deleteUserModal = document.getElementById('deleteUserModal');
+let deleteUserModalText = document.getElementById('deleteUserModalText');
+
+document.querySelectorAll('.delete-user-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        deleteUserForm = btn.closest('form');
+        deleteUserName = btn.getAttribute('data-username') || btn.closest('form').getAttribute('data-username') || '';
+        deleteUserModalText.textContent = `Apakah anda yakin untuk hapus user "${deleteUserName}"?`;
+        deleteUserModal.classList.remove('hidden');
+    });
+});
+
+document.getElementById('cancelDeleteUserBtn').onclick = closeDeleteUserModal;
+document.getElementById('closeDeleteUserModal').onclick = closeDeleteUserModal;
+
+function closeDeleteUserModal() {
+    deleteUserModal.classList.add('hidden');
+    deleteUserForm = null;
+    deleteUserName = '';
+}
+
+document.getElementById('confirmDeleteUserBtn').onclick = function() {
+    if (deleteUserForm) {
+        deleteUserForm.submit();
+        closeDeleteUserModal();
+    }
+};
+
+// View User Modal Logic
+let viewUserModal = document.getElementById('viewUserModal');
+let viewUserModalContent = document.getElementById('viewUserModalContent');
+if (viewUserModal) {
+    document.querySelectorAll('.view-user-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const userId = btn.getAttribute('data-userid');
+            viewUserModal.classList.remove('hidden');
+            viewUserModalContent.innerHTML = `<div class='flex justify-center items-center h-32'><svg class='animate-spin h-8 w-8 text-blue-600' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'><circle class='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' stroke-width='4'></circle><path class='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z'></path></svg></div>`;
+            fetch(`/admin/users/${userId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html'
+                }
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error('Gagal memuat detail user');
+                    return res.text();
+                })
+                .then(html => {
+                    viewUserModalContent.innerHTML = html;
+                })
+                .catch(() => {
+                    viewUserModalContent.innerHTML = '<div class="text-red-600 text-center">Gagal memuat detail user.</div>';
+                });
+        });
+    });
+    document.getElementById('closeViewUserModal').onclick = function() {
+        viewUserModal.classList.add('hidden');
+        viewUserModalContent.innerHTML = '';
+    };
+}
 </script>
 
 </body>

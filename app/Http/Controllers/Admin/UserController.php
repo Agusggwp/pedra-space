@@ -45,6 +45,15 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
+    public function show(User $user)
+    {
+        // Untuk modal detail user (AJAX/modal)
+        if (request()->ajax()) {
+            return view('admin.users.user-detail', compact('user'));
+        }
+        return view('admin.users.show', compact('user'));
+    }
+
     public function update(Request $request, User $user)
     {
         $request->validate([
