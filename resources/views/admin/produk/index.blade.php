@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Produk - POS Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
 
@@ -104,10 +105,10 @@
                                 <i class="ph ph-pencil-simple text-lg"></i>
                                 Edit
                             </a>
-                            <form action="{{ route('admin.produk.destroy', $p) }}" method="POST" class="inline">
+                            <form action="{{ route('admin.produk.destroy', $p) }}" method="POST" class="inline delete-produk-form">
                                 @csrf @method('DELETE')
                                 <button type="submit"
-                                        onclick="return confirm('Hapus {{ addslashes($p->nama) }}?')"
+                                        data-produk-name="{{ $p->nama }}"
                                         class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-5 py-3 rounded-lg shadow transition flex items-center gap-1.5 min-w-28 justify-center">
                                     <i class="ph ph-trash text-lg"></i>
                                     Hapus
@@ -134,6 +135,45 @@
         </main>
     </div>
 </div>
+
+<script>
+// Delete Produk with SweetAlert
+document.querySelectorAll('.delete-produk-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const produkName = form.querySelector('button[type="submit"]').getAttribute('data-produk-name');
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'Hapus Produk',
+            html: `<p class="text-gray-700">Apakah Anda yakin ingin menghapus produk <strong class="text-red-600">"${produkName}"</strong>?</p><p class="text-sm text-gray-500 mt-2">Aksi ini tidak dapat dibatalkan!</p>`,
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            preConfirm: () => {
+                return new Promise((resolve) => {
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        html: 'Mohon tunggu, sedang menghapus produk...',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            setTimeout(() => {
+                                form.submit();
+                            }, 500);
+                        }
+                    });
+                });
+            }
+        });
+    });
+});
+</script>
 
 </body>
 </html>

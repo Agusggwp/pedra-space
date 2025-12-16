@@ -52,6 +52,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/users/{user}', [UserController::class, 'update'])
         ->name('users.update');
 
+    Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])
+        ->name('users.resetPassword');
+
     Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen User - POS Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
 
@@ -200,13 +201,13 @@
                                 </svg>
                                 Edit User
                             </a>
-                            <a href="#" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                            <button type="button" class="w-full flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition reset-password-btn" data-userid="{{ $user->id }}" data-username="{{ $user->name }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3">
                                     <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                                 </svg>
                                 Reset Password
-                            </a>
+                            </button>
                             <div class="border-t border-gray-200 my-1"></div>
                             <form action="{{ url('/admin/users/'.$user->id) }}" method="POST" class="delete-user-form" data-username="{{ $user->name }}">
                                 @csrf @method('DELETE')
@@ -242,6 +243,50 @@
                         @include('admin.users.view-modal')
                         </div>
                         @endforeach
+
+                        <!-- Reset Password Modal -->
+                        <div id="resetPasswordModal" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-40 hidden">
+                            <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-8 relative">
+                                <button id="closeResetPasswordModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+
+                                <h3 class="text-lg font-semibold mb-2 text-gray-900">Reset Password</h3>
+                                <p class="text-sm text-gray-600 mb-6">Atur ulang password untuk user: <span id="resetPasswordUserName" class="font-medium text-gray-900"></span></p>
+
+                                <form id="resetPasswordForm" method="POST" class="space-y-4">
+                                    @csrf
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
+                                        <input type="password" id="resetPasswordInput" name="password" placeholder="Masukkan password baru" required
+                                               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                                        <p class="text-xs text-gray-500 mt-1">Minimal 6 karakter</p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
+                                        <input type="password" id="resetPasswordConfirmInput" name="password_confirmation" placeholder="Konfirmasi password" required
+                                               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                                    </div>
+
+                                    <div class="flex justify-end gap-3 pt-4">
+                                        <button type="button" id="cancelResetPasswordBtn" class="px-4 py-2.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition font-medium">
+                                            Batal
+                                        </button>
+                                        <button type="submit" class="px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition font-medium flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M12 2v20"/>
+                                                <path d="M2 12h20"/>
+                                            </svg>
+                                            Atur Ulang Password
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </table>
                 </div>
 
@@ -425,6 +470,117 @@ if (viewUserModal) {
         viewUserModalContent.innerHTML = '';
     };
 }
+
+// Reset Password Modal Logic
+let resetPasswordModal = document.getElementById('resetPasswordModal');
+let resetPasswordForm = document.getElementById('resetPasswordForm');
+let resetPasswordUserName = document.getElementById('resetPasswordUserName');
+let resetPasswordUserId = null;
+
+document.querySelectorAll('.reset-password-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        resetPasswordUserId = btn.getAttribute('data-userid');
+        const userName = btn.getAttribute('data-username');
+        resetPasswordUserName.textContent = userName;
+        resetPasswordForm.action = `/admin/users/${resetPasswordUserId}/reset-password`;
+        resetPasswordModal.classList.remove('hidden');
+        document.getElementById('resetPasswordInput').value = '';
+        document.getElementById('resetPasswordConfirmInput').value = '';
+        document.getElementById('resetPasswordInput').focus();
+    });
+});
+
+document.getElementById('closeResetPasswordModal').onclick = closeResetPasswordModal;
+document.getElementById('cancelResetPasswordBtn').onclick = closeResetPasswordModal;
+
+function closeResetPasswordModal() {
+    resetPasswordModal.classList.add('hidden');
+    resetPasswordForm.reset();
+    resetPasswordUserId = null;
+}
+
+resetPasswordForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const password = document.getElementById('resetPasswordInput').value;
+    const passwordConfirm = document.getElementById('resetPasswordConfirmInput').value;
+    
+    // Validasi password
+    if (password.length < 6) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Password Terlalu Pendek',
+            text: 'Password minimal 6 karakter!',
+            confirmButtonColor: '#3b82f6',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    
+    if (password !== passwordConfirm) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Password Tidak Cocok',
+            text: 'Password dan konfirmasi password tidak cocok!',
+            confirmButtonColor: '#3b82f6',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    
+    // Submit form
+    const formData = new FormData(resetPasswordForm);
+    
+    fetch(resetPasswordForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Tutup modal dulu
+                closeResetPasswordModal();
+                
+                // Tampilkan toast notification di depan
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: data.message || 'Password berhasil diatur ulang!',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: data.message || 'Gagal mengatur ulang password',
+                    confirmButtonColor: '#3b82f6',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Kesalahan Sistem',
+                text: 'Terjadi kesalahan saat mengatur ulang password',
+                confirmButtonColor: '#3b82f6',
+                confirmButtonText: 'OK'
+            });
+        });
+});
 </script>
 
 </body>

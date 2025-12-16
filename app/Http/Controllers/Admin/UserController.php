@@ -89,4 +89,25 @@ class UserController extends Controller
         $user->delete();
         return back()->with('success', 'User berhasil dihapus!');
     }
+
+    public function resetPassword(Request $request, User $user)
+    {
+        $request->validate([
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Password user ' . $user->name . ' berhasil diatur ulang!'
+            ]);
+        }
+
+        return back()->with('success', 'Password berhasil diatur ulang!');
+    }
+
 }

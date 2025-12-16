@@ -6,6 +6,7 @@
     <title>Manajemen Menu - POS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
 
@@ -98,9 +99,9 @@
                                             <i class="ph ph-pencil"></i> Edit
                                         </a>
 
-                                        <form action="{{ route('admin.menu.destroy', $menu) }}" method="POST" class="flex-1" onsubmit="return confirm('Yakin hapus menu ini?')">
+                                        <form action="{{ route('admin.menu.destroy', $menu) }}" method="POST" class="flex-1 delete-menu-form">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger w-full bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-semibold transition flex items-center justify-center gap-2">
+                                            <button type="submit" data-menu-name="{{ $menu->nama }}" class="btn btn-sm btn-danger w-full bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-semibold transition flex items-center justify-center gap-2">
                                                 <i class="ph ph-trash"></i> Hapus
                                             </button>
                                         </form>
@@ -129,6 +130,45 @@
         </main>
     </div>
 </div>
+
+<script>
+// Delete Menu with SweetAlert
+document.querySelectorAll('.delete-menu-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const menuName = form.querySelector('button[type="submit"]').getAttribute('data-menu-name');
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'Hapus Menu',
+            html: `<p class="text-gray-700">Apakah Anda yakin ingin menghapus menu <strong class="text-red-600">"${menuName}"</strong>?</p><p class="text-sm text-gray-500 mt-2">Aksi ini tidak dapat dibatalkan!</p>`,
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            preConfirm: () => {
+                return new Promise((resolve) => {
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        html: 'Mohon tunggu, sedang menghapus menu...',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            setTimeout(() => {
+                                form.submit();
+                            }, 500);
+                        }
+                    });
+                });
+            }
+        });
+    });
+});
+</script>
 
 </body>
 </html>

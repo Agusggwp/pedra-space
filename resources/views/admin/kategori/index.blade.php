@@ -6,6 +6,7 @@
     <title>Manajemen Kategori - POS Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
 
@@ -86,10 +87,10 @@
                                             <i class="ph ph-pencil-simple text-lg"></i>
                                             Edit
                                         </a>
-                                        <form action="{{ route('admin.category.destroy', $category) }}" method="POST" class="inline">
+                                        <form action="{{ route('admin.category.destroy', $category) }}" method="POST" class="inline delete-category-form">
                                             @csrf @method('DELETE')
                                             <button type="submit"
-                                                    onclick="return confirm('Hapus {{ addslashes($category->nama) }}?')"
+                                                    data-category-name="{{ $category->nama }}"
                                                     class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-5 py-3 rounded-lg shadow transition flex items-center gap-1.5 min-w-28 justify-center">
                                                 <i class="ph ph-trash text-lg"></i>
                                                 Hapus
@@ -123,6 +124,45 @@
         </main>
     </div>
 </div>
+
+<script>
+// Delete Category with SweetAlert
+document.querySelectorAll('.delete-category-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const categoryName = form.querySelector('button[type="submit"]').getAttribute('data-category-name');
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'Hapus Kategori',
+            html: `<p class="text-gray-700">Apakah Anda yakin ingin menghapus kategori <strong class="text-red-600">"${categoryName}"</strong>?</p><p class="text-sm text-gray-500 mt-2">Aksi ini tidak dapat dibatalkan!</p>`,
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            preConfirm: () => {
+                return new Promise((resolve) => {
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        html: 'Mohon tunggu, sedang menghapus kategori...',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            setTimeout(() => {
+                                form.submit();
+                            }, 500);
+                        }
+                    });
+                });
+            }
+        });
+    });
+});
+</script>
 
 </body>
 </html>
