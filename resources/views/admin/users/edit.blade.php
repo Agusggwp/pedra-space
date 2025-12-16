@@ -87,7 +87,7 @@
                         </div>
 
                         <!-- Password Baru (opsional) -->
-                        <div>
+                        <!-- <div>
                             <label class="block text-gray-700 font-medium mb-2">
                                 <i class="ph ph-lock text-xl mr-2"></i> Password Baru
                                 <span class="text-gray-500 text-sm">(kosongkan jika tidak diganti)</span>
@@ -98,17 +98,17 @@
                             @error('password')
                                 <p class="text-red-500 text-sm mt-2"><i class="ph ph-warning"></i> {{ $message }}</p>
                             @enderror
-                        </div>
+                        </div> -->
 
                         <!-- Konfirmasi Password -->
-                        <div>
+                        <!-- <div>
                             <label class="block text-gray-700 font-medium mb-2">
                                 <i class="ph ph-lock-key text-xl mr-2"></i> Konfirmasi Password Baru
                             </label>
                             <input type="password" name="password_confirmation"
                                    class="w-full px-5 py-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
                                    placeholder="Ulangi password baru">
-                        </div>
+                        </div> -->
 
                         <!-- Role -->
                         <div>

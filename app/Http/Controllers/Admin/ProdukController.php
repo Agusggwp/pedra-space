@@ -108,6 +108,11 @@ class ProdukController extends Controller
             ->with('success', 'Produk berhasil diupdate!');
     }
 
+    public function show(Produk $produk)
+    {
+        return view('admin.produk.show', compact('produk'));
+    }
+
     public function destroy(Produk $produk)
     {
         // Hapus foto dari storage

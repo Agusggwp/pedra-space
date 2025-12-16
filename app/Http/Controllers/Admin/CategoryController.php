@@ -71,4 +71,12 @@ class CategoryController extends Controller
         return redirect()->route('admin.category.index')
             ->with('success', 'Kategori berhasil dihapus!');
     }
+
+    public function show(Category $category)
+    {
+        // Eager load produks untuk efisiensi
+        $category->load('produks');
+        
+        return view('admin.kategori.show', compact('category'));
+    }
 }

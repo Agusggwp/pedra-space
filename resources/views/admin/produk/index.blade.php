@@ -46,8 +46,8 @@
 
             <!-- TABEL PRODUK – SUPER NYAMAN DI TABLET -->
             <!-- TABEL PRODUK – SEMPURNA DI TABLET (768px – 1024px) -->
-<div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-    <div class="overflow-x-auto">
+<div class="bg-white rounded-2xl shadow-2xl">
+    <div class="relative">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gradient-to-r from-gray-800 to-gray-900 text-white">
                 <tr>
@@ -99,21 +99,39 @@
 
                     <!-- AKSI – Tombol pas untuk jari di tablet -->
                     <td class="py-4 px-3">
-                        <div class="flex justify-center gap-2">
-                            <a href="{{ route('admin.produk.edit', $p) }}"
-                               class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium px-5 py-3 rounded-lg shadow transition flex items-center gap-1.5 min-w-28 justify-center">
-                                <i class="ph ph-pencil-simple text-lg"></i>
-                                Edit
-                            </a>
-                            <form action="{{ route('admin.produk.destroy', $p) }}" method="POST" class="inline delete-produk-form">
-                                @csrf @method('DELETE')
-                                <button type="submit"
-                                        data-produk-name="{{ $p->nama }}"
-                                        class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-5 py-3 rounded-lg shadow transition flex items-center gap-1.5 min-w-28 justify-center">
-                                    <i class="ph ph-trash text-lg"></i>
-                                    Hapus
-                                </button>
-                            </form>
+                        <div class="relative flex justify-center" style="z-index:60;">
+                            <button type="button" class="text-gray-400 hover:text-gray-600 transition p-2 rounded-lg hover:bg-gray-100" onclick="toggleMenu(event, {{ $p->id }})">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="5" r="1.5"/>
+                                    <circle cx="12" cy="12" r="1.5"/>
+                                    <circle cx="12" cy="19" r="1.5"/>
+                                </svg>
+                            </button>
+                            <div id="menu-{{ $p->id }}" class="hidden absolute z-[9999] w-44 bg-white border border-gray-200 rounded-lg shadow-xl py-2 right-0 top-10">
+                                <a href="{{ route('admin.produk.show', $p) }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    Lihat
+                                </a>
+                                <a href="{{ route('admin.produk.edit', $p) }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                                    </svg>
+                                    Edit
+                                </a>
+                                <form action="{{ route('admin.produk.destroy', $p) }}" method="POST" class="delete-produk-form" data-produk-name="{{ $p->nama }}">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                            <rect x="3" y="6" width="18" height="14" rx="2"/>
+                                            <path d="M8 6V4a4 4 0 0 1 8 0v2"/>
+                                        </svg>
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -137,13 +155,31 @@
 </div>
 
 <script>
+// Dropdown menu logic
+function toggleMenu(event, produkId) {
+    event.stopPropagation();
+    const button = event.currentTarget;
+    const menu = document.getElementById('menu-' + produkId);
+    // Close all other menus
+    document.querySelectorAll('[id^="menu-"]').forEach(m => {
+        if (m.id !== 'menu-' + produkId) {
+            m.classList.add('hidden');
+        }
+    });
+    // Toggle current menu
+    menu.classList.toggle('hidden');
+}
+// Close menus when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('button[onclick^="toggleMenu"]') && !event.target.closest('[id^="menu-"]')) {
+        document.querySelectorAll('[id^="menu-"]').forEach(m => m.classList.add('hidden'));
+    }
+});
 // Delete Produk with SweetAlert
 document.querySelectorAll('.delete-produk-form').forEach(form => {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        const produkName = form.querySelector('button[type="submit"]').getAttribute('data-produk-name');
-        
+        const produkName = form.getAttribute('data-produk-name');
         Swal.fire({
             icon: 'warning',
             title: 'Hapus Produk',

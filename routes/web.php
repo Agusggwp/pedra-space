@@ -61,6 +61,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Route detail user untuk modal AJAX (paling bawah agar tidak menimpa /create)
     Route::get('/users/{user}', [UserController::class, 'show'])
         ->name('users.show');
+
+    // Tambahkan route show di dalam group kategori
+    Route::get('/category/{category}', [CategoryController::class, 'show'])->name('admin.category.show');
 });
 
 
