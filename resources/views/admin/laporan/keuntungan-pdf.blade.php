@@ -21,7 +21,7 @@
         }
         .summary-box {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
             margin-bottom: 20px;
             padding: 10px;
@@ -89,6 +89,10 @@
         <div class="value">Rp {{ number_format($totalPenjualan, 0, ',', '.') }}</div>
     </div>
     <div class="summary-item">
+        <p>Total Diskon</p>
+        <div class="value">Rp {{ number_format($totalDiskon, 0, ',', '.') }}</div>
+    </div>
+    <div class="summary-item">
         <p>Total Modal (Harga Beli)</p>
         <div class="value">Rp {{ number_format($totalHargaBeli, 0, ',', '.') }}</div>
     </div>
@@ -114,6 +118,7 @@
                 <th class="text-right">Qty</th>
                 <th class="text-right">Harga Beli</th>
                 <th class="text-right">Harga Jual</th>
+                <th class="text-right">Diskon</th>
                 <th class="text-right">Total Beli</th>
                 <th class="text-right">Total Jual</th>
                 <th class="text-right">Keuntungan</th>
@@ -164,6 +169,18 @@
                         @endif
                     </td>
                     <td class="text-right">Rp {{ number_format($hargaSatuanDisplay, 0, ',', '.') }}</td>
+                    <td class="text-right">
+                        @php
+                            $totalDiskonItem = $items->sum(function($item) { 
+                                return ($item->diskon_nominal ?? 0) * ($item->jumlah ?? $item->qty ?? 0);
+                            });
+                        @endphp
+                        @if($totalDiskonItem > 0)
+                            -Rp {{ number_format($totalDiskonItem, 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td class="text-right">Rp {{ number_format($totalBeli, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($totalJual, 0, ',', '.') }}</td>
                     <td class="text-right"><strong>Rp {{ number_format($totalKeuntunganItem, 0, ',', '.') }}</strong></td>

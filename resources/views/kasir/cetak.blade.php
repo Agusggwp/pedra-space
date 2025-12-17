@@ -82,7 +82,17 @@
         <tr>
             <td>{{ $d->jumlah }} × Rp {{ number_format($d->harga_satuan) }}</td>
             <td></td>
-            <td class="text-right">Rp {{ number_format($d->subtotal) }}</td>
+            <td class="text-right">Rp {{ number_format($d->jumlah * $d->harga_satuan) }}</td>
+        </tr>
+        @if($d->diskon_nominal > 0)
+        <tr>
+            <td colspan="3">
+                <small style="color: #d32f2f;">Diskon -Rp {{ number_format($d->diskon_nominal * $d->jumlah) }}</small>
+            </td>
+        </tr>
+        @endif
+        <tr>
+            <td colspan="3"></td>
         </tr>
     </table>
     @endforeach

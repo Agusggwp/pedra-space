@@ -95,6 +95,16 @@
                 <span>Void / Refund</span>
             </a>
 
+            <a href="{{ url('/admin/diskon') }}" 
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm {{ str_contains($current,'diskon') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="20.5" cy="6.5" r="1.5"/>
+                    <circle cx="3.5" cy="17.5" r="1.5"/>
+                    <path d="M3 6.5h15m-13 11h13"/>
+                </svg>
+                <span>Set Diskon</span>
+            </a>
+
             <!-- Laporan Penjualan with Submenu -->
             <div class="group">
                 <button class="flex items-center gap-3 px-3 py-3 rounded-lg text-sm w-full {{ str_contains($current,'laporan') ? 'bg-blue-500 text-white font-medium' : 'text-gray-400 hover:text-white font-normal' }} transition-colors duration-150" onclick="toggleSubmenu(event)">

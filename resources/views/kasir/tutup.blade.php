@@ -121,19 +121,19 @@
                                 </span>
                             </div>
 
-                            <!-- HARUSNYA ADA -->
+                            <!-- UANG YANG HARUS DISETORKAN -->
                             <div class="flex justify-between items-center p-3 bg-green-50 border-2 border-green-200 rounded-lg">
                                 <span class="text-sm font-bold text-gray-800 flex items-center gap-2">
                                     <i class="ph ph-calculator text-xl text-green-600"></i>
-                                    Harusnya Ada di Laci
+                                    Uang yang Harus Disetorkan
                                 </span>
                                 <span class="text-base font-bold text-green-600">
-                                    Rp {{ number_format($shift->saldo_awal + $transaksiTunai) }}
+                                    Rp {{ number_format($shift->saldo_awal + $transaksiTunai + $transaksiEDC + $transaksiQRIS + $transaksiTransfer) }}
                                 </span>
                             </div>
 
-                            <p class="text-xs text-gray-600 italic mt-2">
-                                * Saldo Awal + Penjualan Tunai = Jumlah uang fisik yang seharusnya ada di laci kasir
+                            <p class="text-xs text-gray-600 italic mt-3">
+                                * Saldo Awal + Semua Penjualan = Total uang yang harus disetorkan kepada pimpinan
                             </p>
 
                         </div>
@@ -146,7 +146,7 @@
 
                             <div class="mb-5">
                                 <label class="block text-sm font-bold text-gray-700 mb-2">
-                                    Masukkan Saldo Akhir (Uang di Laci) <span class="text-red-500">*</span>
+                                    Masukkan Total Uang dari Semua Transaksi <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" 
                                     name="saldo_akhir" 
@@ -157,7 +157,7 @@
                                     required>
                                 <p class="text-xs text-gray-600 mt-2">
                                     <i class="ph ph-info mr-1"></i>
-                                    Hitung semua uang fisik yang ada di laci kasir
+                                    Masukkan total uang tunai yang diterima dari semua transaksi penjualan
                                 </p>
                             </div>
 

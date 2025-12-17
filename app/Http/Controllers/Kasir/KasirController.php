@@ -10,6 +10,7 @@ use App\Models\TransaksiDetail;
 use App\Models\ShiftKasir;
 use App\Models\TotalEarnings;
 use App\Models\StokHistory;
+use App\Models\Diskon;
 use Illuminate\Http\Request;
 
 class KasirController extends Controller
@@ -22,8 +23,14 @@ class KasirController extends Controller
             return redirect()->route('kasir.buka');
         }
 
+        // Ambil produk dengan diskon
         $produks = Produk::where('stok', '>', 0)->orderBy('nama')->get();
+        $produks->load('diskon');
+
+        // Ambil menu dengan diskon
         $menus = Menu::where('is_active', true)->with('options')->orderBy('nama')->get();
+        $menus->load('diskon');
+
         $keranjang = session('keranjang', []);
 
         return view('kasir.pos', compact('produks', 'menus', 'keranjang', 'shift'));
@@ -104,12 +111,14 @@ class KasirController extends Controller
         $shift = ShiftKasir::buka()->where('user_id', auth()->id())->firstOrFail();
         $request->validate(['saldo_akhir' => 'required|numeric|min:0']);
 
-        $transaksiTunaiEDC = Transaksi::where('user_id', auth()->id())
-            ->whereIn('metode_pembayaran', ['Tunai', 'EDC'])
+        // Hitung total transaksi dari SEMUA metode pembayaran
+        $totalSemualMetode = Transaksi::where('user_id', auth()->id())
+            ->whereIn('metode_pembayaran', ['Tunai', 'EDC', 'QRIS', 'Transfer'])
             ->where('created_at', '>=', $shift->dibuka_pada)
+            ->where('status', 'lunas')
             ->sum('total');
 
-        $harusnyaAda = $shift->saldo_awal + $transaksiTunaiEDC;
+        $harusnyaAda = $shift->saldo_awal + $totalSemualMetode;
         $selisih = $request->saldo_akhir - $harusnyaAda;
 
         $shift->update([
@@ -159,12 +168,38 @@ class KasirController extends Controller
             return back()->with('error', 'Stok ' . $produk->nama . ' tidak cukup!');
         }
 
+        // Hitung harga dengan diskon
+        $hargaAwal = $produk->harga_jual;
+        $hargaFinal = $hargaAwal;
+
+        // Cek diskon produk spesifik
+        $diskonProduk = Diskon::where('tipe', 'produk')
+            ->where('produk_id', $produk->id)
+            ->where('aktif', true)
+            ->first();
+
+        if ($diskonProduk) {
+            $hargaFinal = $diskonProduk->hargaSetelahDiskon($hargaAwal);
+        } else {
+            // Cek diskon kategori
+            $diskonKategori = Diskon::where('tipe', 'kategori')
+                ->where('category_id', $produk->category_id)
+                ->where('aktif', true)
+                ->first();
+
+            if ($diskonKategori) {
+                $hargaFinal = $diskonKategori->hargaSetelahDiskon($hargaAwal);
+            }
+        }
+
         if (isset($keranjang[$produk->id])) {
             $keranjang[$produk->id]['jumlah']++;
         } else {
             $keranjang[$produk->id] = [
                 'nama' => $produk->nama,
-                'harga' => $produk->harga_jual,
+                'harga' => $hargaFinal,
+                'harga_awal' => $hargaAwal,
+                'diskon' => $hargaAwal - $hargaFinal,
                 'jumlah' => 1
             ];
         }
@@ -196,7 +231,32 @@ class KasirController extends Controller
                 }
             }
 
-            $hargaFinal = $menu->harga_base + $totalTambahan;
+            $hargaBase = $menu->harga_base + $totalTambahan;
+            $hargaFinal = $hargaBase;
+            $diskonNominal = 0;
+
+            // Cek diskon menu spesifik
+            $diskonMenu = Diskon::where('tipe', 'menu')
+                ->where('menu_id', $menu->id)
+                ->where('aktif', true)
+                ->first();
+
+            if ($diskonMenu) {
+                $hargaFinal = $diskonMenu->hargaSetelahDiskon($hargaBase);
+                $diskonNominal = $hargaBase - $hargaFinal;
+            } else {
+                // Cek diskon kategori menu
+                $diskonKategori = Diskon::where('tipe', 'kategori')
+                    ->where('category_id', $menu->category_id)
+                    ->where('aktif', true)
+                    ->first();
+
+                if ($diskonKategori) {
+                    $hargaFinal = $diskonKategori->hargaSetelahDiskon($hargaBase);
+                    $diskonNominal = $hargaBase - $hargaFinal;
+                }
+            }
+
             $jumlah = $request->jumlah ?? 1;
 
             // Key unik berdasarkan menu_id + options combo
@@ -211,6 +271,8 @@ class KasirController extends Controller
                     'menu_id' => $menu->id,
                     'nama' => $menu->nama,
                     'harga' => $hargaFinal,
+                    'harga_awal' => $hargaBase,
+                    'diskon' => $diskonNominal,
                     'jumlah' => $jumlah,
                     'options' => $selectedOptions,
                     'harga_base' => $menu->harga_base,
@@ -316,21 +378,31 @@ class KasirController extends Controller
         foreach ($keranjang as $id => $item) {
             // Untuk produk: simpan produk_id dan kurangi stok
             if (!isset($item['type']) || $item['type'] !== 'menu') {
+                $hargaAwal = $item['harga_awal'] ?? $item['harga'];
+                $diskonNominal = $item['diskon'] ?? 0;
+                
                 TransaksiDetail::create([
                     'transaksi_id' => $transaksi->id,
                     'produk_id' => $id,
                     'jumlah' => $item['jumlah'],
                     'harga_satuan' => $item['harga'],
+                    'harga_awal' => $hargaAwal,
+                    'diskon_nominal' => $diskonNominal,
                     'subtotal' => $item['harga'] * $item['jumlah']
                 ]);
                 Produk::find($id)->decrement('stok', $item['jumlah']);
             } else {
                 // Untuk menu: simpan menu_id tanpa kurangi stok
+                $hargaAwal = $item['harga_awal'] ?? $item['harga'];
+                $diskonNominal = $item['diskon'] ?? 0;
+                
                 TransaksiDetail::create([
                     'transaksi_id' => $transaksi->id,
                     'menu_id' => $item['menu_id'],
                     'jumlah' => $item['jumlah'],
                     'harga_satuan' => $item['harga'],
+                    'harga_awal' => $hargaAwal,
+                    'diskon_nominal' => $diskonNominal,
                     'subtotal' => $item['harga'] * $item['jumlah'],
                     'options' => $item['options'] ?? null
                 ]);

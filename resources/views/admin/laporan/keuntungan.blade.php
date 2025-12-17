@@ -76,7 +76,7 @@
                 </div>
 
                 <!-- SUMMARY CARDS -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
                     <!-- Total Penjualan -->
                     <div class="group bg-white p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-blue-500 transform hover:-translate-y-2">
                         <div class="flex justify-between items-start mb-4">
@@ -91,6 +91,22 @@
                             </div>
                         </div>
                         <p class="text-xs text-gray-500">Total nilai penjualan (semua transaksi)</p>
+                    </div>
+
+                    <!-- Total Diskon -->
+                    <div class="group bg-white p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-red-500 transform hover:-translate-y-2">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <p class="text-gray-500 text-sm font-medium mb-2 flex items-center gap-2">
+                                    <i class="ph ph-tag text-red-600"></i>Total Diskon
+                                </p>
+                                <p class="text-2xl md:text-3xl font-bold text-red-600">Rp {{ number_format($totalDiskon, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                <i class="ph ph-tag text-3xl text-red-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500">Total diskon yang diberikan</p>
                     </div>
 
                     <!-- Total Harga Beli -->
@@ -188,6 +204,7 @@
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Qty</th>
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Harga Beli</th>
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Harga Jual</th>
+                                        <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Diskon</th>
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Total Beli</th>
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Total Jual</th>
                                         <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Keuntungan</th>
@@ -198,11 +215,21 @@
                                         @php
                                             $first = $items->first();
                                             $totalQty = $items->sum(function($item) { return $item->jumlah ?? $item->qty ?? 0; });
-                                            $totalJual = $items->sum(function($item) { 
-                                                $hargaSatuan = $item->harga_satuan ?? $item->harga ?? 0;
+                                            
+                                            // Hitung Total Jual ORIGINAL (sebelum diskon)
+                                            $totalJualOriginal = $items->sum(function($item) { 
+                                                $hargaAwal = $item->harga_awal ?? $item->harga_satuan ?? 0;
                                                 $jumlah = $item->jumlah ?? $item->qty ?? 0;
-                                                return $hargaSatuan * $jumlah; 
+                                                return $hargaAwal * $jumlah; 
                                             });
+                                            
+                                            // Hitung Total Diskon
+                                            $totalDiskonItem = $items->sum(function($item) { 
+                                                return ($item->diskon_nominal ?? 0) * ($item->jumlah ?? $item->qty ?? 0);
+                                            });
+                                            
+                                            // Total Jual AKHIR (setelah diskon)
+                                            $totalJual = $totalJualOriginal - $totalDiskonItem;
                                             
                                             if ($first->tipe === 'produk') {
                                                 $totalBeli = $items->sum(function($item) { 
@@ -224,6 +251,7 @@
                                             
                                             $totalKeuntunganItem = $totalJual - $totalBeli;
                                             $hargaSatuanDisplay = $first->harga_satuan ?? $first->harga ?? 0;
+                                            $hargaAwalDisplay = $first->harga_awal ?? $hargaSatuanDisplay;
                                         @endphp
                                         <tr class="hover:bg-gray-50 transition-colors duration-150">
                                             <td class="px-6 py-4 text-sm text-gray-700">{{ $loop->iteration }}</td>
@@ -243,7 +271,19 @@
                                                     -
                                                 @endif
                                             </td>
-                                            <td class="px-6 py-4 text-sm text-right text-gray-700">Rp {{ number_format($hargaSatuanDisplay, 0, ',', '.') }}</td>
+                                            <td class="px-6 py-4 text-sm text-right text-gray-700">Rp {{ number_format($hargaAwalDisplay, 0, ',', '.') }}</td>
+                                            <td class="px-6 py-4 text-sm text-right text-red-600 font-medium">
+                                                @php
+                                                    $totalDiskonItem = $items->sum(function($item) { 
+                                                        return ($item->diskon_nominal ?? 0) * ($item->jumlah ?? $item->qty ?? 0);
+                                                    });
+                                                @endphp
+                                                @if($totalDiskonItem > 0)
+                                                    -Rp {{ number_format($totalDiskonItem, 0, ',', '.') }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
                                             <td class="px-6 py-4 text-sm text-right font-medium text-gray-900">Rp {{ number_format($totalBeli, 0, ',', '.') }}</td>
                                             <td class="px-6 py-4 text-sm text-right font-medium text-gray-900">Rp {{ number_format($totalJual, 0, ',', '.') }}</td>
                                             <td class="px-6 py-4 text-sm text-right font-bold {{ $first->tipe === 'menu' ? 'text-purple-600' : 'text-green-600' }}">Rp {{ number_format($totalKeuntunganItem, 0, ',', '.') }}</td>

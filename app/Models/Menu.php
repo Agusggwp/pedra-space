@@ -33,4 +33,10 @@ class Menu extends Model
     {
         return $this->hasMany(MenuOption::class);
     }
+
+    // Relasi ke diskon
+    public function diskon()
+    {
+        return $this->hasMany(Diskon::class, 'menu_id')->aktif();
+    }
 }

@@ -127,6 +127,46 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 
+use App\Http\Controllers\Admin\DiskonController;
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.diskon.')->group(function () {
+    // Main
+    Route::get('/diskon', [DiskonController::class, 'index'])->name('index');
+    
+    // Diskon Produk
+    Route::get('/diskon/produk', [DiskonController::class, 'produk'])->name('produk');
+    Route::get('/diskon/produk/create', [DiskonController::class, 'createProduk'])->name('produk.create');
+    Route::post('/diskon/produk', [DiskonController::class, 'storeProduk'])->name('produk.store');
+    Route::get('/diskon/produk/{diskon}/edit', [DiskonController::class, 'editProduk'])->name('produk.edit');
+    Route::put('/diskon/produk/{diskon}', [DiskonController::class, 'updateProduk'])->name('produk.update');
+    
+    // Diskon Menu
+    Route::get('/diskon/menu', [DiskonController::class, 'menu'])->name('menu');
+    Route::get('/diskon/menu/create', [DiskonController::class, 'createMenu'])->name('menu.create');
+    Route::post('/diskon/menu', [DiskonController::class, 'storeMenu'])->name('menu.store');
+    Route::get('/diskon/menu/{diskon}/edit', [DiskonController::class, 'editMenu'])->name('menu.edit');
+    Route::put('/diskon/menu/{diskon}', [DiskonController::class, 'updateMenu'])->name('menu.update');
+    
+    // Diskon Kategori
+    Route::get('/diskon/kategori', [DiskonController::class, 'kategori'])->name('kategori');
+    Route::get('/diskon/kategori/create', [DiskonController::class, 'createKategori'])->name('kategori.create');
+    Route::post('/diskon/kategori', [DiskonController::class, 'storeKategori'])->name('kategori.store');
+    Route::get('/diskon/kategori/{diskon}/edit', [DiskonController::class, 'editKategori'])->name('kategori.edit');
+    Route::put('/diskon/kategori/{diskon}', [DiskonController::class, 'updateKategori'])->name('kategori.update');
+    
+    // Diskon Umum
+    Route::get('/diskon/umum', [DiskonController::class, 'umum'])->name('umum');
+    Route::get('/diskon/umum/create', [DiskonController::class, 'createUmum'])->name('umum.create');
+    Route::post('/diskon/umum', [DiskonController::class, 'storeUmum'])->name('umum.store');
+    Route::get('/diskon/umum/{diskon}/edit', [DiskonController::class, 'editUmum'])->name('umum.edit');
+    Route::put('/diskon/umum/{diskon}', [DiskonController::class, 'updateUmum'])->name('umum.update');
+    
+    // Delete & Toggle
+    Route::delete('/diskon/{diskon}', [DiskonController::class, 'destroy'])->name('destroy');
+    Route::patch('/diskon/{diskon}/toggle', [DiskonController::class, 'toggle'])->name('toggle');
+});
+
+
 ////KASIRRR
 
 use App\Http\Controllers\Kasir\KasirController;

@@ -104,7 +104,27 @@
                                                         <!-- INFO PRODUK -->
                                                         <div class="p-3">
                                                             <h3 class="font-semibold text-sm text-gray-800 mb-1 truncate">{{ $p->nama }}</h3>
-                                                            <p class="text-lg font-bold text-gray-800 mb-2">Rp {{ number_format($p->harga_jual) }}</p>
+                                                            
+                                                            @php
+                                                                $hargaAwal = $p->harga_jual;
+                                                                $hargaFinal = $hargaAwal;
+                                                                $hasDiskon = false;
+                                                                
+                                                                $diskonProduk = $p->diskon->first();
+                                                                if ($diskonProduk) {
+                                                                    $hargaFinal = $diskonProduk->hargaSetelahDiskon($hargaAwal);
+                                                                    $hasDiskon = true;
+                                                                }
+                                                            @endphp
+                                                            
+                                                            <div class="mb-2">
+                                                                @if($hasDiskon)
+                                                                    <p class="text-xs text-gray-500 line-through">Rp {{ number_format($hargaAwal) }}</p>
+                                                                    <p class="text-lg font-bold text-red-600">Rp {{ number_format($hargaFinal) }}</p>
+                                                                @else
+                                                                    <p class="text-lg font-bold text-gray-800">Rp {{ number_format($hargaAwal) }}</p>
+                                                                @endif
+                                                            </div>
                                                             
                                                             <button type="submit" class="w-full px-3 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition text-sm font-semibold">
                                                                 <i class="ph ph-shopping-cart-simple mr-1"></i>Tambah
@@ -150,7 +170,28 @@
                                                     <!-- INFO MENU -->
                                                     <div class="p-3">
                                                         <h3 class="font-semibold text-sm text-gray-800 mb-1 truncate">{{ $menu->nama }}</h3>
-                                                        <p class="text-lg font-bold text-gray-800 mb-1">Rp {{ number_format($menu->harga_base) }}</p>
+                                                        
+                                                        @php
+                                                            $hargaMenuAwal = $menu->harga_base;
+                                                            $hargaMenuFinal = $hargaMenuAwal;
+                                                            $hasMenuDiskon = false;
+                                                            
+                                                            $diskonMenu = $menu->diskon->first();
+                                                            if ($diskonMenu) {
+                                                                $hargaMenuFinal = $diskonMenu->hargaSetelahDiskon($hargaMenuAwal);
+                                                                $hasMenuDiskon = true;
+                                                            }
+                                                        @endphp
+                                                        
+                                                        <div class="mb-1">
+                                                            @if($hasMenuDiskon)
+                                                                <p class="text-xs text-gray-500 line-through">Rp {{ number_format($hargaMenuAwal) }}</p>
+                                                                <p class="text-lg font-bold text-red-600">Rp {{ number_format($hargaMenuFinal) }}</p>
+                                                            @else
+                                                                <p class="text-lg font-bold text-gray-800">Rp {{ number_format($hargaMenuAwal) }}</p>
+                                                            @endif
+                                                        </div>
+
                                                         @if($menu->options->count() > 0)
                                                             <p class="text-xs text-gray-500 mb-2">
                                                                 <i class="ph ph-gear-six"></i> {{ $menu->options->count() }} Pilihan

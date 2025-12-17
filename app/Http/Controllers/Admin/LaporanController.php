@@ -214,6 +214,12 @@ class LaporanController extends Controller
             return $hargaSatuan * $jumlah;
         });
 
+        $totalDiskon = $transaksiDetail->sum(function ($detail) {
+            $diskonNominal = $detail->diskon_nominal ?? 0;
+            $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+            return $diskonNominal * $jumlah;
+        });
+
         $totalHargaBeli = $transaksiDetail->sum(function ($detail) {
             $hargaBeli = 0;
             $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
@@ -265,11 +271,12 @@ class LaporanController extends Controller
         }
 
         return view('admin.laporan.keuntungan', compact(
-            'keuntungan', 'tahun', 'bulan', 'totalPenjualan', 
+            'keuntungan', 'tahun', 'bulan', 'totalPenjualan', 'totalDiskon',
             'totalHargaBeli', 'totalKeuntungan', 'totalQty', 'hariData'
         ));
     }
 
+    // Export Laporan Keuntungan PDF
     // Export Laporan Keuntungan PDF
     public function exportKeuntunganPdf(Request $request)
     {
@@ -293,7 +300,9 @@ class LaporanController extends Controller
                 $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
                 $hargaBeli = $detail->produk->harga_beli ?? 0;
                 $hargaJual = $hargaSatuan;
+                $diskonNominal = $detail->diskon_nominal ?? 0;
                 
+                $detail->diskon_total = $diskonNominal * $jumlah;
                 $detail->keuntungan_per_item = ($hargaJual - $hargaBeli) * $jumlah;
                 $detail->tipe = 'produk';
             } 
@@ -302,7 +311,9 @@ class LaporanController extends Controller
                 $hargaSatuan = $detail->harga_satuan ?? 0;
                 $jumlah = $detail->jumlah ?? 0;
                 $hargaBeli = $detail->menu->harga_beli ?? 0;
+                $diskonNominal = $detail->diskon_nominal ?? 0;
                 
+                $detail->diskon_total = $diskonNominal * $jumlah;
                 $detail->keuntungan_per_item = ($hargaSatuan - $hargaBeli) * $jumlah;
                 $detail->tipe = 'menu';
             }
@@ -315,6 +326,12 @@ class LaporanController extends Controller
             $hargaSatuan = $detail->harga_satuan ?? $detail->harga ?? 0;
             $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
             return $hargaSatuan * $jumlah;
+        });
+
+        $totalDiskon = $transaksiDetail->sum(function ($detail) {
+            $diskonNominal = $detail->diskon_nominal ?? 0;
+            $jumlah = $detail->jumlah ?? $detail->qty ?? 0;
+            return $diskonNominal * $jumlah;
         });
 
         $totalHargaBeli = $transaksiDetail->sum(function ($detail) {
@@ -368,7 +385,7 @@ class LaporanController extends Controller
         }
 
         $pdf = Pdf::loadView('admin.laporan.keuntungan-pdf', compact(
-            'keuntungan', 'tahun', 'bulan', 'totalPenjualan', 
+            'keuntungan', 'tahun', 'bulan', 'totalPenjualan', 'totalDiskon',
             'totalHargaBeli', 'totalKeuntungan', 'totalQty', 'hariData'
         ))->setPaper('a4', 'landscape');
 
