@@ -555,6 +555,7 @@ function openMenuModal(menuId) {
 function closeMenuModal(menuId) {
     document.getElementById('menuModal' + menuId).classList.add('hidden');
 }
+
 function showStokModal(message) {
     document.getElementById('stokModalText').innerText = message;
     document.getElementById('stokModal').classList.remove('hidden');
@@ -563,6 +564,7 @@ function showStokModal(message) {
 function closeStokModal() {
     document.getElementById('stokModal').classList.add('hidden');
 }
+
 // HITUNG TOTAL MENU
 document.querySelectorAll('[id^="menuModal"]').forEach(modal => {
     const totalSpan = modal.querySelector('.totalHargaMenu');
@@ -608,6 +610,7 @@ if (inputBayar) {
         }
     });
 }
+
 // FULLSCREEN
 function toggleFullscreen(event) {
     event.preventDefault();
@@ -630,8 +633,8 @@ function toggleFullscreen(event) {
         });
     }
 }
-</script>
-<script>
+
+// VALIDASI STOK PRODUK
 document.querySelectorAll('.form-tambah-produk').forEach(form => {
     form.addEventListener('submit', function(e) {
         const stok = parseInt(this.querySelector('.stok-produk').value);
@@ -644,8 +647,8 @@ document.querySelectorAll('.form-tambah-produk').forEach(form => {
         }
     });
 });
-</script>
-<script>
+
+// UPDATE JUMLAH ITEM
 function updateJumlah(itemId, change) {
     const jumlahEl = document.querySelector('.jumlah-item-' + itemId);
     if (!jumlahEl) return;
@@ -680,6 +683,7 @@ function updateJumlah(itemId, change) {
     form.submit();
 }
 </script>
+
 @if(session('error'))
 <script>
     document.addEventListener('DOMContentLoaded', () => {

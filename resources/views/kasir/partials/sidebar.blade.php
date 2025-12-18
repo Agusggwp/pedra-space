@@ -67,7 +67,7 @@
             @csrf
             <button type="submit" class="w-full flex items-center gap-4 px-3 py-3 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all font-bold group">
                 <i class="ph ph-sign-out text-2xl shrink-0"></i>
-                <span class="text-sm sidebar-labels whitespace-nowrap">Keluar</span>
+                <span class="text-sm sidebar-labels whitespace-nowrap">Log Out</span>
             </button>
         </form>
     </div>
