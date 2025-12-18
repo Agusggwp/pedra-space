@@ -17,7 +17,7 @@
             @include('kasir.partials.sidebar')
 
             <!-- MAIN CONTENT -->
-                <div class="lg:ml-72 p-6 md:p-8">
+                <div id="mainContent" class="main-content p-6 md:p-8">
                     <div class="max-w-7xl mx-auto">
 
                         <!-- HEADER -->
@@ -200,6 +200,73 @@
                     </div>
                 </div>
         </div>
- </div>   
+ </div>
+
+<style>
+/* Main content responsive ke sidebar */
+.main-content {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+}
+
+/* Desktop: sidebar expanded */
+@media (min-width: 1024px) {
+    .main-content {
+        margin-left: 288px;
+    }
+    
+    /* Desktop: sidebar collapsed */
+    #sidebar.sidebar-collapsed ~ * .main-content,
+    body:has(#sidebar.sidebar-collapsed) .main-content {
+        margin-left: 72px;
+    }
+}
+
+/* Mobile: no margin */
+@media (max-width: 1023px) {
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mainContent = document.getElementById('mainContent');
+    const sidebar = document.getElementById('sidebar');
+    
+    // Listen untuk perubahan sidebar
+    window.addEventListener('sidebarToggle', function(e) {
+        if (window.innerWidth >= 1024) {
+            if (e.detail.collapsed) {
+                mainContent.style.marginLeft = '72px';
+            } else {
+                mainContent.style.marginLeft = '288px';
+            }
+        }
+    });
+    
+    // Set initial state berdasarkan localStorage
+    if (window.innerWidth >= 1024) {
+        const savedState = localStorage.getItem('sidebarCollapsed');
+        if (savedState === 'true') {
+            mainContent.style.marginLeft = '72px';
+        } else {
+            mainContent.style.marginLeft = '288px';
+        }
+    }
+    
+    // Handle resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+            const isCollapsed = sidebar && sidebar.classList.contains('sidebar-collapsed');
+            mainContent.style.marginLeft = isCollapsed ? '72px' : '288px';
+        } else {
+            mainContent.style.marginLeft = '0';
+        }
+    });
+});
+</script>
+   
 </body>
 </html>

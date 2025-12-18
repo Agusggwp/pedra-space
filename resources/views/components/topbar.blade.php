@@ -1,52 +1,57 @@
 <!-- TOPBAR COMPONENT -->
-<header class="fixed top-0 right-0 left-0 z-40 bg-white border-b border-gray-200 px-6 py-3 shadow-sm w-full">
+<header id="topbar" class="fixed top-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 shadow-sm transition-all duration-300" style="left: 288px;">
     <div class="flex items-center justify-between w-full">
-        <!-- Left: Hamburger Menu (Mobile) + Search -->
-        <div class="flex items-center gap-4 flex-1">
-            <!-- Hamburger Button Selalu di Topbar (Mobile & Desktop) -->
-            <button id="menuBtn" class="text-gray-600 hover:text-gray-900 transition-colors z-50 relative p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="4" x2="20" y1="12" y2="12"/>
-                    <line x1="4" x2="20" y1="6" y2="6"/>
-                    <line x1="4" x2="20" y1="18" y2="18"/>
+        <div class="flex items-center gap-4">
+            <button id="menuBtn" class="bg-emerald-600 text-white hover:bg-emerald-700 transition-all p-2 rounded-lg shadow-md flex items-center justify-center focus:outline-none">
+                <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
         </div>
 
-        <!-- Right: Role Badge + Notification + Profile -->
         <div class="flex items-center gap-4">
-            <!-- Role Badge -->
-            <div class="hidden md:flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1.5 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 16v-4"/>
-                    <path d="M12 8h.01"/>
-                </svg>
-                <span class="text-sm font-medium">{{ ucfirst(auth()->user()->role) }}</span>
-            </div>
+            <!-- <div class="hidden md:flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-100">
+                <span class="text-[10px] font-bold uppercase tracking-wider">{{ auth()->user()->role }}</span>
+            </div> -->
 
-            <!-- Notification Bell -->
-            <!-- <button class="relative text-gray-600 hover:text-gray-900 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
-                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-                </svg>
-                <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button> -->
-
-            <!-- Profile -->
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            <div class="flex items-center gap-3 pl-4 border-l border-gray-100">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-gray-900 leading-none">{{ auth()->user()->name }}</p>
+                    <p class="text-[11px] text-emerald-500 font-medium">Aktif</p>
                 </div>
-                <div class="hidden lg:block">
-                    <p class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</p>
-                    <p class="text-xs text-gray-500">{{ ucfirst(auth()->user()->role) }}</p>
+                <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm border-2 border-white">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 </div>
             </div>
         </div>
     </div>
 </header>
+
+<style>
+/* Default Desktop */
+#topbar {
+    left: 288px;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Jika Sidebar Kecil (Desktop) */
+#sidebar.sidebar-collapsed ~ #topbar {
+    left: 85px;
+}
+
+#sidebar.sidebar-collapsed ~ #topbar #menuIcon {
+    transform: rotate(180deg);
+}
+
+/* Pengaturan Mobile */
+@media (max-width: 1023px) {
+    #topbar {
+        left: 0 !important;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+</style>
 
 <!-- SCRIPT HAMBURGER MENU -->
 <script>
@@ -59,9 +64,20 @@
             menuBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                sidebar.classList.toggle('-translate-x-full');
-                if (overlay) {
-                    overlay.classList.toggle('hidden');
+                // On mobile: slide sidebar in/out
+                // On desktop: toggle collapse/expand
+                if (window.innerWidth < 1024) {
+                    sidebar.classList.toggle('-translate-x-full');
+                    if (overlay) {
+                        overlay.classList.toggle('hidden');
+                    }
+                } else {
+                    // On desktop, always expand if collapsed
+                    if (sidebar.classList.contains('sidebar-collapsed')) {
+                        sidebar.classList.remove('sidebar-collapsed');
+                    } else {
+                        sidebar.classList.add('sidebar-collapsed');
+                    }
                 }
             });
 
@@ -72,15 +88,70 @@
                 });
             }
 
-            // Tutup sidebar saat klik link
+            // Tutup sidebar saat klik link (mobile only)
             document.querySelectorAll('#sidebar a').forEach(link => {
                 link.addEventListener('click', function() {
-                    sidebar.classList.add('-translate-x-full');
-                    if (overlay) {
-                        overlay.classList.add('hidden');
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.add('-translate-x-full');
+                        if (overlay) {
+                            overlay.classList.add('hidden');
+                        }
                     }
                 });
             });
         }
     });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const topbar = document.getElementById('topbar');
+    const overlay = document.getElementById('overlay');
+
+    // Fungsi untuk mengatur posisi Topbar berdasarkan status Sidebar
+    function syncTopbar() {
+        if (window.innerWidth >= 1024) {
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                topbar.style.left = '85px';
+            } else {
+                topbar.style.left = '288px';
+            }
+        } else {
+            topbar.style.left = '0';
+        }
+    }
+
+    // Event Klik Tombol Menu di Topbar
+    menuBtn.addEventListener('click', function() {
+        if (window.innerWidth < 1024) {
+            // Mobile: Slide In/Out
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        } else {
+            // Desktop: Toggle Kecil/Besar
+            sidebar.classList.toggle('sidebar-collapsed');
+            
+            // Simpan status ke memori browser
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+            
+            // Sinkronkan posisi Topbar
+            syncTopbar();
+        }
+    });
+
+    // Cek status tersimpan saat halaman dimuat
+    if (window.innerWidth >= 1024) {
+        const savedState = localStorage.getItem('sidebarCollapsed');
+        if (savedState === 'true') {
+            sidebar.classList.add('sidebar-collapsed');
+        }
+        syncTopbar();
+    }
+
+    // Jalankan sinkronisasi saat layar di-resize (misal dari desktop ke tablet)
+    window.addEventListener('resize', syncTopbar);
+});
 </script>
