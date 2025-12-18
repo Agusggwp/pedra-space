@@ -1,3 +1,4 @@
+<!-- SIDEBAR -->
 <div id="sidebar" class="fixed top-0 left-0 h-screen w-72 bg-white shadow-lg transform -translate-x-full transition-all duration-300 lg:translate-x-0 z-50 flex flex-col border-r border-gray-200">
     
     <div class="p-4 bg-emerald-600 shrink-0 flex items-center overflow-hidden h-[73px]">
@@ -72,39 +73,14 @@
     </div>
 </div>
 
-<header id="topbar" class="fixed top-0 right-0 left-0 z-40 bg-white border-b border-gray-200 px-6 py-3 shadow-sm transition-all duration-300 lg:ml-72">
-    <div class="flex items-center justify-end w-full">
-        <div class="flex items-center gap-4">
-            <div class="hidden md:flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-100">
-                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span class="text-xs font-bold uppercase tracking-wider">{{ auth()->user()->role }}</span>
-            </div>
-
-            <div class="flex items-center gap-3 pl-4 border-l border-gray-100">
-                <div class="text-right hidden lg:block">
-                    <p class="text-sm font-bold text-gray-900 leading-none">{{ auth()->user()->name }}</p>
-                    <p class="text-[11px] text-gray-500">Online</p>
-                </div>
-                <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-inner border-2 border-white">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
+<!-- OVERLAY -->
 <div id="overlay" class="fixed inset-0 bg-black/50 z-30 lg:hidden hidden backdrop-blur-sm transition-opacity duration-300"></div>
 
 <style>
 /* Sidebar Transitions */
 #sidebar {
-    width: 288px; /* w-72 */
+    width: 288px;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease-in-out;
-}
-
-/* Topbar Margin Transition */
-#topbar {
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Collapsed State Styles */
@@ -127,16 +103,8 @@
     gap: 0;
 }
 
-/* Penyesuaian Topbar saat Sidebar Kecil */
-@media (min-width: 1024px) {
-    #sidebar.sidebar-collapsed ~ #topbar {
-        left: 85px;
-    }
-}
-
-/* Ikon Animasi pada Tombol Menu */
-#sidebar.sidebar-collapsed ~ #topbar #menuIcon {
-    transform: rotate(180deg);
+#sidebar.sidebar-collapsed #sidebarLogo {
+    justify-content: center;
 }
 
 /* Scrollbar Style */
@@ -144,76 +112,3 @@
 #sidebar div::-webkit-scrollbar-track { background: transparent; }
 #sidebar div::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const menuBtn = document.getElementById('menuBtn');
-    const sidebar = document.getElementById('sidebar');
-    const topbar = document.getElementById('topbar');
-    const overlay = document.getElementById('overlay');
-    const sidebarLogo = document.getElementById('sidebarLogo');
-
-    function updateLogoAlignment() {
-        if (!sidebarLogo) return;
-        if (sidebar.classList.contains('sidebar-collapsed')) {
-            sidebarLogo.classList.add('mx-auto');
-        } else {
-            sidebarLogo.classList.remove('mx-auto');
-        }
-    }
-
-    function toggleSidebar() {
-        const isMobile = window.innerWidth < 1024;
-
-        if (isMobile) {
-            // Logika Mobile: Slide In/Out
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        } else {
-            // Logika Desktop: Kecilkan/Besarkan
-            sidebar.classList.toggle('sidebar-collapsed');
-            
-            // Atur posisi topbar secara manual untuk sinkronisasi
-            if (sidebar.classList.contains('sidebar-collapsed')) {
-                topbar.style.left = '85px';
-            } else {
-                topbar.style.left = '288px';
-            }
-
-            // Simpan status
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('sidebar-collapsed'));
-            
-            // Beritahu konten utama (jika ada script lain yang mendengarkan)
-            window.dispatchEvent(new CustomEvent('sidebarToggle', {
-                detail: { collapsed: sidebar.classList.contains('sidebar-collapsed') }
-            }));
-        }
-        updateLogoAlignment();
-    }
-
-    if (menuBtn && sidebar) {
-        menuBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleSidebar();
-        });
-
-        // Klik Overlay untuk menutup (Mobile)
-        overlay.addEventListener('click', () => {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        });
-
-        // Restore State Desktop dari LocalStorage
-        if (window.innerWidth >= 1024) {
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (isCollapsed) {
-                sidebar.classList.add('sidebar-collapsed');
-                topbar.style.left = '85px';
-            } else {
-                topbar.style.left = '288px';
-            }
-            updateLogoAlignment();
-        }
-    }
-});
-</script>

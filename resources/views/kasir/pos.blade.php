@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -10,14 +9,14 @@
 </head>
 <body class="bg-gray-50">
 
-<!-- Include Topbar -->
-@include('components.topbar')
-
 <!-- Include Sidebar -->
 @include('kasir.partials.sidebar')
 
+<!-- Include Topbar -->
+@include('components.topbar')
+
 <!-- KONTEN UTAMA -->
-<div id="mainContent" class="transition-all duration-300 pt-16 lg:ml-72">
+<div id="mainContent" class="transition-all duration-300 pt-20 min-h-screen">
     <div class="p-6 md:p-8">
         <div class="max-w-[1600px] mx-auto">
 
@@ -301,7 +300,7 @@
 
                 <!-- KERANJANG -->
                 <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-24">
                         
                         <!-- HEADER KERANJANG -->
                         <div class="border-b border-gray-200 p-4">
@@ -454,6 +453,31 @@
 </div>
 
 <style>
+/* Main Content Positioning */
+#mainContent {
+    margin-left: 0;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Desktop: Margin mengikuti sidebar */
+@media (min-width: 1024px) {
+    #mainContent {
+        margin-left: 288px;
+    }
+
+    /* Ketika sidebar collapsed */
+    #sidebar.sidebar-collapsed ~ #mainContent {
+        margin-left: 85px;
+    }
+}
+
+/* Mobile & Tablet: No margin */
+@media (max-width: 1023px) {
+    #mainContent {
+        margin-left: 0 !important;
+    }
+}
+
 .tab-button {
     color: #6b7280;
     border-bottom-color: transparent;
@@ -478,31 +502,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainContent = document.getElementById('mainContent');
     const sidebar = document.getElementById('sidebar');
     
+    if (!mainContent || !sidebar) return;
+    
     function adjustMainContent() {
-        if (window.innerWidth >= 1024 && sidebar) {
+        const width = window.innerWidth;
+        
+        if (width >= 1024) {
+            // Desktop
             if (sidebar.classList.contains('sidebar-collapsed')) {
-                mainContent.style.marginLeft = '72px';
+                mainContent.style.marginLeft = '85px';
             } else {
                 mainContent.style.marginLeft = '288px';
             }
         } else {
+            // Mobile & Tablet
             mainContent.style.marginLeft = '0';
         }
     }
     
-    // Listen for sidebar toggle event
-    window.addEventListener('sidebarToggle', adjustMainContent);
+    // Observer untuk detect perubahan class sidebar
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'class') {
+                adjustMainContent();
+            }
+        });
+    });
+    
+    observer.observe(sidebar, { attributes: true });
     
     // Listen for window resize
     window.addEventListener('resize', adjustMainContent);
     
     // Initial adjustment
     adjustMainContent();
-    
-    // Check sidebar state on load
-    if (sidebar && sidebar.classList.contains('sidebar-collapsed')) {
-        adjustMainContent();
-    }
 });
 
 // TAB SWITCHING

@@ -1,21 +1,24 @@
-<!-- TOPBAR COMPONENT -->
-<header id="topbar" class="fixed top-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 shadow-sm transition-all duration-300" style="left: 288px;">
+<!-- TOPBAR -->
+<header id="topbar" class="fixed top-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 shadow-sm transition-all duration-300 lg:left-72">
     <div class="flex items-center justify-between w-full">
+        <!-- LEFT: Menu Button (Selalu Tampil) -->
         <div class="flex items-center gap-4">
-            <button id="menuBtn" class="bg-emerald-600 text-white hover:bg-emerald-700 transition-all p-2 rounded-lg shadow-md flex items-center justify-center focus:outline-none">
+            <button id="menuBtn" class="bg-emerald-600 text-white hover:bg-emerald-700 transition-all p-2 rounded-lg shadow-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
         </div>
 
+        <!-- RIGHT: User Info -->
         <div class="flex items-center gap-4">
-            <!-- <div class="hidden md:flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-100">
-                <span class="text-[10px] font-bold uppercase tracking-wider">{{ auth()->user()->role }}</span>
-            </div> -->
+            <div class="hidden md:flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-100">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-xs font-bold uppercase tracking-wider">{{ auth()->user()->role }}</span>
+            </div>
 
             <div class="flex items-center gap-3 pl-4 border-l border-gray-100">
-                <div class="text-right">
+                <div class="text-right hidden sm:block">
                     <p class="text-sm font-bold text-gray-900 leading-none">{{ auth()->user()->name }}</p>
                     <p class="text-[11px] text-emerald-500 font-medium">Aktif</p>
                 </div>
@@ -28,80 +31,33 @@
 </header>
 
 <style>
-/* Default Desktop */
+/* Topbar Positioning */
 #topbar {
-    left: 288px;
+    left: 0;
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Jika Sidebar Kecil (Desktop) */
-#sidebar.sidebar-collapsed ~ #topbar {
-    left: 85px;
-}
-
-#sidebar.sidebar-collapsed ~ #topbar #menuIcon {
-    transform: rotate(180deg);
-}
-
-/* Pengaturan Mobile */
-@media (max-width: 1023px) {
+/* Desktop: Default position with sidebar */
+@media (min-width: 1024px) {
     #topbar {
-        left: 0 !important;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        left: 288px;
+    }
+    
+    /* When sidebar is collapsed */
+    #sidebar.sidebar-collapsed ~ * #topbar,
+    body:has(#sidebar.sidebar-collapsed) #topbar {
+        left: 85px;
+    }
+}
+
+/* Rotate icon when sidebar collapsed (Desktop only) */
+@media (min-width: 1024px) {
+    #sidebar.sidebar-collapsed ~ * #menuIcon,
+    body:has(#sidebar.sidebar-collapsed) #menuIcon {
+        transform: rotate(180deg);
     }
 }
 </style>
-
-<!-- SCRIPT HAMBURGER MENU -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        if (menuBtn && sidebar) {
-            menuBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                // On mobile: slide sidebar in/out
-                // On desktop: toggle collapse/expand
-                if (window.innerWidth < 1024) {
-                    sidebar.classList.toggle('-translate-x-full');
-                    if (overlay) {
-                        overlay.classList.toggle('hidden');
-                    }
-                } else {
-                    // On desktop, always expand if collapsed
-                    if (sidebar.classList.contains('sidebar-collapsed')) {
-                        sidebar.classList.remove('sidebar-collapsed');
-                    } else {
-                        sidebar.classList.add('sidebar-collapsed');
-                    }
-                }
-            });
-
-            if (overlay) {
-                overlay.addEventListener('click', function() {
-                    sidebar.classList.add('-translate-x-full');
-                    overlay.classList.add('hidden');
-                });
-            }
-
-            // Tutup sidebar saat klik link (mobile only)
-            document.querySelectorAll('#sidebar a').forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth < 1024) {
-                        sidebar.classList.add('-translate-x-full');
-                        if (overlay) {
-                            overlay.classList.add('hidden');
-                        }
-                    }
-                });
-            });
-        }
-    });
-</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -110,48 +66,93 @@ document.addEventListener('DOMContentLoaded', function() {
     const topbar = document.getElementById('topbar');
     const overlay = document.getElementById('overlay');
 
-    // Fungsi untuk mengatur posisi Topbar berdasarkan status Sidebar
+    if (!menuBtn || !sidebar || !topbar) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    // Function to sync topbar position
     function syncTopbar() {
-        if (window.innerWidth >= 1024) {
+        const width = window.innerWidth;
+        
+        if (width >= 1024) {
+            // Desktop
             if (sidebar.classList.contains('sidebar-collapsed')) {
                 topbar.style.left = '85px';
             } else {
                 topbar.style.left = '288px';
             }
         } else {
+            // Mobile & Tablet
             topbar.style.left = '0';
         }
     }
 
-    // Event Klik Tombol Menu di Topbar
-    menuBtn.addEventListener('click', function() {
-        if (window.innerWidth < 1024) {
-            // Mobile: Slide In/Out
+    // Toggle sidebar
+    function toggleSidebar() {
+        const isMobile = window.innerWidth < 1024;
+
+        if (isMobile) {
+            // Mobile & Tablet: Slide in/out
             sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
+            if (overlay) {
+                overlay.classList.toggle('hidden');
+            }
         } else {
-            // Desktop: Toggle Kecil/Besar
+            // Desktop: Collapse/expand
             sidebar.classList.toggle('sidebar-collapsed');
             
-            // Simpan status ke memori browser
-            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
-            localStorage.setItem('sidebarCollapsed', isCollapsed);
+            // Save state
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('sidebar-collapsed'));
             
-            // Sinkronkan posisi Topbar
+            // Sync topbar
             syncTopbar();
         }
+    }
+
+    // Menu button click
+    menuBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSidebar();
     });
 
-    // Cek status tersimpan saat halaman dimuat
+    // Overlay click (close sidebar on mobile)
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
+    }
+
+    // Close sidebar when clicking links (mobile only)
+    document.querySelectorAll('#sidebar a').forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth < 1024) {
+                sidebar.classList.add('-translate-x-full');
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                }
+            }
+        });
+    });
+
+    // Restore saved state on desktop
     if (window.innerWidth >= 1024) {
         const savedState = localStorage.getItem('sidebarCollapsed');
         if (savedState === 'true') {
             sidebar.classList.add('sidebar-collapsed');
         }
-        syncTopbar();
     }
 
-    // Jalankan sinkronisasi saat layar di-resize (misal dari desktop ke tablet)
-    window.addEventListener('resize', syncTopbar);
+    // Initial sync
+    syncTopbar();
+
+    // Sync on resize
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(syncTopbar, 100);
+    });
 });
 </script>
