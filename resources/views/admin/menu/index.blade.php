@@ -94,22 +94,26 @@
                                     @endif
 
                                     <!-- ACTIONS -->
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('admin.menu.edit', $menu) }}" class="btn btn-sm btn-primary flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg font-semibold transition flex items-center justify-center gap-2">
-                                            <i class="ph ph-pencil"></i> Edit
+                                    <div class="flex gap-1">
+                                        <a href="{{ route('admin.menu.show', $menu) }}" class="btn btn-sm btn-info flex-1 bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 rounded text-xs font-semibold transition flex items-center justify-center gap-1">
+                                            <i class="ph ph-eye text-sm"></i> Lihat
+                                        </a>
+
+                                        <a href="{{ route('admin.menu.edit', $menu) }}" class="btn btn-sm btn-primary flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold transition flex items-center justify-center gap-1">
+                                            <i class="ph ph-pencil text-sm"></i> Edit
                                         </a>
 
                                         <form action="{{ route('admin.menu.destroy', $menu) }}" method="POST" class="flex-1 delete-menu-form">
                                             @csrf @method('DELETE')
-                                            <button type="submit" data-menu-name="{{ $menu->nama }}" class="btn btn-sm btn-danger w-full bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-semibold transition flex items-center justify-center gap-2">
-                                                <i class="ph ph-trash"></i> Hapus
+                                            <button type="submit" data-menu-name="{{ $menu->nama }}" class="btn btn-sm btn-danger w-full bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold transition flex items-center justify-center gap-1">
+                                                <i class="ph ph-trash text-sm"></i> Hapus
                                             </button>
                                         </form>
 
                                         <form action="{{ route('admin.menu.toggle-status', $menu) }}" method="POST" class="flex-1">
                                             @csrf @method('PATCH')
-                                            <button type="submit" class="btn btn-sm {{ $menu->is_active ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600' }} text-white px-3 py-2 rounded-lg font-semibold transition w-full flex items-center justify-center gap-2">
-                                                <i class="ph {{ $menu->is_active ? 'ph-eye-slash' : 'ph-eye' }}"></i> {{ $menu->is_active ? 'Nonaktif' : 'Aktif' }}
+                                            <button type="submit" class="btn btn-sm {{ $menu->is_active ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600' }} text-white px-2 py-1 rounded text-xs font-semibold transition w-full flex items-center justify-center gap-1">
+                                                <i class="ph {{ $menu->is_active ? 'ph-eye-slash' : 'ph-eye' }} text-sm"></i> {{ $menu->is_active ? 'Nonaktif' : 'Aktif' }}
                                             </button>
                                         </form>
                                     </div>

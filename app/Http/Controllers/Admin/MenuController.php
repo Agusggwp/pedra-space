@@ -60,6 +60,12 @@ class MenuController extends Controller
         return redirect()->route('admin.menu.index')->with('success', 'Menu berhasil ditambahkan!');
     }
 
+    // SHOW MENU DETAIL
+    public function show(Menu $menu)
+    {
+        return view('admin.menu.show', compact('menu'));
+    }
+
     // SHOW EDIT FORM
     public function edit(Menu $menu)
     {
