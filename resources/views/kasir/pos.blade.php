@@ -612,6 +612,10 @@ if (inputBayar) {
 }
 
 // FULLSCREEN
+let isFullscreenLocked = false;
+let fullscreenAttemptCount = 0;
+const MAX_ATTEMPTS = 5;
+
 function toggleFullscreen(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -620,19 +624,80 @@ function toggleFullscreen(event) {
     const icon = document.getElementById('fullscreenIcon');
     
     if (!document.fullscreenElement) {
-        elem.requestFullscreen().then(() => {
+        // Enter fullscreen
+        isFullscreenLocked = true;
+        fullscreenAttemptCount = 0;
+        elem.requestFullscreen({ navigationUI: "hide" }).then(() => {
             icon.classList.remove('ph-arrows-out');
             icon.classList.add('ph-arrows-in');
+            screen.orientation.lock('landscape').catch(err => console.log('Orientation lock not available'));
         }).catch(err => {
             alert(`Fullscreen error: ${err.message}`);
+            isFullscreenLocked = false;
         });
     } else {
+        // Exit fullscreen
+        isFullscreenLocked = false;
+        fullscreenAttemptCount = 0;
         document.exitFullscreen().then(() => {
             icon.classList.remove('ph-arrows-in');
             icon.classList.add('ph-arrows-out');
+            screen.orientation.unlock().catch(err => console.log('Orientation unlock not available'));
         });
     }
 }
+
+// Prevent accidental fullscreen exit - Monitor fullscreen change
+document.addEventListener('fullscreenchange', () => {
+    if (isFullscreenLocked && !document.fullscreenElement) {
+        fullscreenAttemptCount++;
+        if (fullscreenAttemptCount <= MAX_ATTEMPTS) {
+            setTimeout(() => {
+                document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(err => {
+                    console.log('Could not re-enter fullscreen:', err);
+                });
+            }, 50);
+        }
+    }
+});
+
+// Prevent ESC key when fullscreen is locked
+document.addEventListener('keydown', (e) => {
+    if (isFullscreenLocked && e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+}, true);
+
+// Block pointer lock exit
+document.addEventListener('pointerlockchange', () => {
+    if (isFullscreenLocked && !document.pointerLockElement && document.fullscreenElement) {
+        // Re-lock if needed
+    }
+});
+
+// Prevent context menu
+document.addEventListener('contextmenu', (e) => {
+    if (isFullscreenLocked) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// Monitor visibility change to prevent alt+tab tricks
+document.addEventListener('visibilitychange', () => {
+    if (isFullscreenLocked && document.hidden) {
+        // User tried to switch window
+        setTimeout(() => {
+            if (isFullscreenLocked && !document.fullscreenElement) {
+                document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(err => {
+                    console.log('Could not re-enter on tab switch:', err);
+                });
+            }
+        }, 100);
+    }
+});
 
 // VALIDASI STOK PRODUK
 document.querySelectorAll('.form-tambah-produk').forEach(form => {
