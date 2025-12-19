@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between w-full">
         <!-- LEFT: Menu Button (Selalu Tampil) -->
         <div class="flex items-center gap-4">
-            <button id="menuBtn" class="bg-emerald-600 text-white hover:bg-emerald-700 transition-all p-2 rounded-lg shadow-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <button id="menuBtn" class="bg-blue-600 text-white hover:bg-blue-700 transition-all p-2 rounded-lg shadow-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -12,17 +12,17 @@
 
         <!-- RIGHT: User Info -->
         <div class="flex items-center gap-4">
-            <div class="hidden md:flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-100">
-                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            <div class="hidden md:flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full border border-blue-100">
+                <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                 <span class="text-xs font-bold uppercase tracking-wider">{{ auth()->user()->role }}</span>
             </div>
 
             <div class="flex items-center gap-3 pl-4 border-l border-gray-100">
                 <div class="text-right hidden sm:block">
                     <p class="text-sm font-bold text-gray-900 leading-none">{{ auth()->user()->name }}</p>
-                    <p class="text-[11px] text-emerald-500 font-medium">Aktif</p>
+                    <p class="text-[11px] text-blue-500 font-medium">Aktif</p>
                 </div>
-                <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm border-2 border-white">
+                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-sm border-2 border-white">
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 </div>
             </div>
@@ -55,6 +55,28 @@
     #sidebar.sidebar-collapsed ~ * #menuIcon,
     body:has(#sidebar.sidebar-collapsed) #menuIcon {
         transform: rotate(180deg);
+    }
+}
+
+/* Content area adjustment - Expand/Shrink with sidebar */
+@media (min-width: 1024px) {
+    /* Default state with sidebar expanded */
+    #sidebar:not(.sidebar-collapsed) ~ .flex-1 {
+        margin-left: 288px;
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Collapsed state - content expands */
+    #sidebar.sidebar-collapsed ~ .flex-1 {
+        margin-left: 85px;
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+/* Mobile - no margin needed */
+@media (max-width: 1023px) {
+    #sidebar ~ .flex-1 {
+        margin-left: 0 !important;
     }
 }
 </style>
