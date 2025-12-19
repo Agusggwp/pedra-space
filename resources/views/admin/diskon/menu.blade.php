@@ -27,9 +27,14 @@
                             Diskon Menu
                         </h2>
                     </div>
-                    <a href="{{ route('admin.diskon.menu.create') }}" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors">
-                        + Tambah Diskon Menu
-                    </a>
+                    <div class="flex gap-3">
+                        <a href="{{ route('admin.diskon.index') }}" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors">
+                            ← Kembali
+                        </a>
+                        <a href="{{ route('admin.diskon.menu.create') }}" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors">
+                            + Tambah Diskon Menu
+                        </a>
+                    </div>
                 </div>
             </div>
 

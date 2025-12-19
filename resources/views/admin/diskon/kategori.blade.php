@@ -26,9 +26,14 @@
                             Diskon Kategori
                         </h2>
                     </div>
-                    <a href="{{ route('admin.diskon.kategori.create') }}" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors">
-                        + Tambah Diskon Kategori
-                    </a>
+                    <div class="flex gap-3">
+                        <a href="{{ route('admin.diskon.index') }}" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors">
+                            ← Kembali
+                        </a>
+                        <a href="{{ route('admin.diskon.kategori.create') }}" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors">
+                            + Tambah Diskon Kategori
+                        </a>
+                    </div>
                 </div>
             </div>
 

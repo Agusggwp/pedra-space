@@ -27,9 +27,14 @@
                             Diskon Produk
                         </h2>
                     </div>
-                    <a href="{{ route('admin.diskon.produk.create') }}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
-                        + Tambah Diskon Produk
-                    </a>
+                    <div class="flex gap-3">
+                        <a href="{{ route('admin.diskon.index') }}" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors">
+                            ← Kembali
+                        </a>
+                        <a href="{{ route('admin.diskon.produk.create') }}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
+                            + Tambah Diskon Produk
+                        </a>
+                    </div>
                 </div>
             </div>
 

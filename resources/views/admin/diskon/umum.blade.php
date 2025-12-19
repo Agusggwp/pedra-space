@@ -26,9 +26,14 @@
                             Diskon Umum
                         </h2>
                     </div>
-                    <a href="{{ route('admin.diskon.umum.create') }}" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors">
-                        + Tambah Diskon Umum
-                    </a>
+                    <div class="flex gap-3">
+                        <a href="{{ route('admin.diskon.index') }}" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors">
+                            ← Kembali
+                        </a>
+                        <a href="{{ route('admin.diskon.umum.create') }}" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors">
+                            + Tambah Diskon Umum
+                        </a>
+                    </div>
                 </div>
             </div>
 
