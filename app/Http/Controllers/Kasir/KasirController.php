@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Kasir;
 use App\Http\Controllers\Controller;
 use App\Models\Produk;
 use App\Models\Menu;
+use App\Models\Category;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use App\Models\ShiftKasir;
@@ -23,6 +24,9 @@ class KasirController extends Controller
             return redirect()->route('kasir.buka');
         }
 
+        // Ambil kategori
+        $categories = Category::has('produks')->orHas('menus')->get();
+
         // Ambil produk dengan diskon
         $produks = Produk::where('stok', '>', 0)->orderBy('nama')->get();
         $produks->load('diskon');
@@ -33,7 +37,7 @@ class KasirController extends Controller
 
         $keranjang = session('keranjang', []);
 
-        return view('kasir.pos', compact('produks', 'menus', 'keranjang', 'shift'));
+        return view('kasir.pos', compact('produks', 'menus', 'keranjang', 'shift', 'categories'));
     }
 
     // BUKA KASIR

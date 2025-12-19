@@ -28,11 +28,6 @@
                 </div>
 
                 <div class="flex gap-2">
-                    <button onclick="toggleFullscreen(event)" 
-                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 transition font-semibold border border-gray-200">
-                        <i class="ph ph-arrows-out text-lg" id="fullscreenIcon"></i>
-                        <span class="hidden sm:inline">Fullscreen</span>
-                    </button>
                     <a href="{{ route('kasir.daftar') }}" 
                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 transition font-semibold border border-gray-200">
                         <i class="ph ph-receipt text-lg"></i>
@@ -68,6 +63,18 @@
                             </nav>
                         </div>
 
+                        <!-- FILTER KATEGORI -->
+                        <div class="border-b border-gray-200 px-6 py-3 bg-gray-50">
+                            <label class="text-sm font-semibold text-gray-700 mr-3">Filter Kategori:</label>
+                            <select id="categoryFilter" onchange="filterByCategory(this.value)" 
+                                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm font-semibold">
+                                <option value="all">Semua Kategori</option>
+                                @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <!-- TAB CONTENT -->
                         <div class="p-6" style="max-height: 75vh; overflow-y: auto;">
                             
@@ -75,7 +82,7 @@
                             <div id="content-produk" class="tab-content">
                                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                     @forelse($produks as $p)
-                                    <form action="{{ route('kasir.tambah') }}" method="POST" class="form-tambah-produk">
+                                    <form action="{{ route('kasir.tambah') }}" method="POST" class="form-tambah-produk produk-item produk-cat-{{ $p->category_id }}">
                                         @csrf
                                         <input type="hidden" name="produk_id" value="{{ $p->id }}">
                                         <input type="hidden" class="stok-produk" value="{{ $p->stok }}">
@@ -146,7 +153,7 @@
                             <div id="content-menu" class="tab-content hidden">
                                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                     @forelse($menus as $menu)
-                                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-300 transition cursor-pointer"
+                                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-300 transition cursor-pointer menu-item menu-cat-{{ $menu->category_id }}"
                                         onclick="openMenuModal('{{ $menu->id }}')">
                                         
                                         <!-- FOTO MENU -->
@@ -545,6 +552,31 @@ function switchTab(tab) {
     
     document.getElementById('tab-' + tab).classList.add('active');
     document.getElementById('content-' + tab).classList.remove('hidden');
+    
+    // Reset filter ketika tab berubah
+    document.getElementById('categoryFilter').value = 'all';
+    filterByCategory('all');
+}
+
+// FILTER BY CATEGORY DROPDOWN
+function filterByCategory(categoryId) {
+    // Filter produk
+    document.querySelectorAll('.produk-item').forEach(item => {
+        if (categoryId === 'all' || item.classList.contains(`produk-cat-${categoryId}`)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Filter menu
+    document.querySelectorAll('.menu-item').forEach(item => {
+        if (categoryId === 'all' || item.classList.contains(`menu-cat-${categoryId}`)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
 }
 
 // MENU MODAL
@@ -610,92 +642,6 @@ if (inputBayar) {
         }
     });
 }
-
-// FULLSCREEN
-let isFullscreenLocked = false;
-let fullscreenAttemptCount = 0;
-const MAX_ATTEMPTS = 5;
-
-function toggleFullscreen(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    const elem = document.documentElement;
-    const icon = document.getElementById('fullscreenIcon');
-    
-    if (!document.fullscreenElement) {
-        // Enter fullscreen
-        isFullscreenLocked = true;
-        fullscreenAttemptCount = 0;
-        elem.requestFullscreen({ navigationUI: "hide" }).then(() => {
-            icon.classList.remove('ph-arrows-out');
-            icon.classList.add('ph-arrows-in');
-        }).catch(err => {
-            console.log(`Fullscreen error: ${err.message}`);
-            isFullscreenLocked = false;
-        });
-    } else {
-        // Exit fullscreen
-        isFullscreenLocked = false;
-        fullscreenAttemptCount = 0;
-        document.exitFullscreen().then(() => {
-            icon.classList.remove('ph-arrows-in');
-            icon.classList.add('ph-arrows-out');
-        });
-    }
-}
-
-// Prevent accidental fullscreen exit - Monitor fullscreen change
-document.addEventListener('fullscreenchange', () => {
-    if (isFullscreenLocked && !document.fullscreenElement) {
-        fullscreenAttemptCount++;
-        if (fullscreenAttemptCount <= MAX_ATTEMPTS) {
-            setTimeout(() => {
-                document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(err => {
-                    console.log('Could not re-enter fullscreen:', err);
-                });
-            }, 50);
-        }
-    }
-});
-
-// Prevent ESC key when fullscreen is locked
-document.addEventListener('keydown', (e) => {
-    if (isFullscreenLocked && e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-    }
-}, true);
-
-// Block pointer lock exit
-document.addEventListener('pointerlockchange', () => {
-    if (isFullscreenLocked && !document.pointerLockElement && document.fullscreenElement) {
-        // Re-lock if needed
-    }
-});
-
-// Prevent context menu
-document.addEventListener('contextmenu', (e) => {
-    if (isFullscreenLocked) {
-        e.preventDefault();
-        return false;
-    }
-});
-
-// Monitor visibility change to prevent alt+tab tricks
-document.addEventListener('visibilitychange', () => {
-    if (isFullscreenLocked && document.hidden) {
-        // User tried to switch window
-        setTimeout(() => {
-            if (isFullscreenLocked && !document.fullscreenElement) {
-                document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(err => {
-                    console.log('Could not re-enter on tab switch:', err);
-                });
-            }
-        }, 100);
-    }
-});
 
 // VALIDASI STOK PRODUK
 document.querySelectorAll('.form-tambah-produk').forEach(form => {
