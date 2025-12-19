@@ -630,9 +630,8 @@ function toggleFullscreen(event) {
         elem.requestFullscreen({ navigationUI: "hide" }).then(() => {
             icon.classList.remove('ph-arrows-out');
             icon.classList.add('ph-arrows-in');
-            screen.orientation.lock('landscape').catch(err => console.log('Orientation lock not available'));
         }).catch(err => {
-            alert(`Fullscreen error: ${err.message}`);
+            console.log(`Fullscreen error: ${err.message}`);
             isFullscreenLocked = false;
         });
     } else {
@@ -642,7 +641,6 @@ function toggleFullscreen(event) {
         document.exitFullscreen().then(() => {
             icon.classList.remove('ph-arrows-in');
             icon.classList.add('ph-arrows-out');
-            screen.orientation.unlock().catch(err => console.log('Orientation unlock not available'));
         });
     }
 }
