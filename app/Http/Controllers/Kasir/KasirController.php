@@ -175,24 +175,43 @@ class KasirController extends Controller
         // Hitung harga dengan diskon
         $hargaAwal = $produk->harga_jual;
         $hargaFinal = $hargaAwal;
+        $diskonNominal = 0;
 
         // Cek diskon produk spesifik
         $diskonProduk = Diskon::where('tipe', 'produk')
             ->where('produk_id', $produk->id)
             ->where('aktif', true)
+            ->where(function($q) {
+                $q->whereNull('berlaku_dari')
+                  ->orWhere('berlaku_dari', '<=', now());
+            })
+            ->where(function($q) {
+                $q->whereNull('berlaku_sampai')
+                  ->orWhere('berlaku_sampai', '>=', now());
+            })
             ->first();
 
         if ($diskonProduk) {
             $hargaFinal = $diskonProduk->hargaSetelahDiskon($hargaAwal);
+            $diskonNominal = $hargaAwal - $hargaFinal;
         } else {
             // Cek diskon kategori
             $diskonKategori = Diskon::where('tipe', 'kategori')
                 ->where('category_id', $produk->category_id)
                 ->where('aktif', true)
+                ->where(function($q) {
+                    $q->whereNull('berlaku_dari')
+                      ->orWhere('berlaku_dari', '<=', now());
+                })
+                ->where(function($q) {
+                    $q->whereNull('berlaku_sampai')
+                      ->orWhere('berlaku_sampai', '>=', now());
+                })
                 ->first();
 
             if ($diskonKategori) {
                 $hargaFinal = $diskonKategori->hargaSetelahDiskon($hargaAwal);
+                $diskonNominal = $hargaAwal - $hargaFinal;
             }
         }
 
@@ -203,7 +222,7 @@ class KasirController extends Controller
                 'nama' => $produk->nama,
                 'harga' => $hargaFinal,
                 'harga_awal' => $hargaAwal,
-                'diskon' => $hargaAwal - $hargaFinal,
+                'diskon' => $diskonNominal,
                 'jumlah' => 1
             ];
         }
@@ -243,6 +262,14 @@ class KasirController extends Controller
             $diskonMenu = Diskon::where('tipe', 'menu')
                 ->where('menu_id', $menu->id)
                 ->where('aktif', true)
+                ->where(function($q) {
+                    $q->whereNull('berlaku_dari')
+                      ->orWhere('berlaku_dari', '<=', now());
+                })
+                ->where(function($q) {
+                    $q->whereNull('berlaku_sampai')
+                      ->orWhere('berlaku_sampai', '>=', now());
+                })
                 ->first();
 
             if ($diskonMenu) {
@@ -253,6 +280,14 @@ class KasirController extends Controller
                 $diskonKategori = Diskon::where('tipe', 'kategori')
                     ->where('category_id', $menu->category_id)
                     ->where('aktif', true)
+                    ->where(function($q) {
+                        $q->whereNull('berlaku_dari')
+                          ->orWhere('berlaku_dari', '<=', now());
+                    })
+                    ->where(function($q) {
+                        $q->whereNull('berlaku_sampai')
+                          ->orWhere('berlaku_sampai', '>=', now());
+                    })
                     ->first();
 
                 if ($diskonKategori) {

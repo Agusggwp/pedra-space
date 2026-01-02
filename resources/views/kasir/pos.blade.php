@@ -107,6 +107,34 @@
                                                 <span class="absolute top-2 right-2 px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded-full">
                                                     Stok: {{ $p->stok }}
                                                 </span>
+                                                
+                                                @php
+                                                    $diskonProdukCard = $p->diskon->first();
+                                                    if (!$diskonProdukCard) {
+                                                        $diskonProdukCard = \App\Models\Diskon::where('tipe', 'kategori')
+                                                            ->where('category_id', $p->category_id)
+                                                            ->where('aktif', true)
+                                                            ->where(function($q) {
+                                                                $q->whereNull('berlaku_dari')
+                                                                  ->orWhere('berlaku_dari', '<=', now());
+                                                            })
+                                                            ->where(function($q) {
+                                                                $q->whereNull('berlaku_sampai')
+                                                                  ->orWhere('berlaku_sampai', '>=', now());
+                                                            })
+                                                            ->first();
+                                                    }
+                                                @endphp
+                                                
+                                                <!-- BADGE DISKON -->
+                                                @if($diskonProdukCard)
+                                                    @php
+                                                        $persenDiskon = $diskonProdukCard->persentase ?? (($diskonProdukCard->nominal / $p->harga_jual) * 100);
+                                                    @endphp
+                                                    <span class="absolute top-2 left-2 px-2 py-1 bg-red-600 text-white text-xs font-bold rounded-full shadow-md">
+                                                        <i class="ph ph-tag-simple"></i> {{ round($persenDiskon) }}%
+                                                    </span>
+                                                @endif
                                             </div>
 
                                             <!-- INFO PRODUK -->
@@ -167,6 +195,34 @@
                                                 <div class="w-full h-32 bg-gray-100 flex items-center justify-center">
                                                     <i class="ph ph-image text-4xl text-gray-300"></i>
                                                 </div>
+                                            @endif
+                                            
+                                            @php
+                                                $diskonMenuCard = $menu->diskon->first();
+                                                if (!$diskonMenuCard) {
+                                                    $diskonMenuCard = \App\Models\Diskon::where('tipe', 'kategori')
+                                                        ->where('category_id', $menu->category_id)
+                                                        ->where('aktif', true)
+                                                        ->where(function($q) {
+                                                            $q->whereNull('berlaku_dari')
+                                                              ->orWhere('berlaku_dari', '<=', now());
+                                                        })
+                                                        ->where(function($q) {
+                                                            $q->whereNull('berlaku_sampai')
+                                                              ->orWhere('berlaku_sampai', '>=', now());
+                                                        })
+                                                        ->first();
+                                                }
+                                            @endphp
+                                            
+                                            <!-- BADGE DISKON -->
+                                            @if($diskonMenuCard)
+                                                @php
+                                                    $persenDiskonMenu = $diskonMenuCard->persentase ?? (($diskonMenuCard->nominal / $menu->harga_base) * 100);
+                                                @endphp
+                                                <span class="absolute top-2 left-2 px-2 py-1 bg-red-600 text-white text-xs font-bold rounded-full shadow-md">
+                                                    <i class="ph ph-tag-simple"></i> {{ round($persenDiskonMenu) }}%
+                                                </span>
                                             @endif
                                             
                                             <!-- BADGE KATEGORI -->
@@ -318,9 +374,35 @@
                                 </span>
                             </div>
                             @if(!empty($keranjang))
-                                <p class="text-sm text-gray-600 mt-1">
-                                    Total: <span class="font-bold text-gray-800">Rp {{ number_format(collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah'])) }}</span>
-                                </p>
+                                @php
+                                    $totalDiskon = collect($keranjang)->sum(fn($i) => ($i['diskon'] ?? 0) * $i['jumlah']);
+                                    $subtotal = collect($keranjang)->sum(fn($i) => ($i['harga_awal'] ?? $i['harga']) * $i['jumlah']);
+                                    $total = collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah']);
+                                @endphp
+                                
+                                @if($totalDiskon > 0)
+                                    <div class="mt-3 space-y-1 text-sm">
+                                        <div class="flex justify-between text-gray-600">
+                                            <span>Subtotal:</span>
+                                            <span class="font-semibold">Rp {{ number_format($subtotal) }}</span>
+                                        </div>
+                                        <div class="flex justify-between text-red-600">
+                                            <span class="flex items-center gap-1">
+                                                <i class="ph ph-tag-simple"></i>
+                                                Potongan Diskon:
+                                            </span>
+                                            <span class="font-bold">- Rp {{ number_format($totalDiskon) }}</span>
+                                        </div>
+                                        <div class="flex justify-between text-gray-800 font-bold pt-2 border-t border-gray-200">
+                                            <span>Total Bayar:</span>
+                                            <span class="text-lg">Rp {{ number_format($total) }}</span>
+                                        </div>
+                                    </div>
+                                @else
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        Total: <span class="font-bold text-gray-800">Rp {{ number_format($total) }}</span>
+                                    </p>
+                                @endif
                             @endif
                         </div>
 
@@ -350,8 +432,21 @@
                                                 </div>
                                             @endif
                                             
-                                            <p class="text-xs text-gray-600 mt-2">Rp {{ number_format($item['harga']) }}</p>
-                                            <p class="text-sm font-bold text-gray-800 mt-1">Rp {{ number_format($item['harga'] * $item['jumlah']) }}</p>
+                                            <!-- TAMPILKAN DISKON JIKA ADA -->
+                                            @if(isset($item['diskon']) && $item['diskon'] > 0)
+                                                <div class="mt-2 mb-1">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 border border-red-200 rounded text-xs font-semibold text-red-700">
+                                                        <i class="ph ph-tag-simple"></i>
+                                                        Diskon: Rp {{ number_format($item['diskon']) }}
+                                                    </span>
+                                                </div>
+                                                <p class="text-xs text-gray-500 line-through">Rp {{ number_format($item['harga_awal']) }}</p>
+                                                <p class="text-xs text-green-600 font-semibold">Rp {{ number_format($item['harga']) }} /pcs</p>
+                                            @else
+                                                <p class="text-xs text-gray-600 mt-2">Rp {{ number_format($item['harga']) }} /pcs</p>
+                                            @endif
+                                            
+                                            <p class="text-sm font-bold text-gray-800 mt-1">Subtotal: Rp {{ number_format($item['harga'] * $item['jumlah']) }}</p>
                                         </div>
                                         <div class="flex items-center gap-1">
                                             <button type="button" onclick="updateJumlah('{{ $id }}', -1)" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm font-bold">
@@ -377,6 +472,40 @@
                         <!-- FORM PEMBAYARAN -->
                         @if(!empty($keranjang))
                         <div class="border-t border-gray-200 p-4">
+                            
+                            @php
+                                $totalDiskonForm = collect($keranjang)->sum(fn($i) => ($i['diskon'] ?? 0) * $i['jumlah']);
+                                $subtotalForm = collect($keranjang)->sum(fn($i) => ($i['harga_awal'] ?? $i['harga']) * $i['jumlah']);
+                                $totalForm = collect($keranjang)->sum(fn($i) => $i['harga'] * $i['jumlah']);
+                            @endphp
+                            
+                            <!-- RINGKASAN PEMBAYARAN -->
+                            @if($totalDiskonForm > 0)
+                            <div class="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-lg p-3 mb-4">
+                                <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                    <i class="ph ph-receipt text-red-600"></i>
+                                    Ringkasan Pembayaran
+                                </h4>
+                                <div class="space-y-1 text-sm">
+                                    <div class="flex justify-between text-gray-700">
+                                        <span>Subtotal</span>
+                                        <span class="font-semibold">Rp {{ number_format($subtotalForm) }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-red-600">
+                                        <span class="font-semibold flex items-center gap-1">
+                                            <i class="ph ph-tag-simple"></i>
+                                            Total Diskon
+                                        </span>
+                                        <span class="font-bold">- Rp {{ number_format($totalDiskonForm) }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-gray-900 font-bold pt-2 border-t border-red-300">
+                                        <span>Total Bayar</span>
+                                        <span class="text-lg">Rp {{ number_format($totalForm) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            
                             <form action="{{ route('kasir.bayar') }}" method="POST" class="space-y-3">
                                 @csrf
 
